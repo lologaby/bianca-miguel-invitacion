@@ -1,0 +1,21 @@
+.hero-still-life-v2 .glass-drawing-v2 { animation: glass-arrival 1.15s .08s both var(--ease); transform-origin: 210px 684px; }
+.hero-still-life-v2 .glass-bowl-outline { fill: url(#glass-glint-v2); stroke: var(--paper); stroke-linejoin: round; stroke-width: 2.4; }
+.hero-still-life-v2 .glass-stem, .hero-still-life-v2 .glass-foot { fill: rgba(255,255,255,.035); stroke: var(--paper); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.4; }
+.hero-still-life-v2 .glass-foot-highlight, .hero-still-life-v2 .glass-glint { fill: none; opacity: .5; stroke: var(--paper); stroke-linecap: round; stroke-width: 1.25; }
+.hero-still-life-v2 .wine-volume { animation: wine-fills-glass 1.8s .65s both cubic-bezier(.22,1,.36,1); transform-box: fill-box; transform-origin: center bottom; }
+.hero-still-life-v2 .wine-surface { fill: #945565; stroke: #bc7e8c; stroke-width: 1.5; }
+.hero-still-life-v2 .grape-highlight { fill: none; opacity: .55; stroke: var(--paper); stroke-linecap: round; stroke-width: 2; }
+.hero-still-life-v2 .chocolate-v2 { filter: drop-shadow(0 14px 16px rgba(34,20,16,.18)); }
+
+@keyframes glass-arrival {
+  from { opacity: .2; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes wine-fills-glass {
+  from { opacity: .35; transform: translateY(174px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-still-life-v2 .glass-drawing-v2, .hero-still-life-v2 .wine-volume { animation: none; }
+}

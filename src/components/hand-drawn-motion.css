@@ -1,0 +1,50 @@
+.hero-still-life-v2 {
+  filter: drop-shadow(0 22px 28px rgba(18, 36, 28, .16));
+  transform: translateY(var(--paper-drift, 0));
+  will-change: transform;
+}
+
+.hero-still-life-v2 :is(.glass-bowl-outline, .glass-stem, .glass-foot, .stem, .leaf, .petal, .tulip-head, .grape-vine) {
+  stroke-dasharray: 2.2 1.25;
+}
+
+.hero-still-life-v2 .wine-volume {
+  transform: rotate(var(--liquid-tilt, 0deg));
+  transform-box: fill-box;
+  transform-origin: 50% 62%;
+  will-change: transform;
+}
+
+.hero-still-life-v2 .orbit {
+  opacity: .23;
+  stroke-dasharray: 4 9;
+}
+
+.hero-still-life-v2 .poster-word {
+  letter-spacing: .24em;
+  opacity: .68;
+}
+
+.masked-word-section h2 {
+  background-position: calc(50% + var(--curtain-x, 0px)) calc(50% + var(--curtain-y, 0px)) !important;
+  filter: saturate(.82) contrast(1.08);
+  text-shadow: 0 1px 0 rgba(255,255,255,.12);
+  will-change: background-position;
+}
+
+.masked-word-section::after {
+  background: linear-gradient(102deg, transparent 29%, rgba(251,248,240,.16) 48%, transparent 67%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(calc(var(--curtain-x, 0px) * 1.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-still-life-v2, .hero-still-life-v2 .wine-volume, .masked-word-section h2, .masked-word-section::after {
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}

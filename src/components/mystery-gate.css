@@ -1,0 +1,55 @@
+.mystery-gate > section { animation: mystery-arrival 900ms cubic-bezier(.16,1,.3,1) both; }
+.mystery-gate .private-gate-copy { margin-bottom: 2.4rem; }
+.mystery-seal { position: relative; }
+.mystery-seal::after { box-shadow: 0 0 5rem rgba(108, 30, 48, .28); }
+
+.mystery-reveal {
+  align-items: center;
+  background: var(--paper) !important;
+  border: 1px solid var(--paper) !important;
+  color: var(--forest) !important;
+  display: flex;
+  font: 650 .68rem/1 var(--sans) !important;
+  justify-content: space-between;
+  letter-spacing: .14em !important;
+  min-height: 4rem;
+  padding: 0 1.35rem !important;
+  text-transform: uppercase;
+  transition: background-color 240ms ease, color 240ms ease, transform 240ms cubic-bezier(.16,1,.3,1);
+  width: min(100%, 24rem);
+}
+.mystery-reveal b { font: 400 1.1rem/1 var(--sans); transition: transform 240ms cubic-bezier(.16,1,.3,1); }
+.mystery-reveal:hover { background: var(--brass) !important; color: var(--forest) !important; transform: translateY(-2px); }
+.mystery-reveal:hover b { transform: translateX(.25rem); }
+.mystery-reveal:focus-visible, .code-toggle:focus-visible { outline: 2px solid var(--brass); outline-offset: 5px; }
+.mystery-reveal:disabled { cursor: wait; opacity: .68; }
+.mystery-actions { display: grid; gap: 1rem; justify-items: start; }
+.code-toggle {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(243,239,229,.45);
+  color: #d8d0c5;
+  cursor: pointer;
+  font: 600 .61rem/1.4 var(--sans);
+  letter-spacing: .1em;
+  min-height: 44px;
+  padding: .75rem 0 .35rem;
+  text-transform: uppercase;
+}
+.mystery-code-form { animation: code-arrival 520ms cubic-bezier(.16,1,.3,1) both; max-width: 28rem; }
+.mystery-code-form input:focus { outline: none; }
+.mystery-code-form input:focus-visible { box-shadow: inset 0 -2px 0 var(--brass); }
+
+@keyframes mystery-arrival {
+  from { clip-path: inset(0 0 22% 0); filter: blur(6px); transform: translateY(1.25rem); }
+  to { clip-path: inset(0); filter: blur(0); transform: translateY(0); }
+}
+@keyframes code-arrival {
+  from { clip-path: inset(0 0 100% 0); opacity: .4; transform: translateY(-.5rem); }
+  to { clip-path: inset(0); opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mystery-gate > section, .mystery-code-form { animation: none; }
+  .mystery-reveal, .mystery-reveal b { transition: none; }
+}
