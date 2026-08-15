@@ -1,0 +1,93 @@
+/* Final contrast and overlap corrections after full mobile scroll review. */
+.distilled-hero .hero-copy-v2 > .crafted-button {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  clip-path: none;
+  color: var(--wine);
+  gap: 1.4rem;
+  min-height: 42px;
+  padding: 0;
+  width: auto;
+}
+
+.masked-word-section {
+  background: var(--paper);
+  isolation: isolate;
+  position: relative;
+}
+.masked-word-section::before {
+  background: var(--wine);
+  content: '';
+  height: clamp(5rem, 11vw, 8rem);
+  left: clamp(1rem, 5vw, 5rem);
+  opacity: .09;
+  position: absolute;
+  top: 50%;
+  transform: translate(var(--curtain-x, 0), calc(-50% + var(--curtain-y, 0px))) rotate(-1.5deg);
+  width: min(66vw, 48rem);
+  z-index: -1;
+}
+.masked-word-section h2 {
+  background: none !important;
+  color: var(--wine) !important;
+  filter: none;
+  opacity: 1;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--wine) !important;
+}
+.masked-word-section::after { opacity: .28; }
+
+.rsvp-v2 .rsvp-submit {
+  background: var(--wine);
+  border: 1px solid rgba(202,169,112,.78);
+  border-radius: 2px;
+  box-shadow: 0 14px 34px rgba(64,30,42,.2);
+  clip-path: none;
+  min-height: 58px;
+  outline: 1px solid rgba(243,239,229,.55);
+  outline-offset: -5px;
+  padding-inline: 2rem 3.8rem;
+}
+.rsvp-v2 .rsvp-submit::after { border-radius: 0; }
+.rsvp-v2 .rsvp-submit:not(:disabled):hover,
+.rsvp-v2 .rsvp-submit:not(:disabled):focus-visible {
+  background: var(--wine-dark);
+  box-shadow: 0 17px 38px rgba(64,30,42,.24);
+}
+
+@media (max-width: 800px) {
+  .distilled-hero .hero-copy-v2 > .crafted-button { display: none; }
+  .distilled-hero .hero-copy-v2 { padding-bottom: 14rem; }
+  .distilled-hero .hero-copy-v2 > p { max-width: 12.5rem; }
+  .distilled-hero .hero-still-life {
+    bottom: -2%;
+    height: 70%;
+    left: 13%;
+    width: 87%;
+  }
+
+  .masked-word-section {
+    gap: 2.5rem;
+    min-height: auto;
+    padding-block: 5.5rem;
+  }
+  .masked-word-section::before {
+    height: 5.4rem;
+    left: .75rem;
+    top: 7.7rem;
+    width: calc(100% - 1.5rem);
+  }
+  .masked-word-section h2 {
+    font-size: clamp(3.55rem, 18vw, 4.8rem);
+    line-height: .84;
+    overflow-wrap: normal;
+  }
+  .masked-word-section > div { margin-left: 0; padding-left: 1.25rem; }
+}
+
+@media (max-width: 370px) {
+  .distilled-hero .hero-copy-v2 { padding-bottom: 12rem; }
+  .distilled-hero .hero-still-life { height: 66%; }
+  .masked-word-section h2 { font-size: 3.4rem; }
+}
