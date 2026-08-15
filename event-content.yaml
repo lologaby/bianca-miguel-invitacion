@@ -1,0 +1,70 @@
+event:
+  names: "Bianca & Placeholder"
+  slug: "bianca-placeholder"
+  start: "2026-12-26T17:00:00-04:00" # Provisional hasta confirmar la hora
+  end: "2026-12-27T02:00:00-04:00" # Provisional
+  timezone: "America/Puerto_Rico"
+  rsvp_deadline: "PENDIENTE"
+  ceremony:
+    name: "Iglesia Cristiana Discípulos de Cristo en Ponce"
+    address: "Ponce, Puerto Rico"
+  reception:
+    name: "PENDIENTE"
+    address: "PENDIENTE"
+
+locales:
+  default: "es"
+  supported: ["es"]
+
+experience:
+  invitation_reveal: true
+  background_audio: false
+  countdown: true
+  add_to_calendar: false
+  faq: true
+  maps: true
+  gifts: false
+  travel: true
+  recommendations: true
+  guest_codes: true
+  personalized_rsvp: true
+  song_requests: true
+  event_phases: true
+  post_event_gallery: true
+
+guest_rules:
+  maximum_party_size: 6
+  plus_one_mode: "per-guest-record"
+  children_policy: "per-guest-record"
+  collect_dietary_notes: true
+  collect_accessibility_notes: true
+
+integrations:
+  authoritative_rsvp_store: "upstash-redis"
+  cms: "pendiente"
+  music_search: "disabled-until-provider-is-selected"
+  analytics: "off"
+
+theme:
+  direction: "minimalismo editorial de bodega"
+  colors:
+    ivory: "#F4F0E6"
+    eucalyptus: "#647565"
+    forest: "#23352D"
+    wine: "#612F3B"
+    ink: "#24241F"
+    muted_brass: "#B69455"
+  artwork_notes: "Ilustración original plana: copa, calas, tulipán, uvas y eucalipto."
+
+deployment:
+  provider: "Vercel"
+  custom_domain: "PENDIENTE"
+  indexing: "noindex-until-launch"
+  preview_phase_override: true
+
+privacy:
+  public: ["nombres", "fecha", "iglesia", "recomendaciones aprobadas"]
+  private: ["invitados", "códigos", "acompañantes", "RSVP", "notas alimentarias", "canciones"]
+  secrets: ["SESSION_SECRET", "UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN", "GUESTS_JSON"]
+  guest_data_retention: "exportar y eliminar después del evento"
+  media_consent_reviewed: false

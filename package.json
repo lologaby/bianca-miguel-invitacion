@@ -1,0 +1,29 @@
+{
+  "name": "bianca-boda",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "check": "npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.36.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.37.1",
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "@openai/sites-vite-plugin": "^0.1.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.13",
+    "wrangler": "^4.92.0"
+  }
+}

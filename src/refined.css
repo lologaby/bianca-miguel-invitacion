@@ -1,0 +1,75 @@
+/* Privacy-first, distilled presentation layer */
+.private-gate {
+  background: var(--forest);
+  color: var(--paper);
+  display: grid;
+  grid-template-columns: minmax(9rem, .6fr) minmax(20rem, 1fr) minmax(9rem, .6fr);
+  min-height: 100svh;
+  overflow: hidden;
+  padding: clamp(1.25rem, 4vw, 4rem);
+  position: relative;
+}
+.private-gate::before { border: 1px solid rgba(243,239,229,.18); content: ""; inset: clamp(.75rem, 2vw, 1.5rem); pointer-events: none; position: absolute; }
+.private-gate-mark { align-self: center; aspect-ratio: 1; border: 1px solid rgba(243,239,229,.22); border-radius: 50%; display: grid; max-width: 15rem; place-items: center; width: 100%; }
+.private-gate-mark::before, .private-gate-mark::after, .private-gate-mark span { border: 1px solid var(--brass); border-radius: 50%; content: ""; grid-area: 1 / 1; }
+.private-gate-mark::before { height: 62%; width: 62%; }.private-gate-mark::after { height: 28%; width: 28%; }.private-gate-mark span { background: var(--wine); border-color: var(--wine); height: 7%; width: 7%; }
+.private-gate > section { align-self: center; justify-self: center; max-width: 35rem; padding: clamp(2rem, 5vw, 5rem); width: 100%; }
+.private-gate > section > p:first-child { color: var(--brass); font: 650 .62rem/1 var(--sans); letter-spacing: .18em; margin: 0 0 2.5rem; text-transform: uppercase; }
+.private-gate h1 { font: 400 clamp(4rem, 9vw, 6rem)/.76 var(--serif); letter-spacing: -.04em; margin: 0; }
+.private-gate h1 i { color: var(--brass); font-weight: 300; }
+.private-gate-copy { color: #d8d0c5; font: 400 1.05rem/1.6 var(--serif); margin: 2.5rem 0 3.5rem; max-width: 29rem; }
+.private-gate form > label { color: #d8d0c5; display: block; font: 650 .59rem/1 var(--sans); letter-spacing: .14em; margin-bottom: .7rem; text-transform: uppercase; }
+.private-gate form > div { border-bottom: 1px solid rgba(243,239,229,.5); display: grid; grid-template-columns: 1fr auto; }
+.private-gate input { background: transparent; border: 0; border-radius: 0; color: var(--paper); font: 500 1.05rem var(--sans); min-width: 0; padding: 1rem 0; }
+.private-gate button { background: transparent; border: 0; color: var(--brass); cursor: pointer; font: 650 .6rem var(--sans); letter-spacing: .13em; padding: 0 0 0 1rem; text-transform: uppercase; }
+.private-gate button:disabled { cursor: wait; opacity: .6; }
+.private-gate form small { color: #aeb7ac; display: block; font: 500 .65rem/1.5 var(--sans); margin-top: .8rem; }
+.private-gate form code { color: var(--paper); font-family: var(--sans); font-weight: 700; letter-spacing: .07em; }
+.private-gate .form-status { color: #d8d0c5; min-height: 1.5rem; }
+.private-note { align-self: end; color: #aeb7ac; font: 650 .57rem/1 var(--sans); justify-self: end; letter-spacing: .15em; margin: 0 0 1rem; text-transform: uppercase; writing-mode: vertical-rl; }
+
+.header-date > span:only-child { font: 650 .6rem/1.2 var(--sans); letter-spacing: .12em; max-width: 9rem; text-align: right; }
+.date-word h2 { font-size: clamp(2.8rem, 6vw, 5rem); line-height: .85; }
+.distilled-hero .hero-copy-v2 > p { max-width: 22rem; }
+.distilled-hero .hero-actions-v2 { display: none; }
+.distilled-visual::before { inset: clamp(1rem, 3vw, 2.5rem); }
+.distilled-visual .hero-still-life { transform: scale(.92); }
+
+.masked-word-section { align-items: center; background: var(--paper); display: grid; gap: clamp(2rem, 6vw, 7rem); grid-template-columns: minmax(0, 1.35fr) minmax(18rem, .65fr); min-height: 520px; overflow: hidden; padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 7vw, 8rem); }
+.masked-word-section h2 { background: url('./assets/wine-type-texture.webp') center 43% / cover; background-clip: text; color: transparent; font: 600 clamp(4rem, 9vw, 6rem)/.78 var(--serif); letter-spacing: -.04em; margin: 0; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.masked-word-section > div { border-left: 1px solid var(--line); padding-left: clamp(1.5rem, 4vw, 4rem); }
+.masked-word-section p { color: var(--forest); font: italic 400 clamp(1.5rem, 2.5vw, 2.2rem)/1.2 var(--serif); margin: 0; max-width: 24rem; }
+.masked-word-section .vine-rule { margin-top: 2.5rem; }
+
+.event-v2 > div { min-width: 0; }
+.event-v2 > header > p { margin-bottom: 0; }
+.guest-companions { color: var(--wine); font: italic 500 1rem/1.5 var(--serif) !important; margin-top: 1rem !important; }
+.reception-stage { background: rgba(141,155,132,.1); padding-left: clamp(1rem, 3vw, 3rem); }
+.compact-travel .entry-1 { min-height: 470px; padding-top: 6rem; }
+.compact-travel .travel-entry p { max-width: 25rem; }
+.distilled-rsvp { border-top: 1px solid var(--line); }
+.distilled-rsvp .form-heading { max-width: 48rem; }
+.rsvp-more { border-top: 1px solid var(--line); grid-column: 1 / -1; margin-top: 1rem; padding-top: 1rem; }
+.rsvp-more summary { color: var(--forest); cursor: pointer; font: 650 .62rem/1 var(--sans); letter-spacing: .12em; list-style: none; padding: .75rem 0; text-transform: uppercase; }
+.rsvp-more summary::-webkit-details-marker { display: none; }
+.rsvp-more summary::after { content: "+"; float: right; font: 400 1.1rem/1 var(--serif); }
+.rsvp-more[open] summary::after { content: "−"; }
+.rsvp-more > div { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; padding-top: 1rem; }
+
+@media (max-width: 800px) {
+  .private-gate { grid-template-columns: 1fr; padding: 1.25rem; }
+  .private-gate-mark { align-self: end; justify-self: end; margin: 3rem 1rem 0 0; max-width: 7rem; }
+  .private-gate > section { align-self: start; padding: 3rem 1rem; }
+  .private-note { display: none; }
+  .masked-word-section { grid-template-columns: 1fr; min-height: 600px; }
+  .masked-word-section h2 { font-size: clamp(3.7rem, 19vw, 5.5rem); overflow-wrap: anywhere; }
+  .masked-word-section > div { margin-left: 8%; }
+}
+
+@media (max-width: 560px) {
+  .private-gate h1 { font-size: clamp(3.7rem, 18vw, 5rem); }
+  .private-gate form > div { grid-template-columns: 1fr; }
+  .private-gate button { border-top: 1px solid rgba(243,239,229,.2); min-height: 48px; padding: 0; text-align: left; }
+  .masked-word-section { min-height: 520px; padding-left: 1.25rem; padding-right: 1.25rem; }
+  .rsvp-more > div { grid-template-columns: 1fr; }
+}
