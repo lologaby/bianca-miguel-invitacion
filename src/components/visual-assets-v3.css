@@ -1,0 +1,21 @@
+.hero-still-life-v3 .wine-volume { animation: none; transform: rotate(var(--liquid-tilt, 0deg)); transform-box: fill-box; transform-origin: 50% 62%; }
+.hero-still-life-v3 .wine-liquid-rise { animation: liquid-rise 2.15s .45s both cubic-bezier(.22,1,.36,1); }
+.hero-still-life-v3 .wine-surface { animation: liquid-surface 2.15s .45s both cubic-bezier(.22,1,.36,1); transform-box: fill-box; transform-origin: center; }
+.hero-still-life-v3 .glass-stem { fill: none; }
+.hero-still-life-v3 .chocolate-v3 path { fill: none; stroke-linecap: butt; }
+
+@keyframes liquid-rise {
+  0% { transform: translateY(218px); }
+  68% { transform: translateY(-5px); }
+  82% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+@keyframes liquid-surface {
+  0%, 15% { opacity: 0; transform: scaleX(.35); }
+  28% { opacity: 1; transform: scaleX(.72); }
+  72% { transform: scaleX(1.025); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-still-life-v3 .wine-liquid-rise, .hero-still-life-v3 .wine-surface { animation: none; }
+}
