@@ -1,0 +1,18 @@
+.calendar-glyph { transform: rotate(-1.25deg); }
+.calendar-glyph::before { transform: rotate(.6deg); transform-origin: left center; }
+
+.countdown-v2 span { font-size: .72rem; font-weight: 600; }
+.rsvp-v2 .rsvp-form legend,
+.rsvp-v2 .rsvp-form label:not(.choice) {
+  font-size: .75rem;
+  font-weight: 600;
+}
+.rsvp-v2 input,
+.rsvp-v2 textarea,
+.rsvp-v2 select { font-weight: 400; }
+.rsvp-v2 .attendance-card small { font-size: .8125rem; }
+
+@media (max-width: 620px) {
+  .date-word > span { font-size: .75rem; }
+  .footer-meta { font-size: .7rem; }
+}

@@ -1,0 +1,38 @@
+.vine-rule.editorial-rule {
+  align-items: center;
+  display: grid;
+  fill: none;
+  grid-template-columns: minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr);
+  height: auto;
+  stroke: none;
+}
+
+.date-v2 .date-word > span { color: var(--paper); font-size: .75rem; line-height: 1.35; }
+.date-v2 .date-countdown > p { color: var(--muted-on-dark); font-size: 1.16rem; line-height: 1.35; }
+.date-v2 .countdown-v2 span { color: var(--paper); font-size: .72rem; font-weight: 600; line-height: 1.3; }
+.footer-v2 .footer-meta { color: var(--paper); font-size: .7rem; line-height: 1.45; }
+.distilled-rsvp .form-heading > p { color: var(--forest); font-size: 1.1rem; line-height: 1.7; }
+
+.rsvp-v2 .rsvp-form label.attendance-card {
+  color: var(--ink);
+  font: 400 1rem/1.45 var(--sans);
+  letter-spacing: normal;
+  margin-bottom: 0;
+  text-transform: none;
+}
+.rsvp-v2 .rsvp-form label.attendance-card:has(input:checked) { color: var(--paper); }
+.rsvp-v2 .rsvp-form label:not(.choice):not(.attendance-card) {
+  color: var(--forest);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.rsvp-v2 .rsvp-form label:not(.attendance-card) :is(input, textarea, select) {
+  font: 400 1rem/1.45 var(--sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+@media (max-width: 620px) {
+  .footer-v2 .footer-meta { align-items: center; flex-direction: column; gap: .85rem; text-align: center; }
+}

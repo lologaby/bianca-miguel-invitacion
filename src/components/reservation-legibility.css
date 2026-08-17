@@ -1,0 +1,88 @@
+:root {
+  --brass-readable: #d8c69f;
+  --muted-on-dark: #dce1d9;
+  --muted-on-light: #5e5d55;
+}
+
+.editorial-rule {
+  align-items: center;
+  color: var(--forest);
+  display: grid;
+  fill: none;
+  gap: clamp(.85rem, 2.5vw, 1.6rem);
+  grid-template-columns: minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr);
+  height: auto;
+  max-width: 34rem;
+  overflow: visible;
+  stroke: none;
+  width: 100%;
+}
+.editorial-rule-line { background: currentColor; display: block; height: 1px; opacity: .72; }
+.editorial-rule b {
+  align-items: center;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  font: 600 .78rem/1 var(--serif);
+  gap: .42rem;
+  height: 2.65rem;
+  justify-content: center;
+  letter-spacing: .04em;
+  transform: rotate(-2deg);
+  width: 4.35rem;
+}
+.editorial-rule b i { color: var(--wine); font-size: .72em; font-weight: 400; }
+.footer-v2 .editorial-rule { color: var(--brass-readable); margin: 3.5rem auto; }
+.footer-v2 .editorial-rule b i { color: var(--paper); }
+.rsvp-v2 > .editorial-rule { color: var(--forest); margin: 0 auto clamp(4rem, 8vw, 7rem); }
+.masked-word-section .editorial-rule { color: var(--wine); margin-top: 2.5rem; }
+
+.calendar-glyph {
+  border: 2px solid var(--brass-readable);
+  border-radius: 3px;
+  color: var(--brass-readable);
+  display: block;
+  fill: none !important;
+  height: 4.75rem;
+  position: relative;
+  stroke: none !important;
+  width: 4.75rem;
+}
+.calendar-glyph::before {
+  background: currentColor;
+  content: '';
+  height: 2px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 1.2rem;
+}
+.calendar-rings { display: flex; justify-content: space-between; left: .8rem; position: absolute; right: .8rem; top: -.52rem; }
+.calendar-rings i { background: var(--forest); border: 2px solid currentColor; border-radius: 999px; display: block; height: 1.25rem; width: .52rem; }
+.calendar-days { bottom: .9rem; display: flex; gap: .48rem; justify-content: center; left: 0; position: absolute; right: 0; }
+.calendar-days i { border: 1.5px solid currentColor; display: block; height: .48rem; transform: rotate(45deg); width: .48rem; }
+.date-icon .calendar-glyph { fill: none !important; stroke: none !important; }
+
+.date-word > span { color: var(--paper); font-size: .71rem; line-height: 1.35; }
+.date-countdown > p { color: var(--muted-on-dark); font-size: 1.16rem; line-height: 1.35; }
+.countdown-v2 span { color: var(--paper); font-size: .67rem; line-height: 1.3; }
+.footer-meta { color: var(--paper); font-size: .66rem; line-height: 1.45; }
+
+.rsvp-v2 .form-heading > p { color: var(--forest); font-size: 1.1rem; line-height: 1.7; }
+.rsvp-v2 .rsvp-form legend,
+.rsvp-v2 .rsvp-form label:not(.choice) { color: var(--forest); font-size: .73rem; line-height: 1.4; }
+.rsvp-v2 input,
+.rsvp-v2 textarea,
+.rsvp-v2 select { color: var(--ink); font-size: 1rem; line-height: 1.45; }
+.rsvp-v2 :is(input, textarea)::placeholder { color: #68685f; opacity: 1; }
+.rsvp-v2 .attendance-card small { color: var(--muted-on-light); font-size: .72rem; line-height: 1.45; opacity: 1; }
+.rsvp-v2 .attendance-card:has(input:checked) small { color: #eee9df; }
+.test-code-note { font-size: .78rem; line-height: 1.55; }
+.form-status { font-size: .875rem; line-height: 1.55; }
+
+@media (max-width: 620px) {
+  .date-icon { justify-content: center; min-height: 150px; }
+  .calendar-glyph { height: 4.35rem; width: 4.35rem; }
+  .footer-meta { align-items: center; flex-direction: column; gap: .85rem; text-align: center; }
+  .editorial-rule { gap: .8rem; }
+  .editorial-rule b { height: 2.5rem; width: 4rem; }
+}
