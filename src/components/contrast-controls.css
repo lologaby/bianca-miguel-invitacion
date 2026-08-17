@@ -1,0 +1,15 @@
+:root {
+  --line-strong: rgba(36, 58, 49, .58);
+  --line-on-dark: rgba(251, 248, 240, .46);
+}
+
+.rsvp-v2 :is(input, select, textarea) { border-color: var(--line-strong); }
+.rsvp-v2 .attendance-card { border-color: var(--line-strong); }
+.rsvp-v2 .rsvp-submit {
+  font: 600 .75rem/1.2 var(--sans);
+  letter-spacing: .14em;
+}
+.footer-v2 .footer-meta { border-color: var(--line-on-dark); }
+
+.site-shell :is(a, button, input, select, textarea, summary):focus-visible { outline-color: var(--wine); }
+.site-shell :is(.date-v2, .footer-v2) :is(a, button, input, select, textarea, summary):focus-visible { outline-color: var(--brass-readable); }
