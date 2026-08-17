@@ -1,0 +1,141 @@
+:is(#inicio, #detalles, #preguntas, #rsvp) {
+  scroll-margin-top: calc(5.5rem + env(safe-area-inset-top));
+}
+
+@keyframes bm-card-rise {
+  0%, 14% { opacity: .82; transform: translateY(24%) scale(.96); }
+  72%, 100% { opacity: 1; transform: translateY(var(--letter-rise, -58%)) scale(1); }
+}
+
+@media (max-width: 800px) {
+  .mystery-gate {
+    display: block;
+    height: 100svh;
+    inset: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: max(.75rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left));
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .mystery-gate::before {
+    inset: max(.75rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left));
+    position: fixed;
+  }
+
+  .mystery-gate .private-gate-mark {
+    margin: 0;
+    max-width: 3.7rem;
+    position: absolute;
+    right: max(1.35rem, env(safe-area-inset-right));
+    top: max(1.35rem, env(safe-area-inset-top));
+  }
+
+  .mystery-gate > section {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 31rem;
+    min-height: 100%;
+    padding: clamp(4.25rem, 11svh, 5.75rem) 1rem max(1.25rem, env(safe-area-inset-bottom));
+  }
+
+  .mystery-gate h1 {
+    font-size: clamp(2.85rem, 14.5vw, 4.5rem);
+    line-height: .79;
+    max-width: 100%;
+  }
+
+  .mystery-gate .private-gate-copy {
+    font-size: 1rem;
+    line-height: 1.48;
+    margin: 1.4rem 0 1.85rem;
+    max-width: 22rem;
+  }
+
+  .mystery-gate .mystery-reveal { min-height: 3.5rem; }
+  .mystery-gate .mystery-code-form { max-width: none; width: 100%; }
+  .mystery-gate .mystery-code-form > div { grid-template-columns: minmax(0, 1fr) auto; }
+  .mystery-gate .mystery-code-form input { font-size: 1rem; min-height: 3.25rem; padding: .8rem .25rem; }
+  .mystery-gate .mystery-code-form button {
+    border-left: 1px solid rgba(243, 239, 229, .28);
+    border-top: 0;
+    min-height: 3.25rem;
+    padding: 0 1rem;
+    text-align: center;
+  }
+  .mystery-gate .mystery-code-form small { margin-top: .65rem; }
+  .mystery-gate .form-status { font-size: .82rem; margin: .65rem 0 0; min-height: 1.25rem; }
+
+  .invitation-envelope-reveal {
+    height: 100svh;
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  }
+  .stationery-envelope { animation-duration: 2.45s; width: min(84vw, 22rem); }
+  .stationery-envelope__flap { animation-duration: .92s; animation-delay: .1s; }
+  .stationery-envelope__seal { animation-duration: .48s; animation-delay: .08s; }
+  .stationery-envelope__card { animation-duration: 2.1s; animation-delay: .28s; }
+  .envelope-reveal-title { margin-bottom: clamp(2.8rem, 7svh, 4.5rem); }
+  .envelope-reveal-note { margin-top: clamp(3.2rem, 8svh, 5rem); }
+
+  .craft-header {
+    height: calc(72px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .masked-word-section {
+    min-height: auto;
+    padding-block: 4rem;
+  }
+  .masked-word-section::before { top: 6.15rem; }
+  .masked-word-section > div { padding-left: 1rem; }
+
+  .date-icon { min-height: 108px; }
+  .date-word { padding-block: 2.35rem; }
+  .date-countdown { padding-block: 2.5rem 3.25rem; }
+
+  .event-v2 { padding-block: 4.5rem; }
+  .event-v2 > header { margin-bottom: 2.7rem; padding-right: 0; }
+  .event-stage { min-height: 190px; padding-block: 1.6rem; }
+
+  .faq-v2 { gap: 2.6rem; padding-block: 4.5rem; }
+  .faq-v2 > header p { margin: 1.6rem 0 0; }
+  .faq-v2 summary { min-height: 78px; }
+  .faq-v2 summary i { flex: 0 0 2.5rem; }
+
+  .rsvp-v2 { padding-block: 4.5rem; }
+  .rsvp-v2 > .vine-rule { margin-bottom: 3rem; }
+
+  .footer-v2 { padding-block: 4rem 2.25rem; }
+  .footer-v2 .vine-rule { margin-block: 2.6rem; }
+}
+
+@media (max-width: 370px) {
+  .mystery-gate > section { padding-inline: .75rem; }
+  .mystery-gate .private-gate-copy { margin-block: 1.1rem 1.45rem; }
+  .mystery-gate .mystery-code-form button { padding-inline: .8rem; }
+  .event-v2, .faq-v2, .rsvp-v2 { padding-block: 4rem; }
+}
+
+@media (max-height: 650px) and (max-width: 800px) {
+  .mystery-gate .private-gate-mark { max-width: 3.15rem; }
+  .mystery-gate > section { justify-content: flex-start; padding-top: 3.75rem; }
+  .mystery-gate h1 { font-size: clamp(2.7rem, 13.7vw, 3.25rem); }
+  .mystery-gate .private-gate-copy { line-height: 1.42; }
+
+  .invitation-envelope-reveal { align-content: center; }
+  .stationery-envelope { width: min(76vw, 18rem); }
+  .stationery-envelope__card { --letter-rise: -43%; }
+  .envelope-reveal-title { margin-bottom: 2.35rem; }
+  .envelope-reveal-note { margin-top: 2.9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stationery-envelope__card { --letter-rise: -42%; }
+}

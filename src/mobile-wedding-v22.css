@@ -1,0 +1,9 @@
+/* Final mobile typography correction: keep the hero word intact on narrow phones. */
+@media (max-width: 720px) {
+  .masked-word-section h2 {
+    font-size: clamp(3.25rem, 14.5vw, 4rem);
+    overflow-wrap: normal;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+}
