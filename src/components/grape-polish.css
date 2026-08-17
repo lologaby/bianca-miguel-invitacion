@@ -1,0 +1,25 @@
+.hero-still-life-v3 .grapes-v2 circle {
+  fill: #6c3040;
+  stroke: #43242d;
+  stroke-width: 1.6;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(1) { transform: translate(11px, 10px) scale(.86); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(2) { transform: translate(0, 4px) scale(.86); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(3) { transform: translate(-9px, 5px) scale(.88); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(4) { transform: translate(16px, 7px) scale(.88); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(5) { transform: translate(2px, 9px) scale(.88); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(6) { transform: translate(-9px, 9px) scale(.9); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(7) { transform: translate(14px, 7px) scale(.86); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(8) { transform: translate(-1px, 8px) scale(.86); }
+.hero-still-life-v3 .grapes-v2 circle:nth-of-type(9) { transform: translate(8px, -3px) scale(.82); }
+
+.hero-still-life-v3 .grapes-v2 .grape-vine {
+  stroke-dasharray: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-still-life-v3 .grapes-v2 .grape-highlight { display: none; }
