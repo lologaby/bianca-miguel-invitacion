@@ -13,8 +13,17 @@ export interface PrivateEvent {
   end: string;
   timezone: string;
   timeLabel: string;
-  ceremony: { name: string; city: string; mapsUrl: string };
-  reception: { name: string; note: string; mapsUrl?: string };
+  ceremony: { name: string; city: string; mapsUrl: string; timeLabel?: string };
+  reception: {
+    name: string;
+    note: string;
+    mapsUrl?: string;
+    city?: string;
+    timeLabel?: string;
+    moments?: string[];
+  };
+  dressCode?: { label: string; note: string };
+  gifts?: { message: string; athMovil: string };
 }
 
 export interface InvitationPayload {
@@ -30,21 +39,29 @@ export const localDemoInvitation: InvitationPayload = {
     companionNames: ['Acompañante invitado'],
   },
   event: {
-    couple: { first: 'Amelia', second: 'Mateo' },
+    couple: { first: 'Nombre', second: 'Nombre' },
     dateLabel: 'Fecha de demostración',
     dateShort: 'FECHA · DEMO',
-    start: '2027-01-01T17:00:00-04:00',
+    start: '2027-01-01T16:00:00-04:00',
     end: '2027-01-02T02:00:00-04:00',
     timezone: 'UTC',
-    timeLabel: 'Hora por confirmar',
+    timeLabel: '4:00 p. m.',
     ceremony: {
       name: 'Lugar de ceremonia',
       city: 'Ciudad de demostración',
       mapsUrl: '#',
+      timeLabel: '4:00 p. m.',
     },
     reception: {
       name: 'Lugar de recepción',
-      note: 'Los detalles finales se compartirán con cada invitación.',
+      note: 'Ciudad de demostración',
+      city: 'Ciudad de demostración',
+      timeLabel: '6:00 p. m.',
+      moments: ['Cóctel de bienvenida', 'Cata de vino y chocolates', 'Cena y compartir'],
+    },
+    dressCode: {
+      label: 'Cóctel / Formal',
+      note: 'Una noche elegante y cuidada, pensada para celebrar con comodidad.',
     },
   },
 };

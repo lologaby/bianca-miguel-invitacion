@@ -3,12 +3,13 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife, LineIcon, VineRule } from './components/VisualAssets';
-import { faq } from './config/event';
+import { faqFor } from './config/event';
 import type { InvitationPayload, PrivateEvent } from './types/invitation';
 import './craft.css';
 import './refined.css';
+import './itinerary.css';
 
-const nav = [['detalles', 'Celebración'], ['preguntas', 'Preguntas'], ['rsvp', 'Confirmar']] as const;
+const nav = [['detalles', 'Itinerario'], ['etiqueta', 'Detalles'], ['rsvp', 'Confirmar']] as const;
 
 function useScrollProgress() {
   useEffect(() => {
@@ -47,9 +48,33 @@ function Header({ event }: { event: PrivateEvent }) {
   </header>;
 }
 
+function GiftNumber({ number }: { number: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyNumber() {
+    try {
+      if (!navigator.clipboard) throw new Error('clipboard_unavailable');
+      await navigator.clipboard.writeText(number);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return <button className="gift-number" type="button" onClick={() => void copyNumber()} aria-label={`Copiar número de ATH Móvil ${number}`}>
+    <span>ATH MÓVIL</span>
+    <strong>{number.replaceAll('-', ' · ')}</strong>
+    <small aria-live="polite">{copied ? 'Número copiado' : 'Toca para copiar'}</small>
+  </button>;
+}
+
 function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
   const { event, guest } = invitation;
   useScrollProgress();
+  const ceremonyTime = event.ceremony.timeLabel ?? event.timeLabel;
+  const receptionTime = event.reception.timeLabel ?? 'Por confirmar';
+  const receptionMoments = event.reception.moments ?? [];
+  const faq = faqFor(event);
   return <div className="site-shell">
     <div className="scroll-track" aria-hidden="true"><span></span></div>
     <Header event={event}/>
@@ -76,11 +101,52 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
         <div className="pour-line" aria-hidden="true"><span></span></div>
       </section>
 
-      <section className="event-v2" id="detalles">
-        <header><h2>La celebración.</h2><p>Tu invitación es personal y contempla {guest.partyLimit} {guest.partyLimit === 1 ? 'lugar' : 'lugares'}.</p>{guest.companionNames?.length ? <p className="guest-companions">Junto a: {guest.companionNames.join(', ')}</p> : null}</header>
-        <div>
-          <article className="event-stage ceremony-stage"><LineIcon name="church"/><div><span>Ceremonia</span><h3>{event.ceremony.name}</h3><p>{event.ceremony.city}<br/>{event.timeLabel}</p></div>{event.ceremony.mapsUrl !== '#' ? <a className="round-action" href={event.ceremony.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la ceremonia">↗</a> : null}</article>
-          <article className="event-stage reception-stage"><LineIcon name="wine"/><div><span>Recepción</span><h3>{event.reception.name}</h3><p>{event.reception.note}</p></div>{event.reception.mapsUrl ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}</article>
+      <section className="event-v2 itinerary-v3" id="detalles">
+        <header>
+          <h2>El ritmo<br/><em>de la noche.</em></h2>
+          <p>Una tarde para encontrarnos; una noche para brindar, probar y compartir.</p>
+          <div className="itinerary-guest">
+            <span>Tu invitación contempla</span>
+            <strong>{guest.partyLimit} {guest.partyLimit === 1 ? 'lugar' : 'lugares'}</strong>
+            {guest.companionNames?.length ? <small>Junto a {guest.companionNames.join(', ')}</small> : null}
+          </div>
+        </header>
+
+        <ol className="itinerary-list">
+          <li className="itinerary-stop">
+            <time>{ceremonyTime}</time>
+            <article className="itinerary-card ceremony-stage">
+              <LineIcon name="church"/>
+              <div><span>Ceremonia</span><h3>{event.ceremony.name}</h3><p>{event.ceremony.city}</p></div>
+              {event.ceremony.mapsUrl !== '#' ? <a className="round-action" href={event.ceremony.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la ceremonia">↗</a> : null}
+            </article>
+          </li>
+          <li className="itinerary-stop reception-stop">
+            <time>{receptionTime}</time>
+            <article className="itinerary-card reception-stage">
+              <LineIcon name="wine"/>
+              <div><span>Recepción</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
+              {event.reception.mapsUrl ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}
+              {receptionMoments.length ? <ol className="reception-flow" aria-label="Momentos de la recepción">{receptionMoments.map((moment) => <li key={moment}>{moment}</li>)}</ol> : null}
+            </article>
+          </li>
+        </ol>
+      </section>
+
+      <section className="guest-details-v3" id="etiqueta" aria-labelledby="guest-details-title">
+        <header><h2 id="guest-details-title">La elegancia está<br/><em>en los detalles.</em></h2><p>Todo lo necesario para llegar, celebrar y disfrutar con calma.</p></header>
+        <div className="guest-detail-grid">
+          <article className="dress-detail">
+            <span>Código de vestimenta</span>
+            <h3>{event.dressCode?.label ?? 'Cóctel / Formal'}</h3>
+            <p>{event.dressCode?.note ?? 'Agradecemos vestir con elegancia para acompañarnos durante toda la celebración.'}</p>
+          </article>
+          {event.gifts ? <article className="gift-detail">
+            <span>Si desean obsequiarnos</span>
+            <h3>Su presencia es nuestro regalo más especial.</h3>
+            <p>{event.gifts.message}</p>
+            <GiftNumber number={event.gifts.athMovil}/>
+          </article> : null}
         </div>
       </section>
 
