@@ -1,0 +1,694 @@
+/* Invitation continuity and compact RSVP choices. Loaded last by AppMobileV22. */
+.private-gate.mystery-gate {
+  align-items: center;
+  background: var(--forest);
+  color: var(--paper);
+  display: grid;
+  grid-template-columns: 1fr;
+  height: 100svh;
+  inset: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  place-items: center;
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  z-index: 100;
+}
+
+.private-gate.mystery-gate::before {
+  border-color: rgba(243, 239, 229, .2);
+  inset: max(.75rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left));
+  position: fixed;
+}
+
+.private-gate.mystery-gate > .mystery-gate-composition {
+  align-content: center;
+  align-self: center;
+  display: grid;
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 44rem;
+  min-height: calc(100svh - 2rem);
+  padding: clamp(1.5rem, 4vh, 3rem) 1rem;
+  position: relative;
+  width: 100%;
+}
+
+.mystery-intro,
+.mystery-access {
+  max-width: 31rem;
+  width: 100%;
+}
+
+.private-gate.mystery-gate h1 {
+  color: var(--paper);
+  font: 400 clamp(3.5rem, 7vw, 5.6rem)/.82 var(--serif);
+  letter-spacing: -.035em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.private-gate.mystery-gate h1 i {
+  color: var(--brass);
+  font-weight: 300;
+}
+
+.private-gate.mystery-gate .private-gate-copy {
+  color: #e0d9ce;
+  font: 400 1rem/1.55 var(--serif);
+  margin: 0 auto 1.35rem;
+  max-width: 27rem;
+}
+
+.private-gate.mystery-gate .mystery-access {
+  display: grid;
+  justify-items: center;
+}
+
+.private-gate.mystery-gate .mystery-actions {
+  display: grid;
+  gap: .7rem;
+  justify-items: center;
+  width: 100%;
+}
+
+.private-gate.mystery-gate .mystery-reveal {
+  align-items: center;
+  background: var(--paper) !important;
+  border: 1px solid rgba(216, 198, 159, .92) !important;
+  clip-path: polygon(.5rem 0, calc(100% - .5rem) 0, 100% .5rem, 100% calc(100% - .5rem), calc(100% - .5rem) 100%, .5rem 100%, 0 calc(100% - .5rem), 0 .5rem);
+  color: var(--forest) !important;
+  display: flex;
+  font: 650 .68rem/1 var(--sans) !important;
+  justify-content: space-between;
+  letter-spacing: .14em !important;
+  min-height: 3.4rem;
+  padding: 0 1.2rem !important;
+  text-transform: uppercase;
+  transition: background-color 220ms ease, color 220ms ease, transform 220ms cubic-bezier(.16, 1, .3, 1);
+  width: min(100%, 18.5rem);
+}
+
+.private-gate.mystery-gate .mystery-reveal b {
+  font: 400 1.05rem/1 var(--sans);
+  transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.private-gate.mystery-gate .mystery-reveal:hover {
+  background: var(--brass) !important;
+  color: var(--forest) !important;
+  transform: translateY(-1px);
+}
+
+.private-gate.mystery-gate .mystery-reveal:hover b { transform: translateX(.2rem); }
+
+.private-gate.mystery-gate .mystery-reveal:focus-visible,
+.private-gate.mystery-gate .code-toggle:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 4px;
+}
+
+.private-gate.mystery-gate .code-toggle {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(243, 239, 229, .42);
+  color: #ded6cb;
+  cursor: pointer;
+  font: 600 .63rem/1.4 var(--sans);
+  letter-spacing: .1em;
+  min-height: 44px;
+  padding: .7rem .1rem .25rem;
+  text-transform: uppercase;
+}
+
+.private-gate.mystery-gate .mystery-code-form {
+  max-width: 26rem;
+  text-align: left;
+  width: 100%;
+}
+
+.private-gate.mystery-gate .mystery-code-form > label {
+  color: #ded6cb;
+  font-size: .68rem;
+  margin-bottom: .55rem;
+}
+
+.private-gate.mystery-gate .mystery-code-form > div {
+  border-bottom: 1px solid rgba(243, 239, 229, .58);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  transition: border-color 180ms ease;
+}
+
+.private-gate.mystery-gate .mystery-code-form input {
+  caret-color: var(--brass);
+  font-size: 1rem;
+  min-height: 3.2rem;
+  padding: .75rem .2rem;
+}
+
+.private-gate.mystery-gate .mystery-code-form button {
+  border-left: 1px solid rgba(243, 239, 229, .28);
+  border-top: 0;
+  min-height: 3.2rem;
+  padding: 0 .9rem;
+  text-align: center;
+}
+
+.private-gate.mystery-gate .mystery-code-form input:focus { outline: none; }
+.private-gate.mystery-gate .mystery-code-form input:focus-visible { box-shadow: inset 0 -2px 0 var(--brass); }
+
+.private-gate.mystery-gate .form-status {
+  color: #ded6cb;
+  font-size: .82rem;
+  line-height: 1.45;
+  margin: .55rem 0 0;
+  min-height: 1.2rem;
+}
+
+.private-gate.mystery-gate .private-note {
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  color: #b8c0b7;
+  font: 650 .58rem/1.3 var(--sans);
+  left: 50%;
+  letter-spacing: .14em;
+  margin: 0;
+  position: fixed;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+}
+
+.mystery-gate.is-opening .mystery-intro,
+.mystery-gate.is-opening .mystery-access,
+.mystery-gate.is-opening .private-note {
+  animation: bm-gate-content-away 240ms cubic-bezier(.4, 0, 1, 1) both;
+  pointer-events: none;
+}
+
+.mystery-gate.has-error .mystery-code-form > div {
+  animation: bm-code-correction 260ms ease-out;
+  border-color: #d8c69f;
+}
+
+.invitation-envelope-reveal {
+  --envelope-width: clamp(14rem, 72vw, 21rem);
+  display: grid;
+  height: auto;
+  justify-items: center;
+  margin: clamp(1.1rem, 3vh, 1.8rem) 0 clamp(1.2rem, 3vh, 1.8rem);
+  min-height: calc(var(--envelope-width) / 1.48);
+  padding: 0;
+  place-items: center;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+
+.invitation-envelope-reveal.is-closed {
+  height: auto !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
+
+.invitation-envelope-reveal.is-closed .stationery-envelope,
+.invitation-envelope-reveal.is-closed .stationery-envelope__card,
+.invitation-envelope-reveal.is-closed .stationery-envelope__flap,
+.invitation-envelope-reveal.is-closed .stationery-envelope__seal {
+  animation: none !important;
+}
+
+.invitation-envelope-reveal.is-closed .stationery-envelope__card {
+  opacity: 0;
+  transform: translateY(28%) scale(.97);
+}
+
+.invitation-envelope-reveal.is-closed .stationery-envelope__flap {
+  transform: rotateX(0deg);
+  z-index: 5;
+}
+
+.invitation-envelope-reveal.is-closed .stationery-envelope__seal {
+  bottom: auto;
+  display: flex;
+  opacity: 1;
+  top: calc(61% - 1.425rem);
+  transform: none;
+  z-index: 7;
+}
+
+.invitation-envelope-reveal.is-opening {
+  align-content: center;
+  background: var(--forest);
+  color: var(--paper);
+  height: 100svh;
+  inset: 0;
+  margin: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+.invitation-envelope-reveal.is-opening::before {
+  border: 1px solid rgba(243, 239, 229, .2);
+  content: '';
+  inset: max(.75rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left));
+  pointer-events: none;
+  position: absolute;
+}
+
+.envelope-reveal-title {
+  color: #d8c69f;
+  font: 600 clamp(1.05rem, 3vw, 1.35rem)/1.25 var(--serif);
+  left: 1rem;
+  letter-spacing: .02em;
+  margin: 0;
+  outline: none;
+  position: absolute;
+  right: 1rem;
+  text-align: center;
+  top: clamp(3rem, 12vh, 7rem);
+}
+
+.stationery-envelope {
+  aspect-ratio: 1.48;
+  filter: drop-shadow(0 1.4rem 1.5rem rgba(8, 18, 13, .32));
+  perspective: 1100px;
+  position: relative;
+  transform-style: preserve-3d;
+  width: var(--envelope-width);
+}
+
+.invitation-envelope-reveal.is-opening .stationery-envelope {
+  animation: bm-envelope-focus 560ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.stationery-envelope__back {
+  background: #e9e0d0;
+  border: 1px solid rgba(128, 101, 69, .45);
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.stationery-envelope__card {
+  align-content: center;
+  background: #fbf8f0;
+  border: 1px solid rgba(128, 101, 69, .46);
+  color: #23352d;
+  display: grid;
+  height: 80%;
+  justify-items: center;
+  left: 8%;
+  opacity: .94;
+  padding: 1rem;
+  position: absolute;
+  text-align: center;
+  top: 8%;
+  transform: translateY(23%) scale(.97);
+  width: 84%;
+  z-index: 2;
+}
+
+.invitation-envelope-reveal.is-opening .stationery-envelope__card {
+  animation: bm-envelope-card-open 1.08s .72s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.stationery-envelope__card b {
+  font: 500 clamp(2.2rem, 9vw, 3.8rem)/1 var(--serif);
+  letter-spacing: -.03em;
+}
+
+.stationery-envelope__card b i {
+  color: #6c3040;
+  font-size: .55em;
+  font-weight: 400;
+  margin: 0 .2em;
+}
+
+.stationery-envelope__card > span:not(.stationery-card__rule) {
+  color: #5e5d55;
+  font: 650 .64rem/1.4 var(--sans);
+  letter-spacing: .12em;
+  margin-top: .65rem;
+  max-width: 15rem;
+  text-transform: uppercase;
+}
+
+.stationery-envelope__card .stationery-card__promise {
+  font-family: var(--serif);
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+
+.stationery-card__rule {
+  background: #6d7f71;
+  height: 1px;
+  margin: .72rem 0;
+  opacity: .72;
+  position: relative;
+  width: min(8rem, 55%);
+}
+
+.stationery-card__rule::after {
+  background: #6c3040;
+  border-radius: 50%;
+  content: '';
+  height: .34rem;
+  left: calc(50% - .17rem);
+  position: absolute;
+  top: -.15rem;
+  width: .34rem;
+}
+
+.stationery-envelope__front {
+  background: #dfd4c3;
+  clip-path: polygon(0 31%, 50% 69%, 100% 31%, 100% 100%, 0 100%);
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 3;
+}
+
+.stationery-envelope__seam {
+  background: rgba(128, 101, 69, .38);
+  bottom: 24%;
+  height: 1px;
+  position: absolute;
+  width: 62%;
+}
+
+.stationery-envelope__seam.left { left: -8%; transform: rotate(36deg); }
+.stationery-envelope__seam.right { right: -8%; transform: rotate(-36deg); }
+
+.stationery-envelope__flap {
+  backface-visibility: hidden;
+  background: #eee6d8;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  height: 61%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: rotateX(0deg);
+  transform-origin: 50% 0;
+  transform-style: preserve-3d;
+  width: 100%;
+  z-index: 5;
+}
+
+.invitation-envelope-reveal.is-opening .stationery-envelope__flap {
+  animation: bm-envelope-flap-open 660ms .34s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.stationery-envelope__seal {
+  align-items: center;
+  background: #6c3040;
+  border: 1px solid #d8c69f;
+  border-radius: 50%;
+  bottom: auto;
+  box-shadow: 0 .3rem .75rem rgba(70, 25, 36, .25), inset 0 0 0 3px #6c3040, inset 0 0 0 4px rgba(216, 198, 159, .55);
+  color: #d8c69f;
+  display: flex;
+  height: 2.85rem;
+  justify-content: center;
+  left: calc(50% - 1.425rem);
+  position: absolute;
+  top: calc(61% - 1.425rem);
+  width: 2.85rem;
+  z-index: 6;
+}
+
+.stationery-envelope__seal svg {
+  fill: none;
+  height: 1.45rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+  width: 1.45rem;
+}
+
+.invitation-envelope-reveal.is-opening .stationery-envelope__seal {
+  animation: bm-envelope-seal-release 280ms .32s ease-out both;
+}
+
+.envelope-reveal-note {
+  bottom: clamp(3.2rem, 11vh, 6rem);
+  color: #dce1d9;
+  font: 650 .68rem/1.4 var(--sans);
+  left: 1rem;
+  letter-spacing: .14em;
+  margin: 0;
+  position: absolute;
+  right: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.rsvp-v2 .rsvp-form .attendance-fieldset { max-width: 38rem; }
+
+.rsvp-v2 .rsvp-form .attendance-fieldset legend {
+  font: 400 clamp(1.35rem, 3vw, 1.7rem)/1.2 var(--serif) !important;
+  margin-bottom: .8rem !important;
+}
+
+.rsvp-v2 .rsvp-form .attendance-options {
+  display: grid;
+  gap: .65rem;
+  grid-template-columns: repeat(2, minmax(0, 16.5rem));
+  justify-content: start;
+  max-width: 34rem;
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card {
+  align-items: center;
+  background: rgba(251, 248, 240, .42);
+  border: 1px solid rgba(36, 58, 49, .5);
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: polygon(.42rem 0, calc(100% - .42rem) 0, 100% .42rem, 100% calc(100% - .42rem), calc(100% - .42rem) 100%, .42rem 100%, 0 calc(100% - .42rem), 0 .42rem);
+  color: var(--forest);
+  display: flex;
+  gap: .72rem;
+  min-height: 68px;
+  padding: .72rem .9rem;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card:hover {
+  border-color: var(--wine);
+  transform: translateY(-1px);
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card:focus-within {
+  outline: 2px solid var(--wine);
+  outline-offset: 3px;
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card:has(input:checked) {
+  background: var(--forest);
+  border-color: var(--brass);
+  box-shadow: inset 0 0 0 1px rgba(216, 198, 159, .46);
+  color: var(--paper);
+}
+
+.rsvp-v2 .rsvp-form label.no-card:has(input:checked) {
+  background: var(--forest);
+  border-color: var(--brass);
+}
+
+.rsvp-v2 .rsvp-form .choice-mark {
+  border: 1px solid currentColor;
+  border-radius: 0;
+  display: block;
+  flex: 0 0 15px;
+  font-size: 0;
+  height: 15px;
+  position: relative;
+  transform: rotate(45deg);
+  width: 15px;
+}
+
+.rsvp-v2 .rsvp-form .choice-mark::after {
+  background: currentColor;
+  content: '';
+  inset: 3px;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 160ms ease;
+}
+
+.rsvp-v2 .rsvp-form .attendance-card:has(input:checked) .choice-mark::after { opacity: 1; }
+
+.rsvp-v2 .rsvp-form .attendance-card b {
+  display: block;
+  font: 400 1.08rem/1.15 var(--serif);
+}
+
+.rsvp-v2 .rsvp-form .attendance-card small {
+  color: var(--muted-on-light);
+  display: block;
+  font: 600 .7rem/1.3 var(--sans);
+  letter-spacing: .025em;
+  margin-top: .2rem;
+}
+
+.rsvp-v2 .rsvp-form .attendance-card:has(input:checked) small { color: #eee9df; }
+
+.rsvp-v2 .rsvp-form .rsvp-submit:disabled {
+  cursor: not-allowed;
+  filter: saturate(.45);
+  opacity: .48;
+}
+
+@keyframes bm-gate-content-away {
+  from { clip-path: inset(0); filter: blur(0); opacity: 1; transform: translateY(0); }
+  to { clip-path: inset(0 0 20% 0); filter: blur(3px); opacity: 0; transform: translateY(-.5rem); }
+}
+
+@keyframes bm-code-correction {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-.28rem); }
+  70% { transform: translateX(.22rem); }
+}
+
+@keyframes bm-envelope-focus {
+  from { filter: drop-shadow(0 1rem 1.2rem rgba(8, 18, 13, .2)); transform: scale(.94); }
+  to { filter: drop-shadow(0 1.7rem 1.8rem rgba(8, 18, 13, .36)); transform: scale(1.06); }
+}
+
+@keyframes bm-envelope-flap-open {
+  0%, 14% { transform: rotateX(0deg); z-index: 5; }
+  54% { transform: rotateX(-94deg); z-index: 5; }
+  55%, 100% { transform: rotateX(-178deg); z-index: 1; }
+}
+
+@keyframes bm-envelope-seal-release {
+  0%, 24% { opacity: 1; transform: scale(1) rotate(-4deg); }
+  100% { opacity: 0; transform: scale(.7) rotate(3deg); }
+}
+
+@keyframes bm-envelope-card-open {
+  0%, 16% { opacity: .88; transform: translateY(23%) scale(.97); }
+  76%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+@keyframes bm-envelope-reduced-confirm {
+  from { opacity: .75; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 560px) {
+  .private-gate.mystery-gate > .mystery-gate-composition {
+    min-height: calc(100svh - 1.5rem);
+    padding: clamp(2.8rem, 7svh, 4.5rem) .75rem max(2.25rem, env(safe-area-inset-bottom));
+  }
+
+  .private-gate.mystery-gate h1 {
+    font-size: clamp(2.85rem, 14vw, 4.15rem);
+    line-height: .82;
+  }
+
+  .private-gate.mystery-gate .private-gate-copy {
+    font-size: .96rem;
+    line-height: 1.48;
+    max-width: 22rem;
+  }
+
+  .invitation-envelope-reveal {
+    --envelope-width: clamp(13.5rem, 74vw, 18.75rem);
+    margin-block: 1rem 1.15rem;
+  }
+
+  .private-gate.mystery-gate .private-note {
+    bottom: max(1.05rem, env(safe-area-inset-bottom));
+    font-size: .54rem;
+  }
+
+  .rsvp-v2 .rsvp-form .attendance-options {
+    gap: .5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 100%;
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card {
+    gap: .55rem;
+    min-height: 72px;
+    padding: .68rem .7rem;
+  }
+
+  .rsvp-v2 .rsvp-form .attendance-card b { font-size: .98rem; }
+  .rsvp-v2 .rsvp-form .attendance-card small { font-size: .68rem; }
+}
+
+@media (max-width: 370px), (max-width: 620px) and (max-height: 650px) {
+  .private-gate.mystery-gate > .mystery-gate-composition {
+    align-content: start;
+    padding-top: 2.8rem;
+  }
+
+  .private-gate.mystery-gate h1 { font-size: clamp(2.55rem, 13vw, 3rem); }
+
+  .private-gate.mystery-gate .private-gate-copy {
+    font-size: .9rem;
+    line-height: 1.42;
+    margin-bottom: .9rem;
+  }
+
+  .invitation-envelope-reveal {
+    --envelope-width: clamp(12.5rem, 69vw, 14.5rem);
+    margin-block: .75rem .85rem;
+  }
+
+  .private-gate.mystery-gate .mystery-code-form input,
+  .private-gate.mystery-gate .mystery-code-form button { min-height: 3rem; }
+
+  .private-gate.mystery-gate .private-note { display: none; }
+
+  .invitation-envelope-reveal.is-opening .stationery-envelope { width: min(72vw, 15rem); }
+
+  .envelope-reveal-title { top: 2.6rem; }
+  .envelope-reveal-note { bottom: 2.6rem; }
+
+  .rsvp-v2 .form-heading h2 { font-size: clamp(2.65rem, 14vw, 3.25rem); }
+  .rsvp-v2 .form-heading > p { margin-bottom: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mystery-gate.is-opening .mystery-intro,
+  .mystery-gate.is-opening .mystery-access,
+  .mystery-gate.is-opening .private-note {
+    animation-duration: 160ms;
+    filter: none;
+  }
+
+  .mystery-gate.has-error .mystery-code-form > div,
+  .invitation-envelope-reveal.is-opening .stationery-envelope,
+  .invitation-envelope-reveal.is-opening .stationery-envelope__flap,
+  .invitation-envelope-reveal.is-opening .stationery-envelope__seal { animation: none; }
+
+  .invitation-envelope-reveal.is-opening .stationery-envelope__flap {
+    transform: rotateX(-178deg);
+    z-index: 1;
+  }
+
+  .invitation-envelope-reveal.is-opening .stationery-envelope__seal { display: none; }
+
+  .invitation-envelope-reveal.is-opening .stationery-envelope__card {
+    animation: bm-envelope-reduced-confirm 180ms ease-out both;
+    transform: translateY(-40%);
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card,
+  .rsvp-v2 .rsvp-form .choice-mark::after { transition: none; }
+
+  .rsvp-v2 .rsvp-form label.attendance-card:hover { transform: none; }
+}

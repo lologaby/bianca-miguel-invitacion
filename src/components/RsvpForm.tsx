@@ -39,8 +39,8 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     <fieldset className="attendance-fieldset" disabled={busy}>
       <legend>Selecciona tu respuesta</legend>
       <div className="attendance-options">
-        <label className="attendance-card yes-card"><input type="radio" name="attendance" value="yes" onChange={() => setAttendance('yes')}/><span className="choice-mark" aria-hidden="true">✓</span><span><b>Sí, allí estaré</b><small>Guarden mi copa</small></span></label>
-        <label className="attendance-card no-card"><input type="radio" name="attendance" value="no" onChange={() => setAttendance('no')}/><span className="choice-mark" aria-hidden="true">—</span><span><b>No podré asistir</b><small>Les acompaño de corazón</small></span></label>
+        <label className="attendance-card yes-card"><input type="radio" name="attendance" value="yes" onChange={() => setAttendance('yes')}/><span className="choice-mark" aria-hidden="true">✓</span><span><b>Sí, allí estaré</b><small>Confirmo mi asistencia</small></span></label>
+        <label className="attendance-card no-card"><input type="radio" name="attendance" value="no" onChange={() => setAttendance('no')}/><span className="choice-mark" aria-hidden="true">—</span><span><b>No podré asistir</b><small>Gracias por invitarme</small></span></label>
       </div>
     </fieldset>
     {attendance === 'yes' && <div className="conditional-fields">
@@ -49,7 +49,7 @@ export function RsvpForm({ guest }: { guest: Guest }) {
       <label>Una canción para la noche<input name="song" maxLength={120} placeholder="Canción — Artista"/></label>
       <details className="rsvp-more"><summary>Alergias o accesibilidad</summary><div><label>Alergias o necesidades alimentarias<textarea name="dietary" rows={3} maxLength={300}/></label><label>Necesidades de accesibilidad<textarea name="accessibility" rows={3} maxLength={300}/></label></div></details>
     </div>}
-    <button className="button wine rsvp-submit" disabled={busy}>{busy ? 'Guardando…' : attendance === 'no' ? 'Enviar respuesta' : 'Confirmar asistencia'}</button>
+    <button className="button wine rsvp-submit" disabled={busy || !attendance}>{busy ? 'Guardando…' : attendance === 'no' ? 'Enviar respuesta' : 'Confirmar asistencia'}</button>
     <p className="form-status" role="status" aria-live="polite">{status}</p>
   </form>;
 }

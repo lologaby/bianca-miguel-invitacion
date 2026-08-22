@@ -8,11 +8,14 @@ interface Props { onReveal: (invitation: InvitationPayload) => void; }
 type ReviewMode = 'entrada' | 'sobre' | null;
 
 export function InvitationGate({ onReveal }: Props) {
-  const reviewMode = new URL(window.location.href).searchParams.get('vista') as ReviewMode;
+  const initialUrl = new URL(window.location.href);
+  const reviewMode = initialUrl.searchParams.get('vista') as ReviewMode;
+  const initialLinkToken = initialUrl.searchParams.get('invite');
   const [code, setCode] = useState('');
-  const [linkToken, setLinkToken] = useState<string | null>(null);
-  const [showCode, setShowCode] = useState(reviewMode === 'entrada');
+  const [linkToken, setLinkToken] = useState<string | null>(initialLinkToken);
+  const [showCode, setShowCode] = useState(reviewMode === 'entrada' || !initialLinkToken);
   const [status, setStatus] = useState('');
+  const [hasError, setHasError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [opening, setOpening] = useState(false);
   const [pendingInvitation, setPendingInvitation] = useState<InvitationPayload | null>(null);
@@ -37,15 +40,17 @@ export function InvitationGate({ onReveal }: Props) {
     setPendingInvitation(invitation);
     setCode('');
     setLinkToken(null);
+    setHasError(false);
     setStatus('Invitación confirmada. Abriendo…');
     setOpening(true);
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    fallbackTimer.current = window.setTimeout(finishReveal, reducedMotion ? 260 : 2900);
+    fallbackTimer.current = window.setTimeout(finishReveal, reducedMotion ? 260 : 2300);
   }
 
   async function authorize(body: { code?: string; linkToken?: string }) {
     setBusy(true);
-    setStatus(body.linkToken ? 'Preparando…' : 'Comprobando tu código…');
+    setHasError(false);
+    setStatus(body.linkToken ? 'Preparando tu sobre…' : 'Comprobando tu código…');
     try {
       const response = await fetch('/api/guest', {
         method: 'POST',
@@ -55,6 +60,7 @@ export function InvitationGate({ onReveal }: Props) {
       if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('invalid');
       beginEnvelopeReveal(await response.json() as InvitationPayload);
     } catch {
+      setHasError(true);
       setStatus(body.linkToken
         ? 'Este enlace ya no está activo. Puedes usar el código que recibiste.'
         : 'Ese código no coincide. Revísalo e intenta otra vez.');
@@ -72,7 +78,7 @@ export function InvitationGate({ onReveal }: Props) {
     if (token) {
       setLinkToken(token);
       url.searchParams.delete('invite');
-      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+      window.history.replaceState({}, '', url.pathname + url.search + url.hash);
       return;
     }
     if (isLocal || reviewMode === 'entrada') return;
@@ -92,6 +98,7 @@ export function InvitationGate({ onReveal }: Props) {
     event.preventDefault();
     const value = code.trim();
     if (!value) {
+      setHasError(true);
       setStatus('Escribe el código que recibiste.');
       input.current?.focus();
       return;
@@ -104,43 +111,60 @@ export function InvitationGate({ onReveal }: Props) {
   }
 
   function revealCode() {
+    setHasError(false);
     setShowCode(true);
     window.setTimeout(() => input.current?.focus(), 0);
   }
 
   return (
-    <main className={`private-gate mystery-gate${opening ? ' is-opening' : ''}`}>
-      <div className="private-gate-mark mystery-seal" aria-hidden="true"><span /></div>
-      <section aria-labelledby="gate-title" aria-hidden={opening || undefined}>
-        <h1 id="gate-title">Algo especial<br/><i>te espera.</i></h1>
-        <p className="private-gate-copy">Hay un momento guardado detrás de esta puerta. Ábrelo cuando estés listo.</p>
+    <main className={'private-gate mystery-gate' + (opening ? ' is-opening' : '') + (hasError ? ' has-error' : '')}>
+      <section className="mystery-gate-composition" aria-labelledby="gate-title">
+        <div className="mystery-intro" aria-hidden={opening || undefined}>
+          <h1 id="gate-title">Algo especial<br/><i>te espera.</i></h1>
+        </div>
 
-        {linkToken && !showCode ? (
-          <div className="mystery-actions">
-            <button className="mystery-reveal" type="button" disabled={busy || opening} onClick={() => void authorize({ linkToken })}>
-              <span>{busy ? 'Preparando…' : 'Descubrir'}</span><b aria-hidden="true">→</b>
-            </button>
-            <button className="code-toggle" type="button" disabled={opening} onClick={revealCode}>Usar un código</button>
-          </div>
-        ) : !showCode ? (
-          <button className="mystery-reveal" type="button" disabled={opening} onClick={revealCode}>
-            <span>Tengo un código</span><b aria-hidden="true">→</b>
-          </button>
-        ) : (
-          <form className="mystery-code-form" onSubmit={submit}>
-            <label htmlFor="guest-code">Tu código</label>
-            <div>
-              <input ref={input} id="guest-code" autoComplete="one-time-code" inputMode="text" value={code} onChange={(event) => setCode(event.target.value)} maxLength={32} disabled={busy || opening}/>
-              <button disabled={busy || opening}>{busy ? 'Comprobando…' : 'Abrir'}</button>
+        <InvitationEnvelope invitation={pendingInvitation} opening={opening} onComplete={finishReveal} />
+
+        <div className="mystery-access" aria-hidden={opening || undefined}>
+          <p className="private-gate-copy">Este sobre guarda una noche muy especial. Ingresa tu código cuando estés listo para abrirlo.</p>
+
+          {linkToken && !showCode ? (
+            <div className="mystery-actions">
+              <button className="mystery-reveal" type="button" disabled={busy || opening} onClick={() => void authorize({ linkToken })}>
+                <span>{busy ? 'Preparando…' : 'Abrir mi sobre'}</span><b aria-hidden="true">→</b>
+              </button>
+              <button className="code-toggle" type="button" disabled={opening} onClick={revealCode}>Usar un código</button>
             </div>
-            {isLocal && <small>Prueba local: <code>INVITACION-DEMO</code></small>}
-          </form>
-        )}
-        <p className="form-status" role="status" aria-live="polite">{status}</p>
+          ) : !showCode ? (
+            <button className="mystery-reveal" type="button" disabled={opening} onClick={revealCode}>
+              <span>Ingresar mi código</span><b aria-hidden="true">→</b>
+            </button>
+          ) : (
+            <form className="mystery-code-form" onSubmit={submit}>
+              <label htmlFor="guest-code">Tu código</label>
+              <div>
+                <input
+                  ref={input}
+                  id="guest-code"
+                  autoComplete="one-time-code"
+                  inputMode="text"
+                  value={code}
+                  onChange={(event) => {
+                    setCode(event.target.value);
+                    if (hasError) setHasError(false);
+                  }}
+                  maxLength={32}
+                  disabled={busy || opening}
+                />
+                <button disabled={busy || opening}>{busy ? 'Comprobando…' : 'Abrir sobre'}</button>
+              </div>
+              {isLocal && <small>Prueba local: <code>INVITACION-DEMO</code></small>}
+            </form>
+          )}
+          <p className="form-status" role="status" aria-live="polite">{status}</p>
+        </div>
       </section>
-      <p className="private-note">Solo para quien recibió la señal.</p>
-
-      {opening && pendingInvitation ? <InvitationEnvelope invitation={pendingInvitation} onComplete={finishReveal} /> : null}
+      <p className="private-note" aria-hidden={opening || undefined}>Solo para quien recibió esta invitación.</p>
     </main>
   );
 }
