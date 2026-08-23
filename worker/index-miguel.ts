@@ -1,5 +1,7 @@
 import { rsvpSchema } from '../db/schema';
 import type { InvitationPayload } from '../src/types/invitation';
+import coverArtDataUrl from './private-assets/cover-art.png?inline';
+import wordmarkDataUrl from './private-assets/wordmark.png?inline';
 import {
   clearFailedAccess,
   ensureGuestAuthTables,
@@ -13,10 +15,23 @@ import {
 
 interface Env {
   DB: D1Database;
-  ASSETS: Fetcher;
   PREVIEW_GUEST_CODE?: string;
   PREVIEW_LINK_TOKEN?: string;
 }
+
+function decodeDataUrl(dataUrl: string) {
+  const separator = dataUrl.indexOf(',');
+  if (separator < 0) throw new Error('invalid_private_asset');
+  const binary = atob(dataUrl.slice(separator + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
+const privateBrandAssets = new Map([
+  ['/private-assets/cover-art.png', { contentType: 'image/png', body: decodeDataUrl(coverArtDataUrl) }],
+  ['/private-assets/wordmark.png', { contentType: 'image/png', body: decodeDataUrl(wordmarkDataUrl) }],
+]);
 
 const guestId = 'preview-guest';
 const invitation: InvitationPayload = {
@@ -129,17 +144,18 @@ function privateNotFound() {
 async function privateAsset(request: Request, env: Env) {
   if ((request.method !== 'GET' && request.method !== 'HEAD') || !(await isAuthorized(request, env))) return privateNotFound();
 
-  const asset = await env.ASSETS.fetch(request);
-  const contentType = asset.headers.get('content-type') ?? '';
-  if (!asset.ok || contentType.includes('text/html')) return privateNotFound();
+  const asset = privateBrandAssets.get(new URL(request.url).pathname);
+  if (!asset) return privateNotFound();
 
-  const headers = new Headers(asset.headers);
+  const headers = new Headers();
+  headers.set('content-type', asset.contentType);
+  headers.set('content-length', String(asset.body.byteLength));
   headers.set('cache-control', 'private, no-store');
+  headers.set('cross-origin-resource-policy', 'same-origin');
   headers.set('referrer-policy', 'no-referrer');
   headers.set('x-content-type-options', 'nosniff');
   return new Response(request.method === 'HEAD' ? null : asset.body, {
-    status: asset.status,
-    statusText: asset.statusText,
+    status: 200,
     headers,
   });
 }
