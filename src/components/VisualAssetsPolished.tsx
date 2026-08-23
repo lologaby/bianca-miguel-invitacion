@@ -14,7 +14,7 @@ export function VineRule({ inverted = false }: { inverted?: boolean }) {
   return (
     <div className={`vine-rule editorial-rule${inverted ? ' inverted' : ''}`} aria-hidden="true">
       <span className="editorial-rule-line" />
-      <b><span>B</span><i>&amp;</i><span>M</span></b>
+      <span className="editorial-rule-mark"><i /></span>
       <span className="editorial-rule-line" />
     </div>
   );

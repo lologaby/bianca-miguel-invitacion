@@ -11,7 +11,12 @@ import {
   sessionGuestId,
 } from './auth';
 
-interface Env { DB: D1Database; }
+interface Env {
+  DB: D1Database;
+  ASSETS: Fetcher;
+  PREVIEW_GUEST_CODE?: string;
+  PREVIEW_LINK_TOKEN?: string;
+}
 
 const guestId = 'preview-guest';
 const invitation: InvitationPayload = {
@@ -46,13 +51,42 @@ const invitation: InvitationPayload = {
       message: 'Si desean tener un detalle adicional con nosotros, lo recibiremos con mucho cariño en efectivo o a través de ATH Móvil.',
       athMovil: '787-410-5571',
     },
+    faq: [
+      {
+        id: 'companions',
+        q: '¿Puedo llevar acompañantes?',
+        a: 'La invitación indicará la cantidad de personas de su núcleo familiar que están incluidas. Debido a la planificación y capacidad de la celebración, agradecemos que la asistencia se limite al número de invitados indicado en su invitación.',
+      },
+      {
+        id: 'attire-colors',
+        q: '¿Hay colores específicos para la vestimenta?',
+        a: 'No tenemos un código de color específico. La recepción se celebrará en una bodega de vinos con una atmósfera cálida, íntima y de iluminación tenue, así que pueden tomar el ambiente como inspiración y usar su creatividad al elegir su vestimenta.',
+      },
+      {
+        id: 'indoor-spaces',
+        q: '¿La ceremonia y la recepción serán en espacios bajo techo?',
+        a: 'Sí. Tanto la ceremonia como la recepción se llevarán a cabo en espacios cerrados y con aire acondicionado, para mayor comodidad de nuestros invitados durante toda la celebración.',
+      },
+      {
+        id: 'rsvp-deadline',
+        q: '¿Hasta cuándo tengo para confirmar mi asistencia?',
+        a: 'Agradecemos confirmar su asistencia no más tarde del 15 de octubre de 2026. Esto nos permitirá completar con tiempo los detalles finales de la celebración.',
+      },
+      {
+        id: 'parking',
+        q: '¿Habrá estacionamiento disponible?',
+        a: 'Para la ceremonia habrá estacionamiento disponible en los predios de la iglesia.\n\nEn la recepción, los espacios de estacionamiento en Bodega de Méndez son limitados. Sin embargo, hay espacios disponibles en las calles y áreas cercanas a la bodega. Recomendamos llegar con tiempo para estacionarse cómodamente.',
+      },
+      {
+        id: 'drinks',
+        q: '¿Habrá bebidas alcohólicas y opciones sin alcohol?',
+        a: 'Sí. Como parte del protocolo de la recepción, tendremos una experiencia especial que incluirá bebidas alcohólicas. Para quienes deseen consumir bebidas alcohólicas adicionales durante la celebración, habrá servicio de cash bar.\n\nTambién tendremos opciones de bebidas sin alcohol disponibles.',
+      },
+    ],
   },
 };
 
 const cookieName = 'bianca_invitation_session';
-const previewCode = 'INVITACION-DEMO';
-const previewLink = 'bianca-preview-2026';
-
 function json(data: unknown, init: ResponseInit = {}) {
   const headers = new Headers(init.headers);
   headers.set('content-type', 'application/json; charset=utf-8');
@@ -81,6 +115,35 @@ async function isAuthorized(request: Request, env: Env) {
   return await sessionGuestId(request, env.DB, cookieName) === guestId;
 }
 
+function privateNotFound() {
+  return new Response(null, {
+    status: 404,
+    headers: {
+      'cache-control': 'private, no-store',
+      'referrer-policy': 'no-referrer',
+      'x-content-type-options': 'nosniff',
+    },
+  });
+}
+
+async function privateAsset(request: Request, env: Env) {
+  if ((request.method !== 'GET' && request.method !== 'HEAD') || !(await isAuthorized(request, env))) return privateNotFound();
+
+  const asset = await env.ASSETS.fetch(request);
+  const contentType = asset.headers.get('content-type') ?? '';
+  if (!asset.ok || contentType.includes('text/html')) return privateNotFound();
+
+  const headers = new Headers(asset.headers);
+  headers.set('cache-control', 'private, no-store');
+  headers.set('referrer-policy', 'no-referrer');
+  headers.set('x-content-type-options', 'nosniff');
+  return new Response(request.method === 'HEAD' ? null : asset.body, {
+    status: asset.status,
+    statusText: asset.statusText,
+    headers,
+  });
+}
+
 async function api(request: Request, env: Env) {
   const url = new URL(request.url);
 
@@ -90,9 +153,11 @@ async function api(request: Request, env: Env) {
     if (await isAccessRateLimited(request, env.DB)) return json({ error: 'try_later' }, { status: 429 });
 
     const body = await readBody(request);
+    const previewCode = env.PREVIEW_GUEST_CODE?.trim();
+    const previewLink = env.PREVIEW_LINK_TOKEN?.trim();
     const [validCode, validLink] = await Promise.all([
-      safeTokenEqual(body?.code, previewCode, (value) => value.trim().toUpperCase()),
-      safeTokenEqual(body?.linkToken, previewLink, (value) => value.trim()),
+      previewCode ? safeTokenEqual(body?.code, previewCode, (value) => value.trim().toUpperCase()) : Promise.resolve(false),
+      previewLink ? safeTokenEqual(body?.linkToken, previewLink, (value) => value.trim()) : Promise.resolve(false),
     ]);
     if (!body || (!validCode && !validLink)) {
       await recordFailedAccess(request, env.DB);
@@ -129,6 +194,7 @@ async function api(request: Request, env: Env) {
 export default {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith('/private-assets/')) return privateAsset(request, env);
     if (url.pathname.startsWith('/api/')) return api(request, env);
     return new Response(null, { status: 404 });
   },

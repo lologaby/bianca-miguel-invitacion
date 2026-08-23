@@ -1,13 +1,14 @@
 import type { PrivateEvent } from '../types/invitation';
 
-export function faqFor(event: PrivateEvent) {
-  const dressCode = event.dressCode?.label ?? 'Cóctel / Formal';
-  const dressNote = event.dressCode?.note ?? 'Agradecemos vestir con elegancia para acompañarnos durante toda la celebración.';
+const genericFaq: NonNullable<PrivateEvent['faq']> = [
+  { id: 'companions', q: '¿Puedo llevar acompañantes?', a: 'La cantidad de personas incluidas aparece dentro de cada invitación personalizada.' },
+  { id: 'attire', q: '¿Hay indicaciones para la vestimenta?', a: 'Las indicaciones de vestimenta aparecerán dentro de la invitación.' },
+  { id: 'spaces', q: '¿Cómo serán los espacios de la celebración?', a: 'Los detalles de los espacios se compartirán dentro de la invitación.' },
+  { id: 'deadline', q: '¿Hasta cuándo puedo confirmar mi asistencia?', a: 'La fecha límite de confirmación aparecerá dentro de la invitación.' },
+  { id: 'parking', q: '¿Habrá estacionamiento disponible?', a: 'Las indicaciones de estacionamiento se compartirán con los detalles de la celebración.' },
+  { id: 'drinks', q: '¿Habrá opciones de bebidas?', a: 'Las opciones disponibles se detallarán dentro de la invitación.' },
+];
 
-  return [
-    { q: '¿Cuál será el código de vestimenta?', a: `${dressCode}. ${dressNote}` },
-    { q: '¿Puedo llevar acompañante?', a: 'La cantidad de lugares y los acompañantes incluidos aparecen dentro de tu invitación personalizada.' },
-    { q: '¿Será una celebración para niños?', a: 'Los lugares disponibles para cada familia aparecen en su invitación. Agradecemos respetar la cantidad indicada.' },
-    { q: '¿Cuándo debo confirmar?', a: 'La fecha límite se compartirá con la invitación final. Podrás actualizar tu respuesta comunicándote con la pareja.' },
-  ];
+export function faqFor(event: PrivateEvent) {
+  return event.faq?.length ? event.faq : genericFaq;
 }

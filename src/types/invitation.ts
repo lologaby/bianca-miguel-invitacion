@@ -5,6 +5,12 @@ export interface Guest {
   companionNames?: string[];
 }
 
+export interface EventFaqItem {
+  id: string;
+  q: string;
+  a: string;
+}
+
 export interface PrivateEvent {
   couple: { first: string; second: string };
   dateLabel: string;
@@ -24,6 +30,7 @@ export interface PrivateEvent {
   };
   dressCode?: { label: string; note: string };
   gifts?: { message: string; athMovil: string };
+  faq?: EventFaqItem[];
 }
 
 export interface InvitationPayload {

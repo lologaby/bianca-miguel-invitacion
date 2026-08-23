@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
-import { HeroStillLife, LineIcon, VineRule } from './components/VisualAssets';
+import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
+import { HeroStillLife as DrawnHeroStillLife } from './components/VisualAssetsPolishedComplete';
 import { faqFor } from './config/event';
 import type { InvitationPayload, PrivateEvent } from './types/invitation';
 import './craft.css';
@@ -48,6 +49,10 @@ function Header({ event }: { event: PrivateEvent }) {
   </header>;
 }
 
+function CoupleWordmark({ first, second }: { first: string; second: string }) {
+  return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.png`} alt={`${first} y ${second}`} width="1800" height="1200" loading="eager" decoding="async"/></span>;
+}
+
 function GiftNumber({ number }: { number: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -79,14 +84,18 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
     <div className="scroll-track" aria-hidden="true"><span></span></div>
     <Header event={event}/>
     <main>
-      <section className="hero-v2 distilled-hero" id="inicio">
-        <div className="hero-copy-v2">
-          <div className="hero-ledger"><span>Para {guest.name}</span><span>{event.dateShort}</span></div>
-          <h1><span>{event.couple.first}</span><i>&</i><span>{event.couple.second}</span></h1>
-          <p>Nos haría muy feliz compartir esta noche contigo.</p>
-          <a className="crafted-button solid" href="#rsvp"><span>Confirmar asistencia</span><b aria-hidden="true">↗</b></a>
+      <section className="client-concept-hero" id="inicio" aria-labelledby="client-hero-title">
+        <div className="client-hero-copy">
+          <p className="client-hero-overline">Invitación de boda</p>
+          <h1 id="client-hero-title">
+            <CoupleWordmark first={event.couple.first} second={event.couple.second}/>
+          </h1>
+          <div className="client-hero-personalization">
+            <span>Para {guest.name}</span>
+            <span>{event.dateLabel} · {event.ceremony.city}</span>
+          </div>
         </div>
-        <div className="hero-visual-v2 distilled-visual"><HeroStillLife/></div>
+        <div className="client-hero-art"><ClientCoverArt/></div>
       </section>
 
       <section className="masked-word-section" aria-label="Brindemos">
@@ -160,7 +169,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
 
 function DuringWedding({ invitation }: { invitation: InvitationPayload }) {
   const { event } = invitation;
-  return <main className="phase-v2 live-v2"><HeroStillLife/><div><h1>Hoy<br/>brindamos.</h1><p>{event.couple.first} & {event.couple.second} · {event.ceremony.city}</p><a className="crafted-button light" href={event.ceremony.mapsUrl}>Cómo llegar <b aria-hidden="true">↗</b></a></div></main>;
+  return <main className="phase-v2 live-v2"><DrawnHeroStillLife/><div><h1>Hoy<br/>brindamos.</h1><p>{event.couple.first} & {event.couple.second} · {event.ceremony.city}</p><a className="crafted-button light" href={event.ceremony.mapsUrl}>Cómo llegar <b aria-hidden="true">↗</b></a></div></main>;
 }
 
 function AfterWedding({ invitation }: { invitation: InvitationPayload }) {
