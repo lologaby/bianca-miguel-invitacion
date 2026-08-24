@@ -1,0 +1,716 @@
+/* Final client-facing composition: reduced forms, exact palette, mobile first. */
+:root {
+  --ivory: #f6eee4;
+  --paper: #f6eee4;
+  --eucalyptus: #475548;
+  --forest: #272c24;
+  --wine: #5e2023;
+  --wine-dark: #5e2023;
+  --ink: #0d0e0b;
+  --brass: #f6eee4;
+  --metal: #f6eee4;
+  --client-cream: #f6eee4;
+  --client-wine: #5e2023;
+  --client-eucalyptus: #475548;
+  --client-forest: #272c24;
+  --client-black: #0d0e0b;
+  --line: rgba(39, 44, 36, .24);
+  --line-strong: rgba(39, 44, 36, .56);
+  --header-height: 84px;
+}
+
+html {
+  background: #f6eee4;
+  scroll-padding-top: var(--header-height);
+}
+
+body,
+.site-shell {
+  background: #f6eee4;
+  color: #0d0e0b;
+}
+
+.site-shell main > section {
+  isolation: isolate;
+  position: relative;
+  z-index: 0;
+}
+
+#inicio,
+#celebracion,
+#detalles,
+#etiqueta,
+#preguntas,
+#rsvp,
+.guest-planning-v25 {
+  scroll-margin-top: 0;
+}
+
+/* A truly opaque header prevents previous sections from ghosting underneath. */
+.craft-header {
+  background: #f6eee4;
+  border-bottom: 1px solid rgba(39, 44, 36, .22);
+  box-shadow: 0 .6rem 1.35rem rgba(13, 14, 11, .045);
+  box-sizing: border-box;
+  isolation: isolate;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  transform: translateZ(0);
+  z-index: 1000;
+}
+
+.craft-header::after {
+  content: none;
+  display: none;
+}
+
+.craft-header nav a {
+  color: #272c24;
+  min-height: 44px;
+  align-items: center;
+  display: inline-flex;
+  transition: color 180ms ease;
+}
+
+.craft-header nav a::after {
+  background: #5e2023;
+  bottom: .35rem;
+}
+
+.craft-header nav a[aria-current="location"] {
+  color: #5e2023;
+}
+
+.craft-header nav a[aria-current="location"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.header-date > span:first-child,
+.craft-monogram {
+  color: #272c24;
+}
+
+.header-date > span:last-child,
+.craft-monogram i {
+  color: #5e2023;
+}
+
+/* Hero: one restrained editorial symbol system on eucalyptus. */
+.client-concept-hero {
+  background: #f6eee4;
+  height: auto;
+  min-height: calc(100svh - var(--header-height));
+  overflow: clip;
+}
+
+.client-hero-copy {
+  background: #f6eee4;
+  color: #272c24;
+}
+
+.client-hero-copy h1 {
+  margin-top: 0;
+}
+
+.client-hero-personalization {
+  border-top-color: rgba(39, 44, 36, .45);
+  color: #272c24;
+}
+
+.client-hero-personalization span:last-child {
+  color: #5e2023;
+}
+
+.client-hero-art,
+.client-cover-art--minimal {
+  background: #475548;
+}
+
+.client-cover-art--minimal {
+  animation: client-minimal-arrival 760ms cubic-bezier(.16, 1, .3, 1) both;
+  display: block;
+  height: 100%;
+  max-height: 100%;
+  shape-rendering: geometricPrecision;
+  width: 100%;
+}
+
+.client-art-hairline,
+.client-outline-glass,
+.client-single-leaf,
+.client-grape-cluster,
+.client-chocolate-square {
+  fill: none;
+  stroke: #f6eee4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.client-art-hairline {
+  opacity: .28;
+}
+
+.client-solid-glass > path:first-child,
+.client-solid-glass > path:last-child {
+  fill: #5e2023;
+  stroke: #5e2023;
+  stroke-width: 1.5;
+}
+
+.client-solid-glass > path:nth-child(2) {
+  fill: none;
+  stroke: #5e2023;
+  stroke-linecap: round;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.client-single-leaf path:first-child {
+  fill: rgba(246, 238, 228, .045);
+}
+
+.client-grape-cluster circle {
+  fill: #5e2023;
+  stroke: #f6eee4;
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.client-chocolate-square rect {
+  fill: #0d0e0b;
+}
+
+.client-logo-reserve {
+  fill: transparent;
+  stroke: none;
+}
+
+/* Summary before the long itinerary. */
+.celebration-summary-v26 {
+  background: #f6eee4;
+  border-block: 1px solid rgba(39, 44, 36, .28);
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 7rem);
+  grid-template-columns: minmax(16rem, .72fr) minmax(0, 1.28fr);
+  padding: clamp(4.5rem, 8vw, 7rem) clamp(1.25rem, 8vw, 9rem);
+}
+
+.celebration-summary-copy h2 {
+  color: #272c24;
+  font: 400 clamp(3.2rem, 6vw, 5.6rem)/.86 var(--serif);
+  letter-spacing: -.04em;
+  margin: 0 0 1.35rem;
+}
+
+.celebration-summary-copy > p {
+  color: #272c24;
+  font: 400 1.06rem/1.58 var(--serif);
+  margin: 0;
+  max-width: 28rem;
+}
+
+.celebration-summary-copy > p + p {
+  margin-top: .8rem;
+}
+
+.celebration-summary-copy strong {
+  color: #5e2023;
+  font-weight: 600;
+}
+
+.celebration-companions {
+  border-top: 1px solid rgba(39, 44, 36, .25);
+  display: grid;
+  gap: .35rem;
+  margin-top: 1.35rem !important;
+  padding-top: 1rem;
+}
+
+.celebration-companions span {
+  color: #5e2023;
+  font: 700 .68rem/1.2 var(--sans);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.celebration-summary-events {
+  border-top: 1px solid rgba(39, 44, 36, .32);
+}
+
+.celebration-summary-events article {
+  align-items: start;
+  border-bottom: 1px solid rgba(39, 44, 36, .32);
+  display: grid;
+  gap: clamp(1.15rem, 3vw, 2rem);
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  padding: 1.65rem 0;
+}
+
+.celebration-summary-events .line-icon {
+  fill: none !important;
+  height: 2.6rem;
+  stroke: #5e2023 !important;
+  stroke-width: 1.45;
+  width: 2.6rem;
+}
+
+.celebration-summary-events article > div > span {
+  color: #5e2023;
+  display: block;
+  font: 700 .69rem/1.3 var(--sans);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.celebration-summary-events h3 {
+  color: #272c24;
+  font: 400 clamp(1.5rem, 2.4vw, 2rem)/1.12 var(--serif);
+  margin: .42rem 0 .25rem;
+  overflow-wrap: anywhere;
+}
+
+.celebration-summary-events p {
+  color: #0d0e0b;
+  font: 500 .94rem/1.45 var(--sans);
+  margin: 0;
+}
+
+/* The wine section keeps the physics, while the drawing stays flat and light. */
+.wine-story-v25 {
+  background: #f6eee4;
+  border-block-color: rgba(39, 44, 36, .22);
+}
+
+.wine-story-copy h2 {
+  color: #5e2023;
+}
+
+.wine-story-narrative {
+  border-top-color: rgba(39, 44, 36, .28);
+}
+
+.wine-story-narrative p {
+  color: #272c24;
+}
+
+.wine-glass-stage-v25 {
+  background: #475548;
+  color: #f6eee4;
+}
+
+.wine-glass-stage-v25::before {
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid rgba(246, 238, 228, .28);
+  height: 0;
+  left: 12%;
+  top: 52%;
+  transform: none;
+  width: 76%;
+}
+
+.wine-glass-stage-v25 .interactive-wine-glass {
+  --wine-glass-brass: #f6eee4;
+  --wine-glass-forest: #f6eee4;
+  --wine-glass-paper: #f6eee4;
+  --wine-glass-wine: #5e2023;
+}
+
+.interactive-wine-glass__wine {
+  fill: #5e2023;
+}
+
+.interactive-wine-glass__surface {
+  stroke: #f6eee4;
+  stroke-width: 1.15;
+}
+
+.interactive-wine-glass__stream {
+  stroke: #5e2023;
+  stroke-width: 5;
+}
+
+.interactive-wine-glass__outline,
+.interactive-wine-glass__rim,
+.interactive-wine-glass__stem,
+.interactive-wine-glass__base {
+  fill: none;
+  stroke: #f6eee4;
+  stroke-width: 1.55;
+}
+
+.interactive-wine-glass__rim {
+  fill: transparent;
+}
+
+.wine-glass-stage-v25 .interactive-wine-glass__motion-control {
+  background: transparent;
+  border: 1px solid rgba(246, 238, 228, .65);
+  border-radius: 0;
+  color: #f6eee4;
+}
+
+.wine-glass-stage-v25 .interactive-wine-glass__motion-control:hover:not(:disabled) {
+  background: #f6eee4;
+  border-color: #f6eee4;
+  color: #475548;
+}
+
+.wine-glass-stage-v25 > p {
+  color: rgba(246, 238, 228, .82);
+}
+
+/* Keep calendar and detail icons in the same line system. */
+.date-icon .line-icon,
+.guest-details-v3 .line-icon {
+  fill: none !important;
+}
+
+.date-icon .line-icon {
+  color: #f6eee4;
+  stroke: #f6eee4 !important;
+}
+
+.calendar-glyph,
+.calendar-glyph * {
+  background-color: transparent !important;
+  border-color: #f6eee4 !important;
+  color: #f6eee4 !important;
+}
+
+.envelope-reveal-title,
+.envelope-reveal-note {
+  color: #f6eee4;
+}
+
+.stationery-envelope__back,
+.stationery-envelope__front,
+.stationery-envelope__flap,
+.stationery-envelope__card {
+  background: #f6eee4;
+  border-color: rgba(71, 85, 72, .38);
+}
+
+.stationery-envelope__back {
+  background: color-mix(in srgb, #f6eee4 94%, #475548 6%);
+}
+
+.stationery-envelope__front {
+  background: color-mix(in srgb, #f6eee4 90%, #475548 10%);
+}
+
+.stationery-envelope__flap {
+  background: color-mix(in srgb, #f6eee4 98%, #475548 2%);
+}
+
+.stationery-envelope__seam {
+  background: rgba(71, 85, 72, .42);
+}
+
+.stationery-envelope__card {
+  color: #272c24;
+}
+
+.stationery-envelope__card b {
+  color: #272c24;
+}
+
+.stationery-envelope__card b i,
+.stationery-card__rule::after {
+  color: #5e2023;
+  background: #5e2023;
+}
+
+.stationery-envelope__card > span:not(.stationery-card__rule) {
+  color: #272c24;
+}
+
+.stationery-card__rule {
+  background: #475548;
+}
+
+.stationery-envelope__seal {
+  background: #5e2023;
+  border-color: #f6eee4;
+  box-shadow: 0 .3rem .75rem rgba(13, 14, 11, .25), inset 0 0 0 3px #5e2023, inset 0 0 0 4px rgba(246, 238, 228, .55);
+  color: #f6eee4;
+}
+
+.stationery-envelope__monogram {
+  align-items: baseline;
+  color: #f6eee4;
+  display: inline-flex;
+  font: 600 .82rem/1 var(--serif);
+  gap: .08rem;
+  justify-content: center;
+  letter-spacing: -.04em;
+}
+
+.stationery-envelope__monogram i {
+  color: #f6eee4;
+  font-size: .66em;
+  font-weight: 400;
+}
+
+/* RSVP selections and final action provide an unmistakable active state. */
+.rsvp-v2 .rsvp-form label.attendance-card {
+  background: transparent;
+  border: 1px solid rgba(39, 44, 36, .34);
+  box-shadow: none;
+  color: #272c24;
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card:has(input:checked) {
+  background: #5e2023;
+  border-color: #5e2023;
+  box-shadow: none;
+  color: #f6eee4;
+}
+
+.rsvp-v2 .rsvp-form label.attendance-card:has(input:checked) small,
+.rsvp-v2 .rsvp-form label.attendance-card:has(input:checked) b {
+  color: #f6eee4;
+}
+
+.rsvp-v2 .rsvp-form > .rsvp-submit.is-ready:not(:disabled) {
+  background: #5e2023 !important;
+  border-color: #5e2023 !important;
+  color: #f6eee4 !important;
+}
+
+.rsvp-v2 .rsvp-form > .rsvp-submit.is-ready:not(:disabled) > i {
+  border-color: #f6eee4;
+}
+
+.rsvp-v2 .rsvp-form > .rsvp-submit:disabled {
+  border-color: rgba(94, 32, 35, .42) !important;
+  color: rgba(94, 32, 35, .72) !important;
+}
+
+.rsvp-v2 :is(.field-note, .form-status),
+.faq-v2 details p {
+  color: #272c24;
+}
+
+.guest-details-v3 p {
+  color: #f6eee4;
+}
+
+/* Reserve is structural only; the supplied chocolate-box mark can drop in here later. */
+.client-logo-reserve {
+  pointer-events: none;
+}
+
+@keyframes client-minimal-arrival {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (min-width: 901px) {
+  .client-concept-hero {
+    grid-template-columns: minmax(30rem, .95fr) minmax(31rem, 1.05fr);
+    min-height: calc(100svh - var(--header-height));
+  }
+
+  .client-hero-copy {
+    grid-area: 1 / 1;
+  }
+
+  .client-hero-art {
+    grid-area: 1 / 2;
+  }
+
+  .client-cover-art--minimal {
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --header-height: calc(96px + env(safe-area-inset-top));
+  }
+
+  .craft-header {
+    align-items: center;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 52px 44px;
+    height: var(--header-height);
+    padding: env(safe-area-inset-top) 1rem 0;
+  }
+
+  .craft-monogram {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .header-date {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .craft-header nav {
+    align-self: stretch;
+    border-top: 1px solid rgba(39, 44, 36, .18);
+    display: grid !important;
+    gap: 0;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .craft-header nav a {
+    font-size: .75rem;
+    justify-content: center;
+    letter-spacing: .09em;
+    min-height: 44px;
+    padding: 0 .25rem;
+  }
+
+  .craft-header nav a::after {
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+  }
+
+  .client-concept-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(20rem, 1fr);
+  }
+
+  .client-hero-copy,
+  .client-hero-art {
+    grid-column: 1;
+  }
+
+  .client-hero-copy {
+    align-content: center;
+    grid-row: 1;
+    min-height: clamp(12.5rem, 32svh, 16.5rem);
+    padding: clamp(1.3rem, 4svh, 2.2rem) 1.25rem;
+  }
+
+  .client-hero-art {
+    grid-row: 2;
+    min-height: clamp(20rem, 54svh, 30rem);
+  }
+
+  .client-cover-art--minimal {
+    max-height: clamp(20rem, 54svh, 30rem);
+  }
+
+  .client-hero-copy h1,
+  .client-hero-personalization {
+    width: min(88vw, 22rem);
+  }
+
+  .client-hero-personalization {
+    font-size: .71rem;
+    line-height: 1.45;
+    margin-top: .9rem;
+  }
+
+  .celebration-summary-v26 {
+    gap: 2.75rem;
+    grid-template-columns: 1fr;
+    padding: 4.5rem clamp(1.25rem, 6vw, 3rem);
+  }
+
+  .wine-story-v25 {
+    grid-template-columns: 1fr;
+  }
+
+  .wine-glass-stage-v25 {
+    min-height: 35rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .header-date > span:first-child {
+    font-size: 1.45rem;
+  }
+
+  .header-date > span:last-child {
+    font-size: .7rem;
+    max-width: 6.25rem;
+  }
+
+  .celebration-summary-copy h2 {
+    font-size: clamp(3rem, 15vw, 4rem);
+  }
+
+  .celebration-summary-events article {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+  }
+
+  .celebration-summary-events .line-icon {
+    height: 2.25rem;
+    width: 2.25rem;
+  }
+
+  .wine-story-copy {
+    padding: 4.25rem 1.25rem;
+  }
+
+  .wine-glass-stage-v25 {
+    min-height: 32rem;
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .wine-glass-stage-v25 .interactive-wine-glass {
+    inline-size: min(80vw, 20rem);
+  }
+
+  .rsvp-v2 .rsvp-form .attendance-options {
+    gap: .65rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .65rem;
+    min-height: 8.25rem;
+    padding: 1rem;
+  }
+
+  .rsvp-v2 .rsvp-form .choice-mark {
+    flex-basis: 32px;
+    height: 32px;
+    width: 32px;
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card b {
+    font-size: 1rem;
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card small {
+    font-size: .76rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .craft-header nav a {
+    font-size: .75rem;
+    letter-spacing: .02em;
+  }
+
+  .rsvp-v2 .rsvp-form .attendance-options {
+    grid-template-columns: 1fr;
+  }
+
+  .rsvp-v2 .rsvp-form label.attendance-card {
+    min-height: 5.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-cover-art--minimal {
+    animation: none;
+  }
+}

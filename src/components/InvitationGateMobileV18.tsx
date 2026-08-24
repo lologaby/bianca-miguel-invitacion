@@ -130,7 +130,7 @@ export function InvitationGate({ onReveal }: Props) {
         <InvitationEnvelope invitation={pendingInvitation} opening={opening} onComplete={finishReveal} />
 
         <div className="mystery-access" aria-hidden={opening || undefined}>
-          <p className="private-gate-copy">Este sobre guarda una noche muy especial. Ingrese su código cuando desee abrirlo.</p>
+          <p className="private-gate-copy">Ingrese el código que recibió para abrir el sobre.</p>
 
           {linkToken && !showCode ? (
             <div className="mystery-actions">

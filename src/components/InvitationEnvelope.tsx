@@ -25,7 +25,7 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
   return (
     <div className={'invitation-envelope-reveal ' + (opening ? 'is-opening' : 'is-closed')} aria-hidden={opening ? undefined : true}>
       {opening ? <p ref={status} className="envelope-reveal-title" role="status" tabIndex={-1}>
-        Su invitación está lista
+        Invitación confirmada
       </p> : null}
 
       <div className="stationery-envelope" aria-hidden="true">
@@ -34,7 +34,7 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
           <span className="stationery-card__rule" />
           {invitation ? <>
             <b>{firstInitial}<i>&amp;</i>{secondInitial}</b>
-            <span>Una noche para brindar despacio</span>
+            <span>{invitation.event.couple.first} &amp; {invitation.event.couple.second} · {invitation.event.dateLabel}</span>
           </> : <span className="stationery-card__promise">Reservado para usted</span>}
           <span className="stationery-card__rule" />
         </article>
@@ -44,16 +44,13 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
         </div>
         <div className="stationery-envelope__flap" />
         <span className="stationery-envelope__seal">
-          <svg viewBox="0 0 32 32" focusable="false" aria-hidden="true">
-            <path d="M16 24V11" />
-            <path d="M16 15c-4.4-.2-7-2.2-7.7-6.1 4.3-.4 7.1 1.6 7.7 6.1Z" />
-            <path d="M16 18c4.4-.2 7-2.2 7.7-6.1-4.3-.4-7.1 1.6-7.7 6.1Z" />
-            <path d="M12 24h8" />
-          </svg>
+          <span className="stationery-envelope__monogram" aria-hidden="true">
+            {firstInitial ?? 'B'}<i>&amp;</i>{secondInitial ?? 'M'}
+          </span>
         </span>
       </div>
 
-      {opening ? <p className="envelope-reveal-note">Abriendo su lugar en la mesa…</p> : null}
+      {opening ? <p className="envelope-reveal-note">Abriendo su invitación…</p> : null}
     </div>
   );
 }

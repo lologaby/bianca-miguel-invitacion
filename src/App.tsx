@@ -11,7 +11,7 @@ import './craft.css';
 import './refined.css';
 import './itinerary.css';
 
-const nav = [['detalles', 'Itinerario'], ['etiqueta', 'Detalles'], ['rsvp', 'Confirmar']] as const;
+const nav = [['celebracion', 'Celebración'], ['preguntas', 'Preguntas'], ['rsvp', 'Confirmar']] as const;
 
 function useScrollProgress() {
   useEffect(() => {
@@ -43,11 +43,29 @@ function Countdown({ start }: { start: string }) {
 }
 
 function Header({ event }: { event: PrivateEvent }) {
+  const [active, setActive] = useState<(typeof nav)[number][0]>('celebracion');
   const [day = event.dateShort, month = ''] = event.dateShort.split('·').map((part) => part.trim());
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((first, second) => Math.abs(first.boundingClientRect.top) - Math.abs(second.boundingClientRect.top));
+      const id = visible[0]?.target.id as (typeof nav)[number][0] | undefined;
+      if (id) setActive(id);
+    }, { rootMargin: '-24% 0px -62% 0px', threshold: [0, .1, .4] });
+
+    nav.forEach(([id]) => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   return <header className="craft-header">
     <a className="craft-monogram" href="#inicio" aria-label="Inicio"><span>{event.couple.first[0]}</span><i>&</i><span>{event.couple.second[0]}</span></a>
-    <nav aria-label="Principal">{nav.map(([id, label]) => <a key={id} href={`#${id}`}>{label}</a>)}</nav>
-    <a className="header-date" href="#detalles" aria-label={'Ver itinerario del ' + event.dateLabel}>
+    <nav aria-label="Secciones de la invitación">{nav.map(([id, label]) => <a key={id} href={`#${id}`} aria-current={active === id ? 'location' : undefined} onClick={() => setActive(id)}>{label}</a>)}</nav>
+    <a className="header-date" href="#celebracion" aria-label={'Ver la celebración del ' + event.dateLabel}>
       <span>{day}</span>{month ? <span>{month}</span> : null}
     </a>
   </header>;
@@ -78,21 +96,18 @@ function GiftNumber({ number }: { number: string }) {
 }
 
 function WineStory({ event }: { event: PrivateEvent }) {
-  const paragraphs = event.story?.paragraphs ?? [
-    'El lugar que elegimos acompaña una celebración íntima, entre vino, cacao y luz tenue.',
-  ];
+  const paragraphs = event.story?.paragraphs ?? [];
 
   return <section className="wine-story-v25" aria-labelledby="wine-story-title">
     <div className="wine-story-copy">
-      {event.story?.kicker ? <p className="wine-story-kicker">{event.story.kicker}</p> : null}
       <h2 id="wine-story-title">Brindemos</h2>
-      <div className="wine-story-narrative">
+      {paragraphs.length ? <div className="wine-story-narrative">
         {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-      </div>
+      </div> : null}
     </div>
     <div className="wine-glass-stage-v25">
       <InteractiveWineGlass ariaLabel="Copa de vino que se sirve y responde suavemente al movimiento" />
-      <p>Deslice, mueva el cursor o active el movimiento de su teléfono.</p>
+      <p>Mueva el cursor; en el teléfono puede activar el movimiento de la copa.</p>
     </div>
   </section>;
 }
@@ -103,8 +118,8 @@ function GuestPlanning({ event }: { event: PrivateEvent }) {
 
   return <section className="guest-planning-v25" aria-labelledby="guest-planning-title">
     <header>
-      <h2 id="guest-planning-title">Para acompañarnos<br/><em>con calma.</em></h2>
-      <p>Información adicional para organizar su visita.</p>
+      <h2 id="guest-planning-title">Su visita a Ponce</h2>
+
     </header>
     <div className="guest-planning-list">
       {event.lodging?.length ? <article>
@@ -119,10 +134,37 @@ function GuestPlanning({ event }: { event: PrivateEvent }) {
         <p>{event.transportation.note}</p>
       </article> : null}
       {event.hashtag || event.playlist ? <article>
-        <h3>Compartir la noche</h3>
+        <h3>Música y fotografías</h3>
         {event.hashtag ? <p className="wedding-hashtag">{event.hashtag}</p> : null}
         {event.playlist ? <a className="planning-link-v25" href={event.playlist.url} target="_blank" rel="noreferrer">{event.playlist.label}<span aria-hidden="true">↗</span></a> : null}
       </article> : null}
+    </div>
+  </section>;
+}
+
+function CelebrationSummary({ event, guest, ceremonyTime, receptionTime }: {
+  event: PrivateEvent;
+  guest: InvitationPayload['guest'];
+  ceremonyTime: string;
+  receptionTime: string;
+}) {
+  const places = `${guest.partyLimit} ${guest.partyLimit === 1 ? 'lugar' : 'lugares'}`;
+  return <section className="celebration-summary-v26" id="celebracion" aria-labelledby="celebration-summary-title">
+    <div className="celebration-summary-copy">
+      <h2 id="celebration-summary-title">La celebración.</h2>
+      <p>Todos los detalles, en un mismo lugar.</p>
+      <p>Su invitación es personal y contempla <strong>{places}</strong>.</p>
+      {guest.companionNames?.length ? <p className="celebration-companions"><span>Personas incluidas</span>{guest.companionNames.join(', ')}</p> : null}
+    </div>
+    <div className="celebration-summary-events">
+      <article>
+        <LineIcon name="church"/>
+        <div><span>Ceremonia · {ceremonyTime}</span><h3>{event.ceremony.name}</h3><p>{event.ceremony.city}</p></div>
+      </article>
+      <article>
+        <LineIcon name="wine"/>
+        <div><span>Recepción · {receptionTime}</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
+      </article>
     </div>
   </section>;
 }
@@ -140,7 +182,6 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
     <main>
       <section className="client-concept-hero" id="inicio" aria-labelledby="client-hero-title">
         <div className="client-hero-copy">
-          <p className="client-hero-overline">Invitación de boda</p>
           <h1 id="client-hero-title">
             <CoupleWordmark first={event.couple.first} second={event.couple.second}/>
           </h1>
@@ -157,19 +198,16 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
       <section className="date-v2" aria-label="Cuenta regresiva">
         <div className="date-icon"><LineIcon name="calendar"/></div>
         <div className="date-word"><span>La fecha</span><h2>{event.dateShort}</h2><span>{event.ceremony.city}</span></div>
-        <div className="date-countdown"><p>Hasta levantar las copas</p><Countdown start={event.start}/></div>
+        <div className="date-countdown"><p>Cuenta regresiva</p><Countdown start={event.start}/></div>
         <div className="pour-line" aria-hidden="true"><span></span></div>
       </section>
 
+      <CelebrationSummary event={event} guest={guest} ceremonyTime={ceremonyTime} receptionTime={receptionTime}/>
+
       <section className="event-v2 itinerary-v3" id="detalles">
         <header>
-          <h2>El ritmo<br/><em>de la noche.</em></h2>
-          <p>Una tarde para encontrarnos; una noche para brindar, probar y compartir.</p>
-          <div className="itinerary-guest">
-            <span>Su invitación contempla</span>
-            <strong>{guest.partyLimit} {guest.partyLimit === 1 ? 'lugar' : 'lugares'}</strong>
-            {guest.companionNames?.length ? <small>Junto a {guest.companionNames.join(', ')}</small> : null}
-          </div>
+          <h2>Itinerario</h2>
+          <p>Ceremonia: {ceremonyTime} · Recepción: {receptionTime}</p>
         </header>
 
         <ol className="itinerary-list">
@@ -194,7 +232,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
       </section>
 
       <section className="guest-details-v3" id="etiqueta" aria-labelledby="guest-details-title">
-        <header><h2 id="guest-details-title">La elegancia está<br/><em>en los detalles.</em></h2><p>Todo lo necesario para llegar, celebrar y disfrutar con calma.</p></header>
+        <header><h2 id="guest-details-title">Vestimenta y regalos</h2><p>Código de vestimenta e información para obsequios.</p></header>
         <div className="guest-detail-grid">
           <article className="dress-detail">
             <span>Código de vestimenta</span>
@@ -203,8 +241,8 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
             {event.weatherNote ? <div className="weather-note-v25"><strong>Clima al llegar</strong><p>{event.weatherNote}</p></div> : null}
           </article>
           {event.gifts ? <article className="gift-detail">
-            <span>Si desea obsequiarnos</span>
-            <h3>{event.gifts.heading ?? 'Lo más valioso será compartir la mesa con usted.'}</h3>
+            <span>Regalos</span>
+            <h3>{event.gifts.heading ?? 'Si desea hacernos un regalo'}</h3>
             <p>{event.gifts.message}</p>
             <GiftNumber number={event.gifts.athMovil}/>
           </article> : null}
@@ -213,11 +251,11 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
 
       <GuestPlanning event={event}/>
 
-      <section className="faq-v2" id="preguntas"><header><h2>Antes<br/>de brindar</h2><p>Lo esencial para acompañarnos con calma.</p></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section>
+      {faq.length ? <section className="faq-v2" id="preguntas"><header><h2>Preguntas frecuentes</h2><p>Información práctica para el {event.dateLabel}.</p></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
 
       <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><VineRule/><RsvpForm guest={guest}/></section>
     </main>
-    <footer className="footer-v2"><div className="footer-names">{event.couple.first} <i>&</i> {event.couple.second}</div><VineRule inverted/><div className="footer-meta"><span>{event.dateLabel}</span><span>{event.ceremony.city}</span><span>Nos vemos en la mesa.</span></div></footer>
+    <footer className="footer-v2"><div className="footer-names">{event.couple.first} <i>&</i> {event.couple.second}</div><VineRule inverted/><div className="footer-meta"><span>{event.dateLabel}</span><span>{event.ceremony.city}</span></div></footer>
   </div>;
 }
 
@@ -228,7 +266,7 @@ function DuringWedding({ invitation }: { invitation: InvitationPayload }) {
 
 function AfterWedding({ invitation }: { invitation: InvitationPayload }) {
   const { event } = invitation;
-  return <main className="phase-v2 after-v2"><div className="after-image"><img src={`${import.meta.env.BASE_URL}images/wine-still-life.webp`} alt="Composición de vino, calas, tulipán, uvas y eucalipto" width="1024" height="1536"/></div><div><h1>Gracias por<br/><em>acompañarnos.</em></h1><p>Por ser parte de esta noche y convertirla en un recuerdo que siempre tendrá un lugar en nuestra mesa.</p><div className="gallery-message"><LineIcon name="wine"/><div><b>La galería llegará pronto</b><span>Compartiremos las fotografías seleccionadas aquí.</span></div></div></div></main>;
+  return <main className="phase-v2 after-v2"><div className="after-image"><img src={`${import.meta.env.BASE_URL}images/wine-still-life.webp`} alt="Composición de vino, calas, tulipán, uvas y eucalipto" width="1024" height="1536"/></div><div><h1>Gracias por<br/><em>acompañarnos.</em></h1><p>{event.ceremony.city} · {event.dateLabel}</p><div className="gallery-message"><LineIcon name="wine"/><div><b>La galería llegará pronto</b><span>Compartiremos las fotografías seleccionadas aquí.</span></div></div></div></main>;
 }
 
 function phaseFor(event: PrivateEvent) {

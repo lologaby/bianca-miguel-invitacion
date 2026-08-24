@@ -18,7 +18,7 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     if (isLocalPreview) {
       await new Promise((resolve) => window.setTimeout(resolve, 350));
       window.localStorage.setItem('wedding-rsvp-preview', JSON.stringify({ ...body, savedAt: new Date().toISOString() }));
-      setStatus(attendance === 'yes' ? '¡Listo! Su asistencia quedó confirmada en esta prueba.' : 'Gracias por responder. Esta respuesta es solo una prueba local.');
+      setStatus(attendance === 'yes' ? 'Su asistencia quedó registrada en esta prueba.' : 'Gracias por avisarnos. Esta respuesta es solo una prueba local.');
       setBusy(false);
       return;
     }
@@ -26,9 +26,9 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     try {
       const response = await fetch('/api/rsvp', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('submit');
-      setStatus(attendance === 'yes' ? '¡Gracias! Su lugar quedó confirmado.' : 'Gracias por responder. Sentiremos no contar con su compañía.');
+      setStatus(attendance === 'yes' ? '¡Gracias! Su lugar quedó confirmado.' : 'Gracias por avisarnos.');
     } catch {
-      setStatus('No pudimos guardar su respuesta. La información permanecerá aquí para que lo intente nuevamente.');
+      setStatus('No pudimos guardar su respuesta. Inténtelo nuevamente.');
     } finally {
       setBusy(false);
     }
@@ -46,10 +46,10 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     {attendance === 'yes' && <div className="conditional-fields">
       <label>Número de asistentes<select name="partySize" defaultValue="1">{Array.from({ length: guest.partyLimit }, (_, index) => <option key={index + 1}>{index + 1}</option>)}</select></label>
       {guest.plusOneAllowed && <label>Nombre de acompañante<input name="plusOneName" maxLength={80} defaultValue={guest.companionNames?.[0] ?? ''}/></label>}
-      <label>Una canción para la noche<input name="song" maxLength={120} placeholder="Canción — Artista"/><small className="field-note">Comparta una canción que le gustaría escuchar durante la celebración.</small></label>
+      <label>Sugerencia musical<input name="song" maxLength={120} placeholder="Canción — Artista"/><small className="field-note">¿Qué canción le gustaría escuchar en la recepción?</small></label>
       <details className="rsvp-more"><summary>Alergias o accesibilidad</summary><div><label>Alergias o necesidades alimentarias<textarea name="dietary" rows={3} maxLength={300}/></label><label>Necesidades de accesibilidad<textarea name="accessibility" rows={3} maxLength={300}/></label></div></details>
     </div>}
-    <button className="button wine rsvp-submit" disabled={busy || !attendance}>
+    <button className={`button wine rsvp-submit${attendance ? ' is-ready' : ''}`} disabled={busy || !attendance}>
       <span>{busy ? 'Guardando…' : attendance === 'no' ? 'Enviar respuesta' : 'Confirmar asistencia'}</span>
       <i aria-hidden="true" />
     </button>

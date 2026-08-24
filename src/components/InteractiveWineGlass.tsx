@@ -136,8 +136,6 @@ export function InteractiveWineGlass({
   const titleId = `wine-glass-title-${id}`;
   const descriptionId = `wine-glass-description-${id}`;
   const clipId = `wine-glass-clip-${id}`;
-  const wineGradientId = `wine-gradient-${id}`;
-  const glassGradientId = `glass-gradient-${id}`;
 
   const handlePointerMove = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (event.pointerType === 'touch' && !event.isPrimary) return;
@@ -479,33 +477,14 @@ export function InteractiveWineGlass({
           <clipPath id={clipId}>
             <path d="M72 70 C77 210 110 302 180 330 C250 302 283 210 288 70 Z" />
           </clipPath>
-          <linearGradient id={wineGradientId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#431719" />
-            <stop offset="0.5" stopColor="#6f292d" />
-            <stop offset="1" stopColor="#4f1c20" />
-          </linearGradient>
-          <linearGradient id={glassGradientId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#ffffff" stopOpacity="0.28" />
-            <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.03" />
-            <stop offset="1" stopColor="#ffffff" stopOpacity="0.16" />
-          </linearGradient>
         </defs>
 
-        <ellipse className="interactive-wine-glass__shadow" cx="180" cy="472" rx="103" ry="14" />
-
         <g ref={motionGroupRef} className="interactive-wine-glass__motion">
-          <path
-            className="interactive-wine-glass__bowl-wash"
-            d="M72 70 C77 210 110 302 180 330 C250 302 283 210 288 70 Z"
-            fill={`url(#${glassGradientId})`}
-          />
-
           <g className="interactive-wine-glass__liquid" clipPath={`url(#${clipId})`}>
             <path
               ref={liquidPathRef}
               className="interactive-wine-glass__wine"
               d={initialLiquidPath}
-              fill={`url(#${wineGradientId})`}
             />
             <path
               ref={surfacePathRef}
@@ -520,10 +499,8 @@ export function InteractiveWineGlass({
             d="M72 70 C77 210 110 302 180 330 C250 302 283 210 288 70"
           />
           <path className="interactive-wine-glass__rim" d="M72 70 C112 60 248 60 288 70 C247 81 113 81 72 70 Z" />
-          <path className="interactive-wine-glass__highlight" d="M100 94 C107 183 127 257 158 294" />
           <path className="interactive-wine-glass__stem" d="M180 330 L180 443" />
           <path className="interactive-wine-glass__base" d="M90 463 C125 448 235 448 270 463 C234 479 126 479 90 463 Z" />
-          <path className="interactive-wine-glass__base-highlight" d="M116 461 C148 455 212 455 244 461" />
         </g>
       </svg>
 

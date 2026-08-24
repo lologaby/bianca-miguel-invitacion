@@ -95,7 +95,7 @@ export const localDemoInvitation: InvitationPayload = {
     },
     dressCode: {
       label: 'Cóctel / Formal',
-      note: 'Una noche elegante y cuidada, pensada para celebrar con comodidad.',
+      note: 'No hay colores reservados. Puede elegir el color que prefiera dentro del código Cóctel / Formal.',
     },
   },
 };

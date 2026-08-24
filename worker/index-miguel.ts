@@ -1,7 +1,5 @@
 import { rsvpSchema } from '../db/schema';
 import type { Guest, InvitationPayload, PrivateEvent } from '../src/types/invitation';
-import coverArtDataUrl from './private-assets/cover-art.webp?inline';
-import coverArtMobileDataUrl from './private-assets/cover-art-470.webp?inline';
 import wordmarkDataUrl from './private-assets/wordmark.webp?inline';
 import wordmarkMobileDataUrl from './private-assets/wordmark-450.webp?inline';
 import {
@@ -74,8 +72,6 @@ function decodeDataUrl(dataUrl: string) {
 }
 
 const privateBrandAssets = new Map([
-  ['/private-assets/cover-art.webp', { contentType: 'image/webp', body: decodeDataUrl(coverArtDataUrl) }],
-  ['/private-assets/cover-art-470.webp', { contentType: 'image/webp', body: decodeDataUrl(coverArtMobileDataUrl) }],
   ['/private-assets/wordmark.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkDataUrl) }],
   ['/private-assets/wordmark-450.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkMobileDataUrl) }],
 ]);
@@ -112,52 +108,51 @@ const privateEvent: PrivateEvent = {
     },
     dressCode: {
       label: 'Cóctel / Formal',
-      note: 'Una noche elegante y cuidada, pensada para celebrar con comodidad.',
+      note: 'No hay colores reservados. Puede elegir el color que prefiera dentro del código Cóctel / Formal.',
     },
     gifts: {
-      heading: 'Lo más valioso será compartir la mesa con usted.',
-      message: 'Si desea obsequiarnos un detalle adicional, lo recibiremos con mucho cariño en efectivo o a través de ATH Móvil.',
+      heading: 'Si desea hacernos un regalo',
+      message: 'Puede entregarlo en efectivo o enviarlo por ATH Móvil.',
       athMovil: '787-410-5571',
     },
     faq: [
       {
         id: 'companions',
         q: '¿Puedo llevar acompañantes?',
-        a: 'La invitación indicará la cantidad de personas de su núcleo familiar que están incluidas. Debido a la planificación y capacidad de la celebración, agradecemos que la asistencia se limite al número de invitados indicado en su invitación.',
+        a: 'Su invitación indica cuántas personas de su núcleo familiar están incluidas. Por capacidad, solo podremos recibir ese número.',
       },
       {
         id: 'attire-colors',
         q: '¿Hay colores específicos para la vestimenta?',
-        a: 'No tenemos un código de color específico. La recepción se celebrará en una bodega de vinos con una atmósfera cálida, íntima y de iluminación tenue, así que puede tomar el ambiente como inspiración y usar su creatividad al elegir su vestimenta.',
+        a: 'No hay colores reservados. La recepción será en una bodega con iluminación tenue; puede elegir el color que prefiera dentro del código Cóctel / Formal.',
       },
       {
         id: 'indoor-spaces',
         q: '¿La ceremonia y la recepción serán en espacios bajo techo?',
-        a: 'Sí. Tanto la ceremonia como la recepción se llevarán a cabo en espacios cerrados y con aire acondicionado, para mayor comodidad de nuestros invitados durante toda la celebración.',
+        a: 'Sí. La ceremonia y la recepción serán en interiores con aire acondicionado.',
       },
       {
         id: 'rsvp-deadline',
         q: '¿Hasta cuándo tengo para confirmar mi asistencia?',
-        a: 'Agradecemos confirmar su asistencia no más tarde del 15 de octubre de 2026. Esto nos permitirá completar con tiempo los detalles finales de la celebración.',
+        a: 'La fecha límite para confirmar es el 15 de octubre de 2026.',
       },
       {
         id: 'parking',
         q: '¿Habrá estacionamiento disponible?',
-        a: 'Para la ceremonia habrá estacionamiento disponible en los predios de la iglesia.\n\nEn la recepción, los espacios de estacionamiento en Bodega de Méndez son limitados. Sin embargo, hay espacios disponibles en las calles y áreas cercanas a la bodega. Recomendamos llegar con tiempo para estacionarse cómodamente.',
+        a: 'La iglesia tiene estacionamiento. En Bodega de Méndez los espacios son limitados; también puede estacionarse en las calles cercanas. Le recomendamos llegar con tiempo.',
       },
       {
         id: 'drinks',
         q: '¿Habrá bebidas alcohólicas y opciones sin alcohol?',
-        a: 'Sí. Como parte del protocolo de la recepción, tendremos una experiencia especial que incluirá bebidas alcohólicas. Para quienes deseen consumir bebidas alcohólicas adicionales durante la celebración, habrá servicio de cash bar.\n\nTambién tendremos opciones de bebidas sin alcohol disponibles.',
+        a: 'La recepción incluye bebidas alcohólicas y opciones sin alcohol. Habrá cash bar para compras adicionales.',
       },
     ],
     story: {
-      kicker: 'Una celebración con sentido de lugar',
       paragraphs: [
-        'Queríamos celebrar en Ponce y hacerlo en una bodega donde la noche pudiera sentirse íntima: vino, cacao, luz tenue y tiempo para conversar. Esa combinación nos representa y es la que queremos compartir con usted.',
+        'Elegimos Ponce para la boda y Bodega de Méndez para la recepción. Allí tendremos una cata de vino y chocolates antes de la cena.',
       ],
     },
-    weatherNote: 'Diciembre en Ponce suele sentirse cálido y húmedo, especialmente al llegar. La ceremonia y la recepción serán en interiores con aire acondicionado; para su comodidad, puede elegir telas frescas dentro del código Cóctel / Formal.',
+    weatherNote: 'En Ponce, diciembre sigue siendo cálido y húmedo al llegar. La ceremonia y la recepción son en interiores con aire acondicionado; dentro del código Cóctel / Formal, las telas frescas pueden resultarle más cómodas.',
 };
 
 function invitationForGuest(guest: PrivateGuestRecord): InvitationPayload {
@@ -613,7 +608,11 @@ async function api(request: Request, env: Env) {
     const body = await readBody(request);
     if (!body || (body.attendance !== 'yes' && body.attendance !== 'no')) return json({ error: 'invalid_attendance' }, { status: 400 });
     const partySize = body.attendance === 'yes' ? Number(body.partySize) : 0;
-    if (!Number.isInteger(partySize) || partySize < 0 || partySize > guest.partyLimit) return json({ error: 'invalid_party_size' }, { status: 400 });
+    if (
+      !Number.isInteger(partySize)
+      || partySize > guest.partyLimit
+      || (body.attendance === 'yes' && partySize < 1)
+    ) return json({ error: 'invalid_party_size' }, { status: 400 });
     await env.DB.prepare(rsvpSchema).run();
     await env.DB.prepare(`INSERT INTO rsvps (guest_id, guest_name, attendance, party_size, plus_one_name, song, dietary, accessibility, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(guest_id) DO UPDATE SET attendance = excluded.attendance, party_size = excluded.party_size, plus_one_name = excluded.plus_one_name, song = excluded.song, dietary = excluded.dietary, accessibility = excluded.accessibility, updated_at = excluded.updated_at`)
       .bind(guest.id, guest.name, body.attendance, partySize, clean(body.plusOneName, 80), clean(body.song, 120), clean(body.dietary, 300), clean(body.accessibility, 300), new Date().toISOString())
