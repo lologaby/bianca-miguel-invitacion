@@ -598,7 +598,14 @@ async function api(request: Request, env: Env) {
     const guest = await authenticatedGuest(request, env);
     return guest
       ? json(invitationForGuest(guest))
-      : json({ error: 'unauthorized' }, { status: 401 });
+      : new Response(null, {
+        status: 204,
+        headers: {
+          'cache-control': 'no-store',
+          'referrer-policy': 'no-referrer',
+          'x-content-type-options': 'nosniff',
+        },
+      });
   }
 
   if (url.pathname === '/api/rsvp' && request.method === 'POST') {
