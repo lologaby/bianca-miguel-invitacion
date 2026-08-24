@@ -1,0 +1,184 @@
+/* Client-approved cover language, taken directly from Idea.png. */
+.client-concept-hero {
+  background: #272c24;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  height: auto;
+  isolation: isolate;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  place-items: center;
+}
+
+.client-hero-art,
+.client-hero-copy {
+  aspect-ratio: 941 / 1672;
+  grid-area: 1 / 1;
+  height: auto;
+  justify-self: center;
+  max-height: calc(100svh - var(--header-height));
+  width: min(100%, calc((100svh - var(--header-height)) * 941 / 1672));
+}
+
+.client-hero-art {
+  background: #475548;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.client-cover-art--idea,
+.client-cover-art--idea img {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.client-cover-art--idea img {
+  animation: client-idea-arrival 900ms cubic-bezier(.16, 1, .3, 1) both;
+  object-fit: cover;
+  object-position: center;
+}
+
+.client-hero-copy {
+  align-content: start;
+  align-items: center;
+  background: transparent;
+  box-sizing: border-box;
+  color: #0d0e0b;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(3.6rem, 19vw, 6.6rem) 7% 0;
+  pointer-events: none;
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+
+.client-hero-overline {
+  color: #5e2023;
+  font: 700 clamp(.61rem, 2.5vw, .78rem)/1.2 var(--sans);
+  letter-spacing: .34em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.client-hero-overline::after {
+  background: #272c24;
+  content: '';
+  display: block;
+  height: clamp(1.65rem, 8vw, 2.65rem);
+  margin: clamp(.7rem, 3.5vw, 1.15rem) auto 0;
+  opacity: .85;
+  width: 1px;
+}
+
+.client-hero-copy h1 {
+  margin: clamp(1rem, 4.7vw, 1.55rem) 0 0;
+  width: 82%;
+}
+
+.client-hero-copy .client-wordmark-crop {
+  width: 100%;
+}
+
+.client-hero-theme {
+  color: #0d0e0b;
+  font: 700 clamp(.57rem, 2.35vw, .75rem)/1.35 var(--sans);
+  letter-spacing: .35em;
+  margin: clamp(1.25rem, 5vw, 1.85rem) 0 0;
+  text-transform: uppercase;
+}
+
+.client-hero-personalization {
+  border: 0;
+  color: #5e2023;
+  display: block;
+  font: 700 clamp(.58rem, 2.15vw, .7rem)/1.3 var(--sans);
+  letter-spacing: .18em;
+  margin: clamp(.58rem, 2.4vw, .9rem) 0 0;
+  max-width: 82%;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: auto;
+}
+
+.client-hero-personalization::before {
+  content: none;
+  display: none;
+}
+
+.client-hero-personalization span {
+  color: #5e2023 !important;
+}
+
+@keyframes client-idea-arrival {
+  from { opacity: .72; transform: scale(1.012); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 900px) {
+  .client-concept-hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .client-hero-art,
+  .client-hero-copy {
+    grid-column: 1;
+    grid-row: 1;
+    max-height: none;
+    width: 100%;
+  }
+}
+
+@media (min-width: 901px) {
+  .client-concept-hero {
+    min-height: calc(100svh - var(--header-height));
+  }
+
+  .client-hero-art,
+  .client-hero-copy {
+    width: min(36rem, calc((100svh - var(--header-height)) * 941 / 1672));
+  }
+
+  .client-hero-copy {
+    padding-top: clamp(4.9rem, 9.9vh, 6.6rem);
+  }
+}
+
+@media (max-width: 350px) {
+  .client-hero-copy {
+    padding-top: 3.25rem;
+  }
+
+  .client-hero-overline,
+  .client-hero-theme,
+  .client-hero-personalization {
+    letter-spacing: .22em;
+  }
+
+  .client-hero-copy h1 {
+    margin-top: .85rem;
+    width: 79%;
+  }
+
+  .client-hero-theme {
+    margin-top: 1rem;
+  }
+
+  .client-hero-personalization {
+    margin-top: .65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-cover-art--idea img {
+    animation: none;
+  }
+}

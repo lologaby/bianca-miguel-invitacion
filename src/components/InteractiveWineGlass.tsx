@@ -45,8 +45,8 @@ interface LiquidPhysics {
   orientationPermissionGranted: boolean;
 }
 
-const SURFACE_LEFT = 76;
-const SURFACE_RIGHT = 284;
+const SURFACE_LEFT = 82;
+const SURFACE_RIGHT = 278;
 const SURFACE_TOP = 180;
 const SURFACE_BOTTOM = 333;
 const SURFACE_POINTS = 34;
@@ -475,7 +475,7 @@ export function InteractiveWineGlass({
         </desc>
         <defs>
           <clipPath id={clipId}>
-            <path d="M72 70 C77 210 110 302 180 330 C250 302 283 210 288 70 Z" />
+            <path d="M82 72 L278 72 C276 205 246 294 180 330 C114 294 84 205 82 72 Z" />
           </clipPath>
         </defs>
 
@@ -496,11 +496,11 @@ export function InteractiveWineGlass({
 
           <path
             className="interactive-wine-glass__outline"
-            d="M72 70 C77 210 110 302 180 330 C250 302 283 210 288 70"
+            d="M82 72 C84 205 114 294 180 330 C246 294 276 205 278 72"
           />
-          <path className="interactive-wine-glass__rim" d="M72 70 C112 60 248 60 288 70 C247 81 113 81 72 70 Z" />
+          <path className="interactive-wine-glass__rim" d="M82 72 H278" />
           <path className="interactive-wine-glass__stem" d="M180 330 L180 443" />
-          <path className="interactive-wine-glass__base" d="M90 463 C125 448 235 448 270 463 C234 479 126 479 90 463 Z" />
+          <path className="interactive-wine-glass__base" d="M112 463 Q180 447 248 463" />
         </g>
       </svg>
 

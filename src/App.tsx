@@ -182,12 +182,13 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
     <main>
       <section className="client-concept-hero" id="inicio" aria-labelledby="client-hero-title">
         <div className="client-hero-copy">
+          <p className="client-hero-overline">Invitación de boda</p>
           <h1 id="client-hero-title">
             <CoupleWordmark first={event.couple.first} second={event.couple.second}/>
           </h1>
+          <p className="client-hero-theme">Cata de vino y chocolate</p>
           <div className="client-hero-personalization">
             <span>Para: {guest.name}</span>
-            <span>{event.dateLabel} · {event.ceremony.city}</span>
           </div>
         </div>
         <div className="client-hero-art"><ClientCoverArt/></div>
