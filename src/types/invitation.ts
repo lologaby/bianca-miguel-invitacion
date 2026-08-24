@@ -11,6 +11,27 @@ export interface EventFaqItem {
   a: string;
 }
 
+export interface EventStory {
+  kicker?: string;
+  paragraphs: string[];
+}
+
+export interface RecommendedLodging {
+  name: string;
+  note?: string;
+  url?: string;
+}
+
+export interface EventTransportation {
+  available: boolean;
+  note: string;
+}
+
+export interface EventPlaylist {
+  label: string;
+  url: string;
+}
+
 export interface PrivateEvent {
   couple: { first: string; second: string };
   dateLabel: string;
@@ -29,8 +50,14 @@ export interface PrivateEvent {
     moments?: string[];
   };
   dressCode?: { label: string; note: string };
-  gifts?: { message: string; athMovil: string };
+  gifts?: { heading?: string; message: string; athMovil: string };
   faq?: EventFaqItem[];
+  story?: EventStory;
+  weatherNote?: string;
+  lodging?: RecommendedLodging[];
+  transportation?: EventTransportation;
+  hashtag?: string;
+  playlist?: EventPlaylist;
 }
 
 export interface InvitationPayload {
@@ -40,7 +67,7 @@ export interface InvitationPayload {
 
 export const localDemoInvitation: InvitationPayload = {
   guest: {
-    name: 'Andrea Rivera',
+    name: 'María Rodríguez',
     partyLimit: 2,
     plusOneAllowed: true,
     companionNames: ['Acompañante invitado'],

@@ -1,4 +1,4 @@
-/* Bianca & Placeholder — custom editorial system */
+/* Custom editorial system */
 
 :root {
   --ivory: #f3efe5;
@@ -10,8 +10,8 @@
   --ink: #201d1a;
   --brass: #b39665;
   --line: rgba(36, 58, 49, 0.22);
-  --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
-  --sans: "DM Sans", "Avenir Next", Avenir, sans-serif;
+  --serif: "Cormorant Garamond Variable", "Iowan Old Style", Georgia, serif;
+  --sans: "DM Sans Variable", "Avenir Next", Avenir, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --scroll-progress: 0;
 }
@@ -196,7 +196,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .faq-v2 details[open] summary i { background: var(--eucalyptus); transform: rotate(45deg); }
 .faq-v2 details p { font: 400 .9rem/1.7 var(--sans); margin: -.25rem 4rem 2rem 0; max-width: 38rem; }
 
-/* Ponce recommendations */
+/* Guest recommendations */
 .travel-v2 { background: var(--paper); padding: clamp(6rem, 11vw, 10rem) clamp(1.5rem, 8vw, 9rem); }
 .travel-v2 > header { display: grid; gap: 2rem; grid-template-columns: 5rem 1.3fr .7fr; }
 .travel-v2 > header .line-icon { fill: none; height: 4rem; stroke: var(--wine); stroke-width: 1.5; width: 4rem; }

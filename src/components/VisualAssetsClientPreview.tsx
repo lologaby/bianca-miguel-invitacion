@@ -7,12 +7,15 @@ export function HeroStillLife() {
   return (
     <picture className="client-cover-art" aria-hidden="true">
       <img
-        src={privateAsset('cover-art.png')}
+        src={privateAsset('cover-art.webp')}
+        srcSet={`${privateAsset('cover-art-470.webp')} 470w, ${privateAsset('cover-art.webp')} 941w`}
+        sizes="(max-width: 900px) 100vw, 50vw"
         alt=""
         width="941"
         height="1672"
         loading="eager"
         decoding="async"
+        fetchPriority="high"
       />
     </picture>
   );

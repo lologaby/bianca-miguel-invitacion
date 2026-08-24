@@ -37,7 +37,7 @@ export function AdminDashboard() {
       setAuthorized(true);
       setStatus('Información actualizada.');
     } catch {
-      setStatus('No pudimos cargar las confirmaciones. Intenta nuevamente.');
+      setStatus('No pudimos cargar las confirmaciones. Intente nuevamente.');
     } finally {
       setBusy(false);
     }
@@ -61,6 +61,29 @@ export function AdminDashboard() {
     }
   }
 
+  async function logout() {
+    if (isDemo) {
+      setAuthorized(false);
+      setRecords([]);
+      setStatus('La vista de demostración se cerró.');
+      return;
+    }
+
+    setBusy(true);
+    setStatus('Cerrando sesión…');
+    try {
+      const response = await fetch('/api/admin-logout', { method: 'POST' });
+      if (!response.ok) throw new Error('logout');
+      setAuthorized(false);
+      setRecords([]);
+      setStatus('Sesión cerrada.');
+    } catch {
+      setStatus('No pudimos cerrar la sesión. Intente nuevamente.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const totals = useMemo(() => ({
     attending: records.filter((record) => record.attendance === 'yes').reduce((sum, record) => sum + record.partySize, 0),
     declined: records.filter((record) => record.attendance === 'no').length,
@@ -70,7 +93,7 @@ export function AdminDashboard() {
   if (!authorized) return (
     <main className="admin-login">
       <form onSubmit={login}>
-        <a href="./" className="admin-monogram" aria-label="Volver a la invitación">B <i>&</i> P</a>
+        <a href="./" className="admin-monogram" aria-label="Volver a la invitación">B <i>&</i> M</a>
         <h1>Panel de coordinación</h1>
         <p>Acceso reservado para la persona encargada de las confirmaciones.</p>
         <label htmlFor="admin-password">Contraseña</label>
@@ -85,7 +108,10 @@ export function AdminDashboard() {
     <main className="admin-shell">
       <header className="admin-header">
         <div><span>Celebración privada</span><h1>Confirmaciones</h1></div>
-        <button onClick={loadRecords} disabled={busy}>{busy ? 'Actualizando…' : 'Actualizar'}</button>
+        <div className="admin-header-actions">
+          <button type="button" onClick={loadRecords} disabled={busy}>{busy ? 'Actualizando…' : 'Actualizar'}</button>
+          <button className="admin-logout" type="button" onClick={logout} disabled={busy}>Cerrar sesión</button>
+        </div>
       </header>
       <p className="admin-summary"><strong>{totals.attending}</strong> personas asistirán <i></i><strong>{totals.declined}</strong> invitaciones declinaron <i></i><strong>{totals.pending}</strong> pendientes</p>
       <div className="admin-table-wrap">

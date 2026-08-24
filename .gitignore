@@ -1,6 +1,10 @@
 node_modules/
 dist/
+dist-qa/
 output/
+.playwright-cli/
+design-source/
+worker/private-assets/wordmark-900.png
 .wrangler/
 *.log
 *.tsbuildinfo

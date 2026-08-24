@@ -1,0 +1,182 @@
+.interactive-wine-glass {
+  --wine-glass-forest: var(--forest, #272c24);
+  --wine-glass-wine: var(--wine, #5e2023);
+  --wine-glass-brass: var(--brass, #b79a60);
+  --wine-glass-paper: var(--paper, #f7f1e7);
+  align-items: center;
+  grid-auto-flow: row;
+  row-gap: 0.75rem;
+  contain: layout paint;
+  display: grid;
+  inline-size: min(100%, 31rem);
+  isolation: isolate;
+  justify-items: center;
+  margin: 0 auto;
+  min-inline-size: 0;
+  position: relative;
+  touch-action: pan-y;
+}
+
+.interactive-wine-glass__art {
+  aspect-ratio: 9 / 13;
+  block-size: auto;
+  display: block;
+  inline-size: 100%;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+}
+
+.interactive-wine-glass__motion,
+.interactive-wine-glass__liquid {
+  transform: translate3d(0, 0, 0);
+  transform-box: fill-box;
+  transform-origin: 50% 92%;
+  will-change: transform;
+}
+
+.interactive-wine-glass__shadow {
+  fill: rgba(39, 44, 36, 0.18);
+  fill: color-mix(in srgb, var(--wine-glass-forest) 18%, transparent);
+  filter: blur(4px);
+  opacity: 0.36;
+}
+
+.interactive-wine-glass__bowl-wash {
+  stroke: none;
+}
+
+.interactive-wine-glass__outline,
+.interactive-wine-glass__rim,
+.interactive-wine-glass__stem,
+.interactive-wine-glass__base,
+.interactive-wine-glass__base-highlight,
+.interactive-wine-glass__highlight {
+  fill: none;
+  stroke: var(--wine-glass-forest);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.interactive-wine-glass__outline,
+.interactive-wine-glass__stem,
+.interactive-wine-glass__base {
+  stroke-width: 1.9;
+}
+
+.interactive-wine-glass__rim {
+  fill: rgba(247, 241, 231, 0.44);
+  fill: color-mix(in srgb, var(--wine-glass-paper) 44%, transparent);
+  stroke-width: 1.65;
+}
+
+.interactive-wine-glass__highlight,
+.interactive-wine-glass__base-highlight {
+  stroke: #e1cfaa;
+  stroke: color-mix(in srgb, var(--wine-glass-paper) 80%, var(--wine-glass-brass));
+  stroke-width: 2.2;
+}
+
+.interactive-wine-glass__highlight {
+  opacity: 0.76;
+}
+
+.interactive-wine-glass__base-highlight {
+  opacity: 0.6;
+}
+
+.interactive-wine-glass__wine {
+  stroke: none;
+}
+
+.interactive-wine-glass__surface {
+  fill: none;
+  opacity: 0.88;
+  stroke: #8e5f51;
+  stroke: color-mix(in srgb, var(--wine-glass-wine) 64%, var(--wine-glass-brass));
+  stroke-linecap: round;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.interactive-wine-glass__stream {
+  fill: none;
+  opacity: 0;
+  stroke: var(--wine-glass-wine);
+  stroke-linecap: round;
+  stroke-width: 6;
+  vector-effect: non-scaling-stroke;
+  will-change: opacity;
+}
+
+.interactive-wine-glass__motion-control {
+  align-items: center;
+  background: rgba(247, 241, 231, 0.88);
+  background: color-mix(in srgb, var(--wine-glass-paper) 88%, transparent);
+  border: 1px solid rgba(183, 154, 96, 0.72);
+  border: 1px solid color-mix(in srgb, var(--wine-glass-brass) 72%, transparent);
+  border-radius: 999px;
+  color: var(--wine-glass-forest);
+  cursor: pointer;
+  display: inline-flex;
+  font: 600 0.64rem/1 var(--sans, Arial, sans-serif);
+  justify-content: center;
+  margin-block-start: 0.25rem;
+  letter-spacing: 0.13em;
+  min-block-size: 44px;
+  padding: 0.72rem 1rem;
+  position: relative;
+  text-transform: uppercase;
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 2;
+}
+
+.interactive-wine-glass__motion-control:hover:not(:disabled) {
+  background: var(--wine-glass-wine);
+  border-color: var(--wine-glass-wine);
+  color: var(--wine-glass-paper);
+  transform: translate3d(0, -2px, 0);
+}
+
+.interactive-wine-glass__motion-control:active:not(:disabled) {
+  transform: translate3d(0, 0, 0) scale(0.98);
+}
+
+.interactive-wine-glass__motion-control:focus-visible {
+  outline: 2px solid var(--wine-glass-wine);
+  outline-offset: 4px;
+}
+
+.interactive-wine-glass__motion-control:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
+@media (max-width: 40rem) {
+  .interactive-wine-glass {
+    inline-size: min(88vw, 24rem);
+  }
+
+  .interactive-wine-glass__motion-control {
+    font-size: 0.59rem;
+    margin-block-start: 0;
+    max-inline-size: calc(100% - 2rem);
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-wine-glass__motion,
+  .interactive-wine-glass__liquid,
+  .interactive-wine-glass__motion-control {
+    transition: none !important;
+  }
+
+  .interactive-wine-glass__motion-control {
+    display: none;
+  }
+}

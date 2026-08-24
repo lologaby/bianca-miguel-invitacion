@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
+import { InteractiveWineGlass } from './components/InteractiveWineGlass';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
@@ -42,15 +43,18 @@ function Countdown({ start }: { start: string }) {
 }
 
 function Header({ event }: { event: PrivateEvent }) {
+  const [day = event.dateShort, month = ''] = event.dateShort.split('·').map((part) => part.trim());
   return <header className="craft-header">
     <a className="craft-monogram" href="#inicio" aria-label="Inicio"><span>{event.couple.first[0]}</span><i>&</i><span>{event.couple.second[0]}</span></a>
     <nav aria-label="Principal">{nav.map(([id, label]) => <a key={id} href={`#${id}`}>{label}</a>)}</nav>
-    <a className="header-date" href="#detalles"><span>{event.dateShort}</span></a>
+    <a className="header-date" href="#detalles" aria-label={'Ver itinerario del ' + event.dateLabel}>
+      <span>{day}</span>{month ? <span>{month}</span> : null}
+    </a>
   </header>;
 }
 
 function CoupleWordmark({ first, second }: { first: string; second: string }) {
-  return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.png`} alt={`${first} y ${second}`} width="1800" height="1200" loading="eager" decoding="async"/></span>;
+  return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.webp`} srcSet={`${import.meta.env.BASE_URL}private-assets/wordmark-450.webp 450w, ${import.meta.env.BASE_URL}private-assets/wordmark.webp 900w`} sizes="(max-width: 900px) 94vw, 43vw" alt={`${first} y ${second}`} width="900" height="600" loading="eager" decoding="async" fetchPriority="high"/></span>;
 }
 
 function GiftNumber({ number }: { number: string }) {
@@ -69,8 +73,58 @@ function GiftNumber({ number }: { number: string }) {
   return <button className="gift-number" type="button" onClick={() => void copyNumber()} aria-label={`Copiar número de ATH Móvil ${number}`}>
     <span>ATH MÓVIL</span>
     <strong>{number.replaceAll('-', ' · ')}</strong>
-    <small aria-live="polite">{copied ? 'Número copiado' : 'Toca para copiar'}</small>
+    <small aria-live="polite">{copied ? 'Número copiado' : 'Toque para copiar'}</small>
   </button>;
+}
+
+function WineStory({ event }: { event: PrivateEvent }) {
+  const paragraphs = event.story?.paragraphs ?? [
+    'El lugar que elegimos acompaña una celebración íntima, entre vino, cacao y luz tenue.',
+  ];
+
+  return <section className="wine-story-v25" aria-labelledby="wine-story-title">
+    <div className="wine-story-copy">
+      {event.story?.kicker ? <p className="wine-story-kicker">{event.story.kicker}</p> : null}
+      <h2 id="wine-story-title">Brindemos</h2>
+      <div className="wine-story-narrative">
+        {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+    </div>
+    <div className="wine-glass-stage-v25">
+      <InteractiveWineGlass ariaLabel="Copa de vino que se sirve y responde suavemente al movimiento" />
+      <p>Deslice, mueva el cursor o active el movimiento de su teléfono.</p>
+    </div>
+  </section>;
+}
+
+function GuestPlanning({ event }: { event: PrivateEvent }) {
+  const hasPlanning = Boolean(event.lodging?.length || event.transportation || event.hashtag || event.playlist);
+  if (!hasPlanning) return null;
+
+  return <section className="guest-planning-v25" aria-labelledby="guest-planning-title">
+    <header>
+      <h2 id="guest-planning-title">Para acompañarnos<br/><em>con calma.</em></h2>
+      <p>Información adicional para organizar su visita.</p>
+    </header>
+    <div className="guest-planning-list">
+      {event.lodging?.length ? <article>
+        <h3>Hospedaje recomendado</h3>
+        <ul>{event.lodging.map((option) => <li key={option.name}>
+          {option.url ? <a href={option.url} target="_blank" rel="noreferrer">{option.name}</a> : <strong>{option.name}</strong>}
+          {option.note ? <span>{option.note}</span> : null}
+        </li>)}</ul>
+      </article> : null}
+      {event.transportation ? <article>
+        <h3>Traslado entre espacios</h3>
+        <p>{event.transportation.note}</p>
+      </article> : null}
+      {event.hashtag || event.playlist ? <article>
+        <h3>Compartir la noche</h3>
+        {event.hashtag ? <p className="wedding-hashtag">{event.hashtag}</p> : null}
+        {event.playlist ? <a className="planning-link-v25" href={event.playlist.url} target="_blank" rel="noreferrer">{event.playlist.label}<span aria-hidden="true">↗</span></a> : null}
+      </article> : null}
+    </div>
+  </section>;
 }
 
 function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
@@ -91,17 +145,14 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
             <CoupleWordmark first={event.couple.first} second={event.couple.second}/>
           </h1>
           <div className="client-hero-personalization">
-            <span>Para {guest.name}</span>
+            <span>Para: {guest.name}</span>
             <span>{event.dateLabel} · {event.ceremony.city}</span>
           </div>
         </div>
         <div className="client-hero-art"><ClientCoverArt/></div>
       </section>
 
-      <section className="masked-word-section" aria-label="Brindemos">
-        <h2 aria-hidden="true">Brindemos</h2>
-        <div><p>Una mesa larga, flores blancas y una copa servida despacio.</p><VineRule/></div>
-      </section>
+      <WineStory event={event}/>
 
       <section className="date-v2" aria-label="Cuenta regresiva">
         <div className="date-icon"><LineIcon name="calendar"/></div>
@@ -115,7 +166,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
           <h2>El ritmo<br/><em>de la noche.</em></h2>
           <p>Una tarde para encontrarnos; una noche para brindar, probar y compartir.</p>
           <div className="itinerary-guest">
-            <span>Tu invitación contempla</span>
+            <span>Su invitación contempla</span>
             <strong>{guest.partyLimit} {guest.partyLimit === 1 ? 'lugar' : 'lugares'}</strong>
             {guest.companionNames?.length ? <small>Junto a {guest.companionNames.join(', ')}</small> : null}
           </div>
@@ -149,15 +200,18 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
             <span>Código de vestimenta</span>
             <h3>{event.dressCode?.label ?? 'Cóctel / Formal'}</h3>
             <p>{event.dressCode?.note ?? 'Agradecemos vestir con elegancia para acompañarnos durante toda la celebración.'}</p>
+            {event.weatherNote ? <div className="weather-note-v25"><strong>Clima al llegar</strong><p>{event.weatherNote}</p></div> : null}
           </article>
           {event.gifts ? <article className="gift-detail">
-            <span>Si desean obsequiarnos</span>
-            <h3>Su presencia es nuestro regalo más especial.</h3>
+            <span>Si desea obsequiarnos</span>
+            <h3>{event.gifts.heading ?? 'Lo más valioso será compartir la mesa con usted.'}</h3>
             <p>{event.gifts.message}</p>
             <GiftNumber number={event.gifts.athMovil}/>
           </article> : null}
         </div>
       </section>
+
+      <GuestPlanning event={event}/>
 
       <section className="faq-v2" id="preguntas"><header><h2>Antes<br/>de brindar</h2><p>Lo esencial para acompañarnos con calma.</p></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section>
 
@@ -174,7 +228,7 @@ function DuringWedding({ invitation }: { invitation: InvitationPayload }) {
 
 function AfterWedding({ invitation }: { invitation: InvitationPayload }) {
   const { event } = invitation;
-  return <main className="phase-v2 after-v2"><div className="after-image"><img src={`${import.meta.env.BASE_URL}images/wine-still-life.png`} alt="Composición de vino, calas, tulipán, uvas y eucalipto"/></div><div><h1>Gracias por<br/><em>quedarte.</em></h1><p>Por acompañarnos y hacer de esta noche un recuerdo que siempre tendrá un lugar en nuestra mesa.</p><div className="gallery-message"><LineIcon name="wine"/><div><b>La galería llegará pronto</b><span>Compartiremos las fotografías seleccionadas aquí.</span></div></div></div></main>;
+  return <main className="phase-v2 after-v2"><div className="after-image"><img src={`${import.meta.env.BASE_URL}images/wine-still-life.webp`} alt="Composición de vino, calas, tulipán, uvas y eucalipto" width="1024" height="1536"/></div><div><h1>Gracias por<br/><em>acompañarnos.</em></h1><p>Por ser parte de esta noche y convertirla en un recuerdo que siempre tendrá un lugar en nuestra mesa.</p><div className="gallery-message"><LineIcon name="wine"/><div><b>La galería llegará pronto</b><span>Compartiremos las fotografías seleccionadas aquí.</span></div></div></div></main>;
 }
 
 function phaseFor(event: PrivateEvent) {

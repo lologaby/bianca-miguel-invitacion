@@ -25,7 +25,7 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
   return (
     <div className={'invitation-envelope-reveal ' + (opening ? 'is-opening' : 'is-closed')} aria-hidden={opening ? undefined : true}>
       {opening ? <p ref={status} className="envelope-reveal-title" role="status" tabIndex={-1}>
-        Tu invitación está lista
+        Su invitación está lista
       </p> : null}
 
       <div className="stationery-envelope" aria-hidden="true">
@@ -35,7 +35,7 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
           {invitation ? <>
             <b>{firstInitial}<i>&amp;</i>{secondInitial}</b>
             <span>Una noche para brindar despacio</span>
-          </> : <span className="stationery-card__promise">Reservado para ti</span>}
+          </> : <span className="stationery-card__promise">Reservado para usted</span>}
           <span className="stationery-card__rule" />
         </article>
         <div className="stationery-envelope__front">
@@ -53,7 +53,7 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
         </span>
       </div>
 
-      {opening ? <p className="envelope-reveal-note">Abriendo tu lugar en la mesa…</p> : null}
+      {opening ? <p className="envelope-reveal-note">Abriendo su lugar en la mesa…</p> : null}
     </div>
   );
 }
