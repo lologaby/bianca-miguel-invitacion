@@ -6,5 +6,6 @@ import './client-concept-v23.css';
 import './wedding-iteration-v25.css';
 import './wedding-final-v26.css';
 import './wedding-client-idea-v27.css';
+import './art/page-marks.css';
 
 export default App;
