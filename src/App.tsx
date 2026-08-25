@@ -4,6 +4,10 @@ import { InteractiveWineGlass } from './components/InteractiveWineGlass';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
+import { Ampersand, ArchMark, CacaoPodMark, SpeckleDisc, WedgeMark, WineGlassMark } from './art/ReferenceMarks';
+import { ScrollMark } from './art/ScrollMark';
+import { AddToCalendar } from './components/AddToCalendar';
+import { VenueMap } from './components/VenueMap';
 import { HeroStillLife as DrawnHeroStillLife } from './components/VisualAssetsPolishedComplete';
 import { faqFor } from './config/event';
 import type { InvitationPayload, PrivateEvent } from './types/invitation';
@@ -11,7 +15,7 @@ import './craft.css';
 import './refined.css';
 import './itinerary.css';
 
-const nav = [['celebracion', 'Celebración'], ['preguntas', 'Preguntas'], ['rsvp', 'Confirmar']] as const;
+const nav = [['celebracion', 'Celebración'], ['lugar', 'Lugar'], ['preguntas', 'Preguntas'], ['rsvp', 'Confirmar']] as const;
 
 function useScrollProgress() {
   useEffect(() => {
@@ -63,7 +67,7 @@ function Header({ event }: { event: PrivateEvent }) {
   }, []);
 
   return <header className="craft-header">
-    <a className="craft-monogram" href="#inicio" aria-label="Inicio"><span>{event.couple.first[0]}</span><i>&</i><span>{event.couple.second[0]}</span></a>
+    <a className="craft-monogram" href="#inicio" aria-label="Inicio"><span>{event.couple.first[0]}</span><i><Ampersand className="mark-ampersand" tone="currentColor"/></i><span>{event.couple.second[0]}</span></a>
     <nav aria-label="Secciones de la invitación">{nav.map(([id, label]) => <a key={id} href={`#${id}`} aria-current={active === id ? 'location' : undefined} onClick={() => setActive(id)}>{label}</a>)}</nav>
     <a className="header-date" href="#celebracion" aria-label={'Ver la celebración del ' + event.dateLabel}>
       <span>{day}</span>{month ? <span>{month}</span> : null}
@@ -73,6 +77,15 @@ function Header({ event }: { event: PrivateEvent }) {
 
 function CoupleWordmark({ first, second }: { first: string; second: string }) {
   return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.webp`} srcSet={`${import.meta.env.BASE_URL}private-assets/wordmark-450.webp 450w, ${import.meta.env.BASE_URL}private-assets/wordmark.webp 900w`} sizes="(max-width: 900px) 94vw, 43vw" alt={`${first} y ${second}`} width="900" height="600" loading="eager" decoding="async" fetchPriority="high"/></span>;
+}
+
+function PaymentGlyph() {
+  return <svg className="line-icon payment-glyph" viewBox="0 0 64 64" aria-hidden="true">
+    <rect x="17" y="5" width="30" height="54" rx="5"/>
+    <path d="M28 51h8"/>
+    <circle cx="32" cy="28" r="9"/>
+    <path d="M32 22v12M29 25h5a2.5 2.5 0 0 1 0 5h-4a2.5 2.5 0 0 0 0 5h5"/>
+  </svg>;
 }
 
 function GiftNumber({ number }: { number: string }) {
@@ -89,9 +102,9 @@ function GiftNumber({ number }: { number: string }) {
   }
 
   return <button className="gift-number" type="button" onClick={() => void copyNumber()} aria-label={`Copiar número de ATH Móvil ${number}`}>
-    <span>ATH MÓVIL</span>
+    <span><PaymentGlyph/>ATH Móvil</span>
     <strong>{number.replaceAll('-', ' · ')}</strong>
-    <small aria-live="polite">{copied ? 'Número copiado' : 'Toque para copiar'}</small>
+    <small aria-live="polite">{copied ? 'Copiado' : 'Toque para copiar'}</small>
   </button>;
 }
 
@@ -118,7 +131,7 @@ function GuestPlanning({ event }: { event: PrivateEvent }) {
 
   return <section className="guest-planning-v25" aria-labelledby="guest-planning-title">
     <header>
-      <h2 id="guest-planning-title">Su visita a Ponce</h2>
+      <h2 id="guest-planning-title">Su visita a {event.ceremony.city.split(',')[0]}</h2>
 
     </header>
     <div className="guest-planning-list">
@@ -150,11 +163,11 @@ function CelebrationSummary({ event, guest, ceremonyTime, receptionTime }: {
 }) {
   const places = `${guest.partyLimit} ${guest.partyLimit === 1 ? 'lugar' : 'lugares'}`;
   return <section className="celebration-summary-v26" id="celebracion" aria-labelledby="celebration-summary-title">
+    <ScrollMark place="crest" opacity={0.07}><ArchMark tone="currentColor"/></ScrollMark>
     <div className="celebration-summary-copy">
-      <h2 id="celebration-summary-title">La celebración.</h2>
-      <p>Todos los detalles, en un mismo lugar.</p>
-      <p>Su invitación es personal y contempla <strong>{places}</strong>.</p>
-      {guest.companionNames?.length ? <p className="celebration-companions"><span>Personas incluidas</span>{guest.companionNames.join(', ')}</p> : null}
+      <h2 id="celebration-summary-title">El día</h2>
+      <p>Hemos reservado <strong>{places}</strong> a su nombre.</p>
+      {guest.companionNames?.length ? <p className="celebration-companions"><span>Con usted</span>{guest.companionNames.join(', ')}</p> : null}
     </div>
     <div className="celebration-summary-events">
       <article>
@@ -182,16 +195,19 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
     <main>
       <section className="client-concept-hero" id="inicio" aria-labelledby="client-hero-title">
         <div className="client-hero-copy">
-          <p className="client-hero-overline">Invitación de boda</p>
           <h1 id="client-hero-title">
             <CoupleWordmark first={event.couple.first} second={event.couple.second}/>
           </h1>
-          <p className="client-hero-theme">Cata de vino y chocolate</p>
+          <p className="client-hero-date">{event.dateLabel} · {event.ceremony.city.split(',')[0]}</p>
           <div className="client-hero-personalization">
-            <span>Para: {guest.name}</span>
+            <span className="hero-addressee-label">Para</span>
+            <span className="hero-addressee-name">{guest.name}</span>
           </div>
         </div>
         <div className="client-hero-art"><ClientCoverArt/></div>
+        <a className="hero-scroll-cue" href="#celebracion" aria-label="Ver la celebración">
+          <span aria-hidden="true"></span>
+        </a>
       </section>
 
       <WineStory event={event}/>
@@ -199,15 +215,16 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
       <section className="date-v2" aria-label="Cuenta regresiva">
         <div className="date-icon"><LineIcon name="calendar"/></div>
         <div className="date-word"><span>La fecha</span><h2>{event.dateShort}</h2><span>{event.ceremony.city}</span></div>
-        <div className="date-countdown"><p>Cuenta regresiva</p><Countdown start={event.start}/></div>
+        <div className="date-countdown"><p>Cuenta regresiva</p><Countdown start={event.start}/><AddToCalendar event={event}/></div>
         <div className="pour-line" aria-hidden="true"><span></span></div>
       </section>
 
       <CelebrationSummary event={event} guest={guest} ceremonyTime={ceremonyTime} receptionTime={receptionTime}/>
 
       <section className="event-v2 itinerary-v3" id="detalles">
+        <ScrollMark place="corner" opacity={0.06}><WedgeMark tone="currentColor" flip/></ScrollMark>
         <header>
-          <h2>Itinerario</h2>
+          <h2>El orden de la tarde</h2>
           <p>Ceremonia: {ceremonyTime} · Recepción: {receptionTime}</p>
         </header>
 
@@ -225,38 +242,45 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
             <article className="itinerary-card reception-stage">
               <LineIcon name="wine"/>
               <div><span>Recepción</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
-              {event.reception.mapsUrl ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}
+              {event.reception.mapsUrl && event.reception.mapsUrl !== '#' ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}
               {receptionMoments.length ? <ol className="reception-flow" aria-label="Momentos de la recepción">{receptionMoments.map((moment) => <li key={moment}>{moment}</li>)}</ol> : null}
             </article>
           </li>
         </ol>
       </section>
 
-      <section className="guest-details-v3" id="etiqueta" aria-labelledby="guest-details-title">
-        <header><h2 id="guest-details-title">Vestimenta y regalos</h2><p>Código de vestimenta e información para obsequios.</p></header>
+      <VenueMap event={event}/>
+
+      <section className="guest-details-v3 dress-section-v28" id="etiqueta" aria-labelledby="dress-title">
+        <ScrollMark place="edge-right" opacity={0.09}><CacaoPodMark tone="currentColor"/></ScrollMark>
+        <header><h2 id="dress-title">Cómo vestir</h2></header>
         <div className="guest-detail-grid">
           <article className="dress-detail">
-            <span>Código de vestimenta</span>
             <h3>{event.dressCode?.label ?? 'Cóctel / Formal'}</h3>
-            <p>{event.dressCode?.note ?? 'Agradecemos vestir con elegancia para acompañarnos durante toda la celebración.'}</p>
-            {event.weatherNote ? <div className="weather-note-v25"><strong>Clima al llegar</strong><p>{event.weatherNote}</p></div> : null}
+            <p>{event.dressCode?.note ?? 'Vístase como se sienta bien; la noche es larga y queremos verlo cómodo.'}</p>
+            {event.weatherNote ? <div className="weather-note-v25"><strong>Al llegar</strong><p>{event.weatherNote}</p></div> : null}
           </article>
-          {event.gifts ? <article className="gift-detail">
-            <span>Regalos</span>
-            <h3>{event.gifts.heading ?? 'Si desea hacernos un regalo'}</h3>
-            <p>{event.gifts.message}</p>
-            <GiftNumber number={event.gifts.athMovil}/>
-          </article> : null}
         </div>
       </section>
 
+      {event.gifts ? <section className="guest-details-v3 gift-section-v28" id="detalle" aria-labelledby="gift-title">
+        <ScrollMark place="sink" opacity={0.06}><SpeckleDisc tone="currentColor"/></ScrollMark>
+        <header><h2 id="gift-title">{event.gifts.heading ?? 'Si desea tener un detalle'}</h2></header>
+        <div className="guest-detail-grid">
+          <article className="gift-detail">
+            <p>{event.gifts.message}</p>
+            <GiftNumber number={event.gifts.athMovil}/>
+          </article>
+        </div>
+      </section> : null}
+
       <GuestPlanning event={event}/>
 
-      {faq.length ? <section className="faq-v2" id="preguntas"><header><h2>Preguntas frecuentes</h2><p>Información práctica para el {event.dateLabel}.</p></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
+      {faq.length ? <section className="faq-v2" id="preguntas"><ScrollMark place="sink" opacity={0.07}><SpeckleDisc tone="currentColor"/></ScrollMark><header><h2>Antes de venir</h2></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
 
-      <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><VineRule/><RsvpForm guest={guest}/></section>
+      <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><ScrollMark place="edge-right" opacity={0.08}><WineGlassMark tone="currentColor"/></ScrollMark><VineRule/><RsvpForm guest={guest}/></section>
     </main>
-    <footer className="footer-v2"><div className="footer-names">{event.couple.first} <i>&</i> {event.couple.second}</div><VineRule inverted/><div className="footer-meta"><span>{event.dateLabel}</span><span>{event.ceremony.city}</span></div></footer>
+    <footer className="footer-v2"><div className="footer-names">{event.couple.first}<i><Ampersand className="mark-ampersand" tone="currentColor"/></i>{event.couple.second}</div><VineRule inverted/><div className="footer-meta"><span>{event.dateLabel}</span><span>{event.ceremony.city}</span></div></footer>
   </div>;
 }
 

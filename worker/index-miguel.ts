@@ -2,8 +2,6 @@ import { rsvpSchema } from '../db/schema';
 import type { Guest, InvitationPayload, PrivateEvent } from '../src/types/invitation';
 import wordmarkDataUrl from './private-assets/wordmark.webp?inline';
 import wordmarkMobileDataUrl from './private-assets/wordmark-450.webp?inline';
-import coverArtDataUrl from './private-assets/cover-art.webp?inline';
-import coverArtMobileDataUrl from './private-assets/cover-art-470.webp?inline';
 import {
   clearFailedAccess,
   ensureGuestAuthTables,
@@ -76,8 +74,6 @@ function decodeDataUrl(dataUrl: string) {
 const privateBrandAssets = new Map([
   ['/private-assets/wordmark.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkDataUrl) }],
   ['/private-assets/wordmark-450.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkMobileDataUrl) }],
-  ['/private-assets/cover-art.webp', { contentType: 'image/webp', body: decodeDataUrl(coverArtDataUrl) }],
-  ['/private-assets/cover-art-470.webp', { contentType: 'image/webp', body: decodeDataUrl(coverArtMobileDataUrl) }],
 ]);
 
 const previewGuest: PrivateGuestRecord = {
@@ -90,7 +86,7 @@ const previewGuest: PrivateGuestRecord = {
 
 const privateEvent: PrivateEvent = {
     couple: { first: 'Bianca', second: 'Miguel' },
-    dateLabel: '26 de diciembre',
+    dateLabel: '26 de diciembre de 2026',
     dateShort: '26 · DICIEMBRE',
     start: '2026-12-26T16:00:00-04:00',
     end: '2026-12-27T02:00:00-04:00',
@@ -108,15 +104,15 @@ const privateEvent: PrivateEvent = {
       city: 'Ponce, Puerto Rico',
       timeLabel: '6:00 p. m.',
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Bodega+de+Mendez+Ponce+Puerto+Rico',
-      moments: ['Cóctel de bienvenida', 'Cata de vino y chocolates', 'Cena y compartir'],
+      moments: ['Cóctel de bienvenida', 'Cata de vino y chocolates', 'Cena y baile'],
     },
     dressCode: {
       label: 'Cóctel / Formal',
-      note: 'No hay colores reservados. Puede elegir el color que prefiera dentro del código Cóctel / Formal.',
+      note: 'Sin código de color: use el que prefiera.',
     },
     gifts: {
-      heading: 'Si desea hacernos un regalo',
-      message: 'Puede entregarlo en efectivo o enviarlo por ATH Móvil.',
+      heading: 'Un detalle',
+      message: 'Su presencia es el regalo. Si desea obsequiarnos algo, puede hacerlo en efectivo o por ATH Móvil.',
       athMovil: '787-410-5571',
     },
     faq: [
@@ -128,7 +124,7 @@ const privateEvent: PrivateEvent = {
       {
         id: 'attire-colors',
         q: '¿Hay colores específicos para la vestimenta?',
-        a: 'No hay colores reservados. La recepción será en una bodega con iluminación tenue; puede elegir el color que prefiera dentro del código Cóctel / Formal.',
+        a: 'No. La recepción es en una bodega de luz tenue; use el color que prefiera.',
       },
       {
         id: 'indoor-spaces',
@@ -153,10 +149,10 @@ const privateEvent: PrivateEvent = {
     ],
     story: {
       paragraphs: [
-        'Elegimos Ponce para la boda y Bodega de Méndez para la recepción. Allí tendremos una cata de vino y chocolates antes de la cena.',
+        'Elegimos Ponce, y la Bodega de Méndez para recibirle. Allí habrá una cata de vino y chocolates antes de la cena.',
       ],
     },
-    weatherNote: 'En Ponce, diciembre sigue siendo cálido y húmedo al llegar. La ceremonia y la recepción son en interiores con aire acondicionado; dentro del código Cóctel / Formal, las telas frescas pueden resultarle más cómodas.',
+    weatherNote: 'Diciembre en Ponce sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
 };
 
 function invitationForGuest(guest: PrivateGuestRecord): InvitationPayload {
