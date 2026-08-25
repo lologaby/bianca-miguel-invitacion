@@ -12,3 +12,8 @@ apply-test.txt
 .env
 .env.*
 !.env.example
+
+# Real event data, pasted into the host as PRIVATE_EVENT_JSON. Never committed.
+private-event.local.json
+private-event.env.local.txt
+event-content.local.yaml

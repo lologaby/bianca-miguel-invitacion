@@ -18,6 +18,7 @@ interface Env {
   PREVIEW_GUEST_CODE?: string;
   PREVIEW_LINK_TOKEN?: string;
   PRIVATE_GUESTS_JSON?: string;
+  PRIVATE_EVENT_JSON?: string;
   SESSION_SECRET?: string;
   ADMIN_PASSWORD?: string;
 }
@@ -84,85 +85,32 @@ const previewGuest: PrivateGuestRecord = {
   companionNames: ['Acompañante invitado'],
 };
 
-const privateEvent: PrivateEvent = {
-    couple: { first: 'Bianca', second: 'Miguel' },
-    dateLabel: '26 de diciembre de 2026',
-    dateShort: '26 · DICIEMBRE',
-    start: '2026-12-26T16:00:00-04:00',
-    end: '2026-12-27T02:00:00-04:00',
-    timezone: 'America/Puerto_Rico',
-    timeLabel: '4:00 p. m.',
-    ceremony: {
-      name: 'Iglesia Cristiana Discípulos de Cristo en Ponce',
-      city: 'Ponce, Puerto Rico',
-      timeLabel: '4:00 p. m.',
-      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Iglesia+Cristiana+Discipulos+de+Cristo+Ponce',
-    },
-    reception: {
-      name: 'Bodega de Méndez',
-      note: 'Ponce, Puerto Rico',
-      city: 'Ponce, Puerto Rico',
-      timeLabel: '6:00 p. m.',
-      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Bodega+de+Mendez+Ponce+Puerto+Rico',
-      moments: ['Cóctel de bienvenida', 'Cata de vino y chocolates', 'Cena y baile'],
-    },
-    dressCode: {
-      label: 'Cóctel / Formal',
-      note: 'Sin código de color: use el que prefiera.',
-    },
-    gifts: {
-      heading: 'Un detalle',
-      message: 'Su presencia es el regalo. Si desea obsequiarnos algo, puede hacerlo en efectivo o por ATH Móvil.',
-      athMovil: '787-410-5571',
-    },
-    faq: [
-      {
-        id: 'companions',
-        q: '¿Puedo llevar acompañantes?',
-        a: 'Su invitación indica cuántas personas de su núcleo familiar están incluidas. Por capacidad, solo podremos recibir ese número.',
-      },
-      {
-        id: 'attire-colors',
-        q: '¿Hay colores específicos para la vestimenta?',
-        a: 'No. La recepción es en una bodega de luz tenue; use el color que prefiera.',
-      },
-      {
-        id: 'indoor-spaces',
-        q: '¿La ceremonia y la recepción serán en espacios bajo techo?',
-        a: 'Sí. La ceremonia y la recepción serán en interiores con aire acondicionado.',
-      },
-      {
-        id: 'rsvp-deadline',
-        q: '¿Hasta cuándo tengo para confirmar mi asistencia?',
-        a: 'La fecha límite para confirmar es el 15 de octubre de 2026.',
-      },
-      {
-        id: 'parking',
-        q: '¿Habrá estacionamiento disponible?',
-        a: 'La iglesia tiene estacionamiento. En Bodega de Méndez los espacios son limitados; también puede estacionarse en las calles cercanas. Le recomendamos llegar con tiempo.',
-      },
-      {
-        id: 'drinks',
-        q: '¿Habrá bebidas alcohólicas y opciones sin alcohol?',
-        a: 'La recepción incluye bebidas alcohólicas y opciones sin alcohol. Habrá cash bar para compras adicionales.',
-      },
-    ],
-    story: {
-      paragraphs: [
-        'Elegimos Ponce, y la Bodega de Méndez para recibirle. Allí habrá una cata de vino y chocolates antes de la cena.',
-      ],
-    },
-    weatherNote: 'Diciembre en Ponce sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
-};
+/**
+ * The event, read from the host rather than kept in the repository.
+ *
+ * The venue, the date and the couple's ATH Móvil number are exactly what the
+ * invitation gate exists to protect, so they are not source code. Set
+ * PRIVATE_EVENT_JSON in the hosting environment; api/_data.ts reads the same
+ * variable on the Vercel side, so both servers are configured identically.
+ */
+function readPrivateEvent(env: Env): PrivateEvent {
+  const raw = env.PRIVATE_EVENT_JSON?.trim();
+  if (!raw) throw new Error('PRIVATE_EVENT_JSON is not configured');
+  const parsed = JSON.parse(raw) as PrivateEvent;
+  if (!parsed?.couple?.first || !parsed?.start || !parsed?.ceremony?.name) {
+    throw new Error('PRIVATE_EVENT_JSON is missing required fields');
+  }
+  return parsed;
+}
 
-function invitationForGuest(guest: PrivateGuestRecord): InvitationPayload {
+function invitationForGuest(guest: PrivateGuestRecord, env: Env): InvitationPayload {
   const publicGuest: Guest = {
     name: guest.name,
     partyLimit: guest.partyLimit,
     plusOneAllowed: guest.plusOneAllowed,
     companionNames: guest.companionNames ? [...guest.companionNames] : undefined,
   };
-  return { guest: publicGuest, event: privateEvent };
+  return { guest: publicGuest, event: readPrivateEvent(env) };
 }
 
 const cookieName = 'bianca_invitation_session';
@@ -591,13 +539,13 @@ async function api(request: Request, env: Env) {
 
     await clearFailedAccess(request, env.DB);
     const sessionId = await issueGuestSession(env.DB, guest.id);
-    return json(invitationForGuest(guest), { headers: { 'set-cookie': guestSessionCookie(cookieName, sessionId) } });
+    return json(invitationForGuest(guest, env), { headers: { 'set-cookie': guestSessionCookie(cookieName, sessionId) } });
   }
 
   if (url.pathname === '/api/session' && request.method === 'GET') {
     const guest = await authenticatedGuest(request, env);
     return guest
-      ? json(invitationForGuest(guest))
+      ? json(invitationForGuest(guest, env))
       : new Response(null, {
         status: 204,
         headers: {
@@ -633,8 +581,15 @@ async function api(request: Request, env: Env) {
 export default {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url);
-    if (url.pathname.startsWith('/private-assets/')) return privateAsset(request, env);
-    if (url.pathname.startsWith('/api/')) return api(request, env);
-    return new Response(null, { status: 404 });
+    try {
+      if (url.pathname.startsWith('/private-assets/')) return privateAsset(request, env);
+      if (url.pathname.startsWith('/api/')) return api(request, env);
+      return new Response(null, { status: 404 });
+    } catch (error) {
+      // A deploy missing PRIVATE_EVENT_JSON must fail as a plain 503, never as
+      // an unhandled throw that echoes internals back to the caller.
+      console.error('request failed', error);
+      return json({ error: 'unavailable' }, { status: 503 });
+    }
   },
 } satisfies ExportedHandler<Env>;
