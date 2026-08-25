@@ -20,13 +20,26 @@ Cada invitación puede abrirse de dos maneras:
 1. Enlace personal con token opaco: `?invite=TOKEN`
 2. Código escrito manualmente como respaldo
 
-Genera un enlace y su hash sin guardar el token en el repositorio:
+Genera el registro completo de un invitado — código legible, hash y, si lo pides, enlace personal:
 
 ```bash
-node scripts/generate-invite-link.mjs https://tu-dominio.com/
+node scripts/generate-guest.mjs "María Rodríguez" 2
+node scripts/generate-guest.mjs "María Rodríguez" 2 --link https://tu-dominio.com/
 ```
 
-Agrega el `linkHash`, el `codeHash`, nombre, cupos y acompañantes en `GUESTS_JSON`. Los valores en claro se comparten únicamente con el invitado.
+Imprime el código para el invitado y el objeto para `GUESTS_JSON`. El sitio nunca guarda el código, solo su SHA-256; el código en claro se comparte únicamente con el invitado y no se guarda en el repositorio.
+
+El código no distingue mayúsculas ni espacios sobrantes: el servidor recorta y pasa a mayúsculas antes de comparar.
+
+### Probar el worker en local
+
+```bash
+npm run build
+cp .dev.vars dist/server/.dev.vars
+npx wrangler dev --config dist/server/wrangler.json --local
+```
+
+`.dev.vars` va con **comillas simples**; entre comillas dobles los `\"` del JSON llegan escapados al worker, `JSON.parse` falla en silencio y toda autenticación devuelve 401 sin decir por qué.
 
 ## Panel de coordinación
 

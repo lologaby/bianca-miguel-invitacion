@@ -17,6 +17,9 @@ interface Env {
   DB: D1Database;
   PREVIEW_GUEST_CODE?: string;
   PREVIEW_LINK_TOKEN?: string;
+  /* GUESTS_JSON is the name api/_data.ts uses; the other is the older
+     spelling and is still read so an existing deploy keeps working. */
+  GUESTS_JSON?: string;
   PRIVATE_GUESTS_JSON?: string;
   PRIVATE_EVENT_JSON?: string;
   SESSION_SECRET?: string;
@@ -336,7 +339,7 @@ function optionalHash(value: unknown) {
 }
 
 function privateGuestDirectory(env: Env) {
-  const source = env.PRIVATE_GUESTS_JSON?.trim() || '';
+  const source = (env.GUESTS_JSON ?? env.PRIVATE_GUESTS_JSON)?.trim() || '';
   if (source === cachedGuestDirectorySource) return cachedGuestDirectory;
 
   cachedGuestDirectorySource = source;

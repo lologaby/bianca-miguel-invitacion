@@ -12,6 +12,7 @@ worker/private-assets/wordmark-900.png
 *.tsbuildinfo
 apply-test.txt
 .env
+.dev.vars
 .env.*
 !.env.example
 
