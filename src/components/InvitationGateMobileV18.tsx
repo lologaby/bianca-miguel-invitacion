@@ -50,7 +50,7 @@ export function InvitationGate({ onReveal }: Props) {
   async function authorize(body: { code?: string; linkToken?: string }) {
     setBusy(true);
     setHasError(false);
-    setStatus(body.linkToken ? 'Preparando su sobre…' : 'Comprobando su código…');
+    setStatus(body.linkToken ? 'Preparando tu sobre…' : 'Comprobando tu código…');
     try {
       const response = await fetch('/api/guest', {
         method: 'POST',
@@ -62,8 +62,8 @@ export function InvitationGate({ onReveal }: Props) {
     } catch {
       setHasError(true);
       setStatus(body.linkToken
-        ? 'Este enlace ya no está activo. Puede usar el código que recibió.'
-        : 'Ese código no coincide. Revíselo e intente nuevamente.');
+        ? 'Este enlace ya no está activo. Puedes usar el código que recibiste.'
+        : 'Ese código no coincide. Revísalo e inténtalo de nuevo.');
       if (body.linkToken) setShowCode(true);
       window.setTimeout(() => input.current?.focus(), 0);
     } finally {
@@ -103,7 +103,7 @@ export function InvitationGate({ onReveal }: Props) {
     const value = code.trim();
     if (!value) {
       setHasError(true);
-      setStatus('Escriba el código que recibió.');
+      setStatus('Escribe el código que recibiste.');
       input.current?.focus();
       return;
     }
@@ -124,13 +124,13 @@ export function InvitationGate({ onReveal }: Props) {
     <main className={'private-gate mystery-gate' + (opening ? ' is-opening' : '') + (hasError ? ' has-error' : '')}>
       <section className="mystery-gate-composition" aria-labelledby="gate-title">
         <div className="mystery-intro" aria-hidden={opening || undefined}>
-          <h1 id="gate-title">Algo especial<br/><i>le espera.</i></h1>
+          <h1 id="gate-title">Algo especial<br/><i>te espera.</i></h1>
         </div>
 
         <InvitationEnvelope invitation={pendingInvitation} opening={opening} onComplete={finishReveal} />
 
         <div className="mystery-access" aria-hidden={opening || undefined}>
-          <p className="private-gate-copy">Ingrese el código que recibió para abrir el sobre.</p>
+          <p className="private-gate-copy">Ingresa el código que recibiste para abrir el sobre.</p>
 
           {linkToken && !showCode ? (
             <div className="mystery-actions">
@@ -141,7 +141,7 @@ export function InvitationGate({ onReveal }: Props) {
             </div>
           ) : !showCode ? (
             <button className="mystery-reveal" type="button" disabled={opening} onClick={revealCode}>
-              <span>Ingresar el código</span><b aria-hidden="true">→</b>
+              <span>Escribir el código</span><b aria-hidden="true">→</b>
             </button>
           ) : (
             <form className="mystery-code-form" onSubmit={submit}>

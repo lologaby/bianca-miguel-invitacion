@@ -1,4 +1,5 @@
 import { AnimationEvent, useEffect, useRef } from 'react';
+import { Ampersand, CacaoPodMark } from '../art/ReferenceMarks';
 import type { InvitationPayload } from '../types/invitation';
 import './envelope-reveal.css';
 
@@ -35,22 +36,21 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
           {invitation ? <>
             <b>{firstInitial}<i>&amp;</i>{secondInitial}</b>
             <span>{invitation.event.couple.first} &amp; {invitation.event.couple.second} · {invitation.event.dateLabel}</span>
-          </> : <span className="stationery-card__promise">Reservado para usted</span>}
+          </> : <span className="stationery-card__promise">Reservado para ti</span>}
           <span className="stationery-card__rule" />
         </article>
         <div className="stationery-envelope__front">
+          <CacaoPodMark className="envelope-pod" tone="currentColor" />
           <span className="stationery-envelope__seam left" />
           <span className="stationery-envelope__seam right" />
         </div>
         <div className="stationery-envelope__flap" />
         <span className="stationery-envelope__seal">
-          <span className="stationery-envelope__monogram" aria-hidden="true">
-            {firstInitial ?? 'B'}<i>&amp;</i>{secondInitial ?? 'M'}
-          </span>
+          <Ampersand className="envelope-ampersand" tone="currentColor" />
         </span>
       </div>
 
-      {opening ? <p className="envelope-reveal-note">Abriendo su invitación…</p> : null}
+      {opening ? <p className="envelope-reveal-note">Abriendo tu invitación…</p> : null}
     </div>
   );
 }
