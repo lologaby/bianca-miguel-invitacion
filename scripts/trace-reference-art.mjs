@@ -218,23 +218,94 @@ function holesOf(mask, [x0, y0, x1, y1], minArea) {
 }
 
 /**
- * The glass is drawn in two tones: solid black on the cream ground, then the same
- * silhouette in cream where it crosses the green band. Trace both halves and
- * bridge the colour seam so it comes out as one outline.
+ * The glass.
+ *
+ * Not traced as one blob. Tracing the union of the black left half and the cream
+ * right half produced a Frankenstein: a notch where the bowl met the stem, an
+ * asymmetric bowl, and a "foot" that was really a bite out of the disc behind
+ * it — the reference's glass has no foot at all, its stem just runs off behind
+ * the discs at the bottom.
+ *
+ * So only the left edge is measured, from the clean black-against-cream boundary,
+ * and the silhouette is mirrored about the stem's centre. The stem and a foot are
+ * authored: a standalone glass needs a base even though the poster crops one off.
  */
-const glassMask = new Uint8Array(W * H);
-fill(glassMask, NEGRO, 639, 919, [500, 700, 743, H - 1]);
-fill(glassMask, CREMA, 800, 919, [744, 700, W - 1, 1600]);
-for (let y = 700; y < 1600; y++) {
-  const left = y * W + 743, right = y * W + 744;
-  if (glassMask[left] || glassMask[right]) { glassMask[left] = 1; glassMask[right] = 1; }
+const GLASS_CENTRE_X = 702.5;   // measured: the stem sits at x 693..712
+const GLASS_RIM_Y = 725;
+const GLASS_NECK_Y = 1150;      // the bowl has become the stem by here
+const STEM_HALF = 9.5;
+
+/** Half-width of the bowl at a given row, from the black/cream boundary. */
+function bowlHalfWidth(y) {
+  for (let x = 500; x <= 743; x++) {
+    if (cls[y * W + x] === NEGRO) return GLASS_CENTRE_X - x;
+  }
+  return null;
 }
-const glass = normalise(
-  contours(closeMask(glassMask), W, H).slice(0, 1).map((c) => rdp(c, 1.0)),
-  300,
-);
-const GLASS_PATH = toPath(glass.contours[0], { corner: 55 });
-console.log(`glass  viewBox=${glass.viewBox} chars=${GLASS_PATH.length}`);
+
+/*
+ * Below the bowl the dark wedge behind the glass starts at x≈503, which the
+ * left-edge scan happily reports as a half-width of 199 and which then flies out
+ * of the silhouette as a wing. Past the widest row the bowl can only narrow, so
+ * anything that widens again is the background, not the glass.
+ */
+const bowl = [];
+let widest = 0;
+let past = false;
+// the rim's first rows are anti-aliased, so start just below the lip
+for (let y = GLASS_RIM_Y + 4; y <= GLASS_NECK_Y; y += 6) {
+  const half = bowlHalfWidth(y);
+  if (half === null || half <= STEM_HALF) continue;
+  if (half >= widest && !past) widest = half;
+  else past = true;
+  if (past && half > bowl[bowl.length - 1][1]) continue;
+  bowl.push([y - GLASS_RIM_Y, half]);
+}
+
+/* Proportions of the authored lower half, in the same units as the bowl. */
+const BOWL_DEPTH = GLASS_NECK_Y - GLASS_RIM_Y;
+const STEM_END = Math.round(BOWL_DEPTH * 1.73);   // stem length, from the poster
+const FOOT_TOP = STEM_END;
+const FOOT_END = STEM_END + Math.round(BOWL_DEPTH * 0.16);
+const FOOT_HALF = Math.round(bowl[0][1] * 0.62);
+
+/*
+ * Where the bowl becomes the stem, stop trusting the scan. The last measured
+ * rows are only a few pixels wide, so quantisation there turns into barbs either
+ * side of the stem once the path is smoothed. Instead, cut the bowl while it is
+ * still comfortably wider than the stem and ease the rest of the way with a
+ * cosine, which arrives vertical and leaves nothing to overshoot.
+ */
+const BLEND_FROM = 26;
+const bowlBody = bowl.filter(([, half]) => half >= BLEND_FROM);
+const [blendY, blendHalf] = bowlBody[bowlBody.length - 1];
+
+const neck = [];
+for (let step = 1; step <= 9; step++) {
+  const t = step / 9;
+  const eased = (1 - Math.cos(t * Math.PI)) / 2;
+  neck.push([
+    blendY + (BOWL_DEPTH - blendY) * t,
+    blendHalf + (STEM_HALF - blendHalf) * eased,
+  ]);
+}
+
+/* Down the left side, then back up the right — one closed, symmetric outline. */
+const leftEdge = [...bowlBody, ...neck].map(([y, half]) => [GLASS_CENTRE_X - half, y]);
+leftEdge.push([GLASS_CENTRE_X - STEM_HALF, FOOT_TOP]);
+leftEdge.push([GLASS_CENTRE_X - FOOT_HALF, FOOT_END - 6]);
+leftEdge.push([GLASS_CENTRE_X - FOOT_HALF, FOOT_END]);
+
+const outline = [
+  ...leftEdge,
+  ...leftEdge.map(([x, y]) => [2 * GLASS_CENTRE_X - x, y]).reverse(),
+];
+
+const glass = normalise([outline], 300);
+/* corner: 100 keeps every joint smooth — the bowl has no true corners, and the
+   foot's are gentle enough that rounding them reads as blown glass. */
+const GLASS_PATH = toPath(glass.contours[0], { corner: 100, tension: 0.38 });
+console.log(`glass  viewBox=${glass.viewBox} bowl=${bowlBody.length}+neck${neck.length} chars=${GLASS_PATH.length}`);
 
 /** The pod's stalk runs into the speckled circle at y≈1556 — cut above it. */
 const podBox = [40, 1050, 330, 1556];

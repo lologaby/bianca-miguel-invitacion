@@ -19,3 +19,8 @@ apply-test.txt
 private-event.local.json
 private-event.env.local.txt
 event-content.local.yaml
+
+# Scratch helpers used while reviewing screenshots
+.crop.mjs
+.slice.mjs
+.zoom.mjs

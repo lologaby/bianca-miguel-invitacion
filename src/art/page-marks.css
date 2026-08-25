@@ -357,3 +357,210 @@
     text-wrap: balance;
   }
 }
+
+/* --- Brindemos: the glass beside the copy, not instead of it ------------
+ *
+ * The glass used to own a full-bleed slab in the middle of the page, which read
+ * as the point of the section rather than as an accompaniment to it. It is a
+ * slim column now, and the copy sits beside it set like a tasting note.
+ */
+
+.wine-story-v28 {
+  background: #475548;
+  color: var(--client-cream, #f6eee4);
+  padding-block: clamp(3rem, 8vw, 5rem);
+  padding-inline: clamp(1.15rem, 5vw, 4rem);
+}
+
+.wine-story-inner {
+  align-items: center;
+  column-gap: clamp(1.5rem, 5vw, 4rem);
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 22%) 1fr;
+  margin-inline: auto;
+  max-inline-size: 60rem;
+}
+
+.wine-glass-aside {
+  margin: 0;
+}
+
+/*
+ * The component sizes itself for the full-bleed stage it used to live on, so it
+ * has to be told to fit its column — `max-inline-size: none` only released the
+ * constraint and let it spill 266px over the copy.
+ */
+.wine-glass-aside .interactive-wine-glass {
+  inline-size: 100%;
+  margin: 0;
+  max-inline-size: 100%;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+.wine-glass-aside .interactive-wine-glass__art {
+  block-size: auto;
+  inline-size: 100%;
+  max-block-size: 26rem;
+  max-inline-size: 100%;
+}
+
+/* the grid column must be allowed to shrink, or its content sets the floor */
+.wine-glass-aside {
+  min-inline-size: 0;
+}
+
+.wine-story-copy h2 {
+  color: var(--client-cream, #f6eee4) !important;
+  font: 400 clamp(2.1rem, 7vw, 3.2rem)/1 var(--serif);
+  margin: 0;
+}
+
+.wine-story-narrative {
+  border: 0 !important;
+  margin-block: 1.1rem 0;
+  padding: 0 !important;
+}
+
+.wine-story-narrative p {
+  color: var(--client-cream, #f6eee4);
+  font: 400 clamp(1rem, 2.9vw, 1.12rem)/1.65 var(--serif);
+  margin: 0;
+  max-inline-size: 42ch;
+  opacity: .9;
+}
+
+/* the tasting card: the reception's three moments, listed like a menu */
+.tasting-list {
+  border-block-start: 1px solid rgba(246, 238, 228, .28);
+  list-style: none;
+  margin-block: 1.6rem 0;
+  max-inline-size: 34rem;
+  padding: 0;
+}
+
+.tasting-list li {
+  align-items: baseline;
+  border-block-end: 1px solid rgba(246, 238, 228, .16);
+  display: flex;
+  font: 400 clamp(.95rem, 2.7vw, 1.05rem)/1.4 var(--serif);
+  gap: .9rem;
+  padding-block: .72rem;
+}
+
+/* the leaders that make a list read as a menu rather than as bullet points */
+.tasting-list li::after {
+  border-block-end: 1px dotted rgba(246, 238, 228, .3);
+  content: '';
+  flex: 1;
+  translate: 0 -.25em;
+}
+
+/* --- RSVP: one alignment ------------------------------------------------
+ *
+ * The block had three at once — a centred heading, a left-aligned legend and
+ * cards, and a centred submit narrower than the cards it sat under. The page is
+ * left-aligned editorial everywhere else, so everything here is too, and the
+ * button spans exactly the width of the answer cards.
+ */
+
+.distilled-rsvp .rsvp-form,
+.distilled-rsvp .form-heading {
+  margin-inline: 0;
+  max-inline-size: 46rem;
+  text-align: start;
+}
+
+.distilled-rsvp .form-heading h2 {
+  margin-inline: 0;
+  text-align: start;
+  /* the comma used to strand itself at the end of the first line */
+  text-wrap: balance;
+}
+
+.distilled-rsvp .form-heading > p {
+  margin-inline: 0;
+  max-inline-size: 42ch;
+  text-align: start;
+}
+
+/*
+ * A layer below caps this at 19.5rem with !important inside a 620px query and
+ * centres it, which is what left the submit floating under left-aligned cards.
+ * Matching that breakpoint and out-ranking it is the only way through.
+ */
+.rsvp-v2.distilled-rsvp .rsvp-form > .rsvp-submit,
+.distilled-rsvp .rsvp-submit {
+  inline-size: 100% !important;
+  margin-inline: 0 !important;
+  max-inline-size: none !important;
+  min-inline-size: 0 !important;
+}
+
+@media (max-width: 620px) {
+  .rsvp-v2.distilled-rsvp .rsvp-form > .rsvp-submit {
+    inline-size: 100% !important;
+    margin-inline: 0 !important;
+    max-inline-size: none !important;
+    min-inline-size: 0 !important;
+  }
+}
+
+/* the whole form is one column, so the rule above it should match it */
+.distilled-rsvp .vine-rule {
+  margin-inline: 0;
+}
+
+@media (min-width: 901px) {
+  .distilled-rsvp .rsvp-form,
+  .distilled-rsvp .form-heading {
+    margin-inline: auto;
+  }
+
+  .distilled-rsvp .vine-rule {
+    margin-inline: auto;
+  }
+}
+
+/* --- less scrolling ------------------------------------------------------
+ *
+ * The invitation ran to eight phone screens, and most of that was air: display
+ * headings at 55-59px on a 390px viewport, and 144px of padding on every
+ * section — a quarter of some sections was padding. Big type over thin content
+ * reads as a page padded out to feel important.
+ *
+ * These caps apply on phones only; the desktop scale is untouched.
+ */
+@media (max-width: 720px) {
+  .celebration-summary-v26,
+  .event-v2,
+  .faq-v2,
+  .guest-details-v3,
+  .rsvp-v2,
+  .venue-map-v28 {
+    padding-block: clamp(2.4rem, 7vw, 3.4rem) !important;
+  }
+
+  .celebration-summary-v26 h2,
+  .event-v2 > header h2,
+  .faq-v2 > header h2,
+  .guest-details-v3 h2,
+  .distilled-rsvp .form-heading h2,
+  .venue-map-v28 h2 {
+    font-size: clamp(1.85rem, 7.4vw, 2.4rem) !important;
+    line-height: 1.04;
+  }
+
+  /* the countdown panel and the footer carry the same excess */
+  .date-v2 { padding-block: clamp(2.2rem, 6vw, 3rem) !important; }
+  .footer-v2 { padding-block: clamp(2.4rem, 7vw, 3.2rem) !important; }
+  .footer-names { font-size: clamp(2rem, 9vw, 2.8rem) !important; }
+
+  /* headings sat a long way above the first line under them */
+  .celebration-summary-v26 > header,
+  .event-v2 > header,
+  .faq-v2 > header,
+  .guest-details-v3 > header {
+    margin-block-end: clamp(1.1rem, 4vw, 1.8rem) !important;
+  }
+}

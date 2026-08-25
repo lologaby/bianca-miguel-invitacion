@@ -102,26 +102,28 @@ function GiftNumber({ number }: { number: string }) {
 function WineStory({ event }: { event: PrivateEvent }) {
   const paragraphs = event.story?.paragraphs ?? [];
 
-  return <section className="wine-story-v25" aria-labelledby="wine-story-title">
-    <div className="wine-story-copy">
-      <h2 id="wine-story-title">Brindemos</h2>
-      {paragraphs.length ? <div className="wine-story-narrative">
-        {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-      </div> : null}
-    </div>
-    <div className="wine-glass-stage-v25">
-      <InteractiveWineGlass ariaLabel="Copa de vino que se sirve y responde suavemente al movimiento" />
-      <p>Mueva el cursor; en el teléfono puede activar el movimiento de la copa.</p>
+  const moments = event.reception.moments ?? [];
+
+  return <section className="wine-story-v28" aria-labelledby="wine-story-title">
+    <div className="wine-story-inner">
+      <figure className="wine-glass-aside">
+        <InteractiveWineGlass ariaLabel="Copa de vino servida que se mueve con el desplazamiento de la página" />
+      </figure>
+
+      <div className="wine-story-copy">
+        <h2 id="wine-story-title">Brindemos</h2>
+        {paragraphs.length ? <div className="wine-story-narrative">
+          {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div> : null}
+        {moments.length ? <ol className="tasting-list">
+          {moments.map((moment) => <li key={moment}>{moment}</li>)}
+        </ol> : null}
+      </div>
     </div>
   </section>;
 }
 
-function CelebrationSummary({ event, guest, ceremonyTime, receptionTime }: {
-  event: PrivateEvent;
-  guest: InvitationPayload['guest'];
-  ceremonyTime: string;
-  receptionTime: string;
-}) {
+function CelebrationSummary({ guest }: { guest: InvitationPayload['guest'] }) {
   const places = `${guest.partyLimit} ${guest.partyLimit === 1 ? 'lugar' : 'lugares'}`;
   return <section className="celebration-summary-v26" id="celebracion" aria-labelledby="celebration-summary-title">
     <ScrollMark place="crest" opacity={0.07}><ArchMark tone="currentColor"/></ScrollMark>
@@ -129,16 +131,6 @@ function CelebrationSummary({ event, guest, ceremonyTime, receptionTime }: {
       <h2 id="celebration-summary-title">El día</h2>
       <p>Hemos reservado <strong>{places}</strong> a su nombre.</p>
       {guest.companionNames?.length ? <p className="celebration-companions"><span>Con usted</span>{guest.companionNames.join(', ')}</p> : null}
-    </div>
-    <div className="celebration-summary-events">
-      <article>
-        <LineIcon name="church"/>
-        <div><span>Ceremonia · {ceremonyTime}</span><h3>{event.ceremony.name}</h3><p>{event.ceremony.city}</p></div>
-      </article>
-      <article>
-        <LineIcon name="wine"/>
-        <div><span>Recepción · {receptionTime}</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
-      </article>
     </div>
   </section>;
 }
@@ -148,7 +140,6 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
   useScrollProgress();
   const ceremonyTime = event.ceremony.timeLabel ?? event.timeLabel;
   const receptionTime = event.reception.timeLabel ?? 'Por confirmar';
-  const receptionMoments = event.reception.moments ?? [];
   const faq = faqFor(event);
   return <div className="site-shell">
     <div className="scroll-track" aria-hidden="true"><span></span></div>
@@ -180,13 +171,12 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
         <div className="pour-line" aria-hidden="true"><span></span></div>
       </section>
 
-      <CelebrationSummary event={event} guest={guest} ceremonyTime={ceremonyTime} receptionTime={receptionTime}/>
+      <CelebrationSummary guest={guest}/>
 
       <section className="event-v2 itinerary-v3" id="detalles">
         <ScrollMark place="corner" opacity={0.06}><WedgeMark tone="currentColor" flip/></ScrollMark>
         <header>
           <h2>El orden de la tarde</h2>
-          <p>Ceremonia: {ceremonyTime} · Recepción: {receptionTime}</p>
         </header>
 
         <ol className="itinerary-list">
@@ -204,7 +194,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
               <LineIcon name="wine"/>
               <div><span>Recepción</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
               {event.reception.mapsUrl && event.reception.mapsUrl !== '#' ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}
-              {receptionMoments.length ? <ol className="reception-flow" aria-label="Momentos de la recepción">{receptionMoments.map((moment) => <li key={moment}>{moment}</li>)}</ol> : null}
+              
             </article>
           </li>
         </ol>

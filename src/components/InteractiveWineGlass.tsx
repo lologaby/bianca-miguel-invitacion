@@ -126,8 +126,16 @@ export function InteractiveWineGlass({
   const pointerBoundsRef = useRef<DOMRectReadOnly | null>(null);
   const wakeAnimationRef = useRef<() => void>(() => undefined);
   const reducedMotionRef = useRef(false);
+  /*
+   * Kept only to drive the effect's own bookkeeping. There is no button: asking
+   * "activar movimiento de la copa?" put a permission prompt in the middle of a
+   * wedding invitation, which is exactly the kind of thing this page is supposed
+   * not to do. Browsers that hand out orientation without a gesture (Android)
+   * get the tilt; iOS, which demands one, simply does without it.
+   */
   const [orientationControl, setOrientationControl] =
     useState<OrientationControlState>('unavailable');
+  void orientationControl;
 
   const physicsRef = useRef<LiquidPhysics>({
     fill: 0,
@@ -284,8 +292,10 @@ export function InteractiveWineGlass({
       if (!physics.started) physics.started = true;
 
       if (Math.abs(1 - physics.fill) > 0.001 || Math.abs(physics.fillVelocity) > 0.0005) {
-        physics.fillVelocity += (1 - physics.fill) * 0.0125 * step;
-        physics.fillVelocity *= Math.pow(0.905, step);
+        // slower and less damped than before: the pour used to be over almost
+        // before it began, which is why nobody noticed the glass filling
+        physics.fillVelocity += (1 - physics.fill) * 0.0068 * step;
+        physics.fillVelocity *= Math.pow(0.94, step);
         physics.fill += physics.fillVelocity * step;
         physics.fill = clamp(physics.fill, 0, 1.065);
 
@@ -297,20 +307,28 @@ export function InteractiveWineGlass({
 
       const requestedTilt =
         (physics.pointerActive ? physics.pointerTilt : physics.orientationTilt) +
-        physics.scrollKick;
+        physics.scrollKick +
+        // the surface leans into the swing; a perfectly level slosh looks rigid
+        physics.bobVelocity * 0.28;
       physics.tiltVelocity += (requestedTilt - physics.tilt) * 0.08 * step;
       physics.tiltVelocity *= Math.pow(0.79, step);
       physics.tilt += physics.tiltVelocity * step;
       physics.tilt = clamp(physics.tilt, -15, 15);
 
-      // a damped spring back to rest — heavy enough to overshoot once, like liquid
-      physics.bobVelocity += -physics.bob * 0.11 * step;
-      physics.bobVelocity *= Math.pow(0.86, step);
+      /*
+       * A damped spring, tuned to underdamped. The old numbers settled inside a
+       * single swing, which is what made the motion read as a nudge rather than
+       * as liquid: real wine in a glass crosses the level line two or three
+       * times before it gives up.
+       */
+      physics.bobVelocity += -physics.bob * 0.155 * step;
+      physics.bobVelocity *= Math.pow(0.935, step);
       physics.bob += physics.bobVelocity * step;
       physics.bob = clamp(physics.bob, -16, 16);
 
       physics.scrollKick *= Math.pow(0.83, step);
-      physics.splash *= Math.pow(0.91, step);
+      // the ripple rides the swing rather than outliving it
+      physics.splash *= Math.pow(0.88, step);
       physics.phase += elapsed * (0.0032 + physics.splash * 0.0028);
 
       const fillIsMoving =
@@ -375,9 +393,9 @@ export function InteractiveWineGlass({
       lastScrollTime = now;
 
       if (reduce || !physics.visible || !physics.pageVisible || Math.abs(velocity) < 0.22) return;
-      physics.splash = clamp(physics.splash + Math.abs(velocity) * 0.22, 0, 1.2);
+      physics.splash = clamp(physics.splash + Math.abs(velocity) * 0.34, 0, 1.35);
       // the wine lags behind the glass: scrolling down throws the surface up
-      physics.bobVelocity = clamp(physics.bobVelocity - velocity * 0.9, -26, 26);
+      physics.bobVelocity = clamp(physics.bobVelocity - velocity * 1.35, -30, 30);
       physics.scrollKick = clamp(physics.scrollKick + velocity * 0.5, -2.4, 2.4);
       scheduleFrame();
     };
@@ -533,22 +551,6 @@ export function InteractiveWineGlass({
         </g>
       </svg>
 
-      {orientationControl === 'available' ||
-      orientationControl === 'requesting' ||
-      orientationControl === 'denied' ? (
-        <button
-          className="interactive-wine-glass__motion-control"
-          type="button"
-          onClick={enableDeviceMotion}
-          disabled={orientationControl === 'requesting' || orientationControl === 'denied'}
-        >
-          {orientationControl === 'requesting'
-            ? 'Activando…'
-            : orientationControl === 'denied'
-              ? 'Movimiento no disponible'
-              : 'Activar movimiento de la copa'}
-        </button>
-      ) : null}
     </figure>
   );
 }
