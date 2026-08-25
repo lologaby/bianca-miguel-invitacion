@@ -39,15 +39,19 @@ jobs:
 
       - run: npm run build:pages
 
-      # A preview that leaks what the gate protects would defeat the point.
+      # A preview that leaks what the gate protects would defeat the point. The
+      # check looks for the shape of the private data rather than naming it,
+      # because this workflow file is public too.
       - name: Verificar que el bundle no lleve datos privados
         run: |
-          for needle in "787-410-5571" "Bodega de M" "Disc" "Ponce"; do
-            if grep -rqF "$needle" dist-pages/assets/; then
-              echo "::error::El bundle de la vista previa contiene datos privados: $needle"
-              exit 1
-            fi
-          done
+          if grep -rhoE "[0-9]{3}-[0-9]{3}-[0-9]{4}" dist-pages/assets/ | grep -qv "000-000-0000"; then
+            echo "::error::El bundle de la vista previa contiene un número de teléfono."
+            exit 1
+          fi
+          if grep -rqiE "iglesia|bodega de" dist-pages/assets/ ; then
+            echo "::error::El bundle de la vista previa contiene un lugar real."
+            exit 1
+          fi
           echo "Bundle limpio."
 
       - uses: actions/configure-pages@v5

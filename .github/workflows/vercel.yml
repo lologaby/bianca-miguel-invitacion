@@ -46,15 +46,24 @@ jobs:
       - name: Comprobar tipos
         run: npm run typecheck
 
-      - name: Comprobar que no queden datos privados en el repositorio
+      # Naming the real values here would put them in a public file, which is the
+      # very leak this guards against. It checks the shape instead: no phone
+      # number literal anywhere in the source, and the servers still reading the
+      # event from their environment.
+      - name: Comprobar que el evento siga fuera del repositorio
         run: |
-          for needle in "787-410-5571" "Bodega de M" "Iglesia Cristiana"; do
-            if git grep -qF "$needle" -- . ; then
-              echo "::error::Dato privado del evento presente en el repositorio: $needle"
+          # 000-000-0000 is the placeholder the demo fixture carries on purpose
+          if git grep -nE "[0-9]{3}-[0-9]{3}-[0-9]{4}" -- 'src' 'worker' 'api' | grep -v "000-000-0000"; then
+            echo "::error::Hay un número de teléfono escrito en el código. El evento va en PRIVATE_EVENT_JSON."
+            exit 1
+          fi
+          for f in worker/index-miguel.ts api/_data.ts; do
+            if ! grep -q "PRIVATE_EVENT_JSON" "$f"; then
+              echo "::error::$f ya no lee PRIVATE_EVENT_JSON del entorno."
               exit 1
             fi
           done
-          echo "Repositorio limpio."
+          echo "El evento vive en el entorno, no en el repositorio."
 
       - name: Desplegar
         env:
