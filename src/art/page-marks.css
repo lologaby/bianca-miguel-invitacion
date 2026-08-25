@@ -200,44 +200,17 @@
   max-inline-size: 46ch;
 }
 
-/* --- the ATH Móvil mark ------------------------------------------------
+/* --- the payment line -------------------------------------------------
  *
- * `.ath-mark` is Evertec's official artwork, dropped into public/ath-movil.svg.
- * `.ath-fallback` is what shows until that file exists: the site's own
- * single-stroke glyph beside the name, in the same system as the church and
- * wine icons, so it reads as part of the set rather than as a missing image.
+ * No badge and no glyph. The client's direction is that a payment logo breaks
+ * the page's restraint, so the provider is simply named, in the same type as
+ * everything else.
  */
-
-.ath-mark {
-  block-size: 1.5em;
-  display: block;
-  inline-size: auto;
-  /* the brand is orange; muted so it sits inside the palette without vanishing */
-  opacity: .88;
-}
-
-.ath-fallback {
-  align-items: center;
-  display: inline-flex;
-  gap: .55em;
-}
 
 .gift-number > span {
   align-items: center;
   display: inline-flex;
   gap: .55em;
-}
-
-.payment-glyph {
-  block-size: 1.45em;
-  fill: none;
-  flex: none;
-  inline-size: auto;
-  opacity: .72;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 3.4;
 }
 
 /* --- numerals ----------------------------------------------------------

@@ -16,22 +16,6 @@ export interface EventStory {
   paragraphs: string[];
 }
 
-export interface RecommendedLodging {
-  name: string;
-  note?: string;
-  url?: string;
-}
-
-export interface EventTransportation {
-  available: boolean;
-  note: string;
-}
-
-export interface EventPlaylist {
-  label: string;
-  url: string;
-}
-
 export interface PrivateEvent {
   couple: { first: string; second: string };
   dateLabel: string;
@@ -54,10 +38,6 @@ export interface PrivateEvent {
   faq?: EventFaqItem[];
   story?: EventStory;
   weatherNote?: string;
-  lodging?: RecommendedLodging[];
-  transportation?: EventTransportation;
-  hashtag?: string;
-  playlist?: EventPlaylist;
 }
 
 export interface InvitationPayload {
@@ -81,9 +61,6 @@ export interface InvitationPayload {
  *
  * The couple's first names are the one real detail kept, because the gate shows
  * "B & M" publicly already and reviewing the lockup needs them.
- *
- * Deliberately omits lodging/transportation/hashtag/playlist, because the real
- * event does not set them either — GuestPlanning does not render in production.
  */
 export const localDemoInvitation: InvitationPayload = {
   guest: {

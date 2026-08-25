@@ -7,7 +7,6 @@ import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './component
 import { Ampersand, ArchMark, CacaoPodMark, SpeckleDisc, WedgeMark, WineGlassMark } from './art/ReferenceMarks';
 import { ScrollMark } from './art/ScrollMark';
 import { AddToCalendar } from './components/AddToCalendar';
-import { AthMovilMark } from './components/AthMovilMark';
 import { VenueMap } from './components/VenueMap';
 import { HeroStillLife as DrawnHeroStillLife } from './components/VisualAssetsPolishedComplete';
 import { faqFor } from './config/event';
@@ -94,7 +93,7 @@ function GiftNumber({ number }: { number: string }) {
   }
 
   return <button className="gift-number" type="button" onClick={() => void copyNumber()} aria-label={`Copiar número de ATH Móvil ${number}`}>
-    <span><AthMovilMark/></span>
+    <span>ATH Móvil</span>
     <strong>{number.replaceAll('-', ' · ')}</strong>
     <small aria-live="polite">{copied ? 'Copiado' : 'Toque para copiar'}</small>
   </button>;
@@ -113,36 +112,6 @@ function WineStory({ event }: { event: PrivateEvent }) {
     <div className="wine-glass-stage-v25">
       <InteractiveWineGlass ariaLabel="Copa de vino que se sirve y responde suavemente al movimiento" />
       <p>Mueva el cursor; en el teléfono puede activar el movimiento de la copa.</p>
-    </div>
-  </section>;
-}
-
-function GuestPlanning({ event }: { event: PrivateEvent }) {
-  const hasPlanning = Boolean(event.lodging?.length || event.transportation || event.hashtag || event.playlist);
-  if (!hasPlanning) return null;
-
-  return <section className="guest-planning-v25" aria-labelledby="guest-planning-title">
-    <header>
-      <h2 id="guest-planning-title">Su visita a {event.ceremony.city.split(',')[0]}</h2>
-
-    </header>
-    <div className="guest-planning-list">
-      {event.lodging?.length ? <article>
-        <h3>Hospedaje recomendado</h3>
-        <ul>{event.lodging.map((option) => <li key={option.name}>
-          {option.url ? <a href={option.url} target="_blank" rel="noreferrer">{option.name}</a> : <strong>{option.name}</strong>}
-          {option.note ? <span>{option.note}</span> : null}
-        </li>)}</ul>
-      </article> : null}
-      {event.transportation ? <article>
-        <h3>Traslado entre espacios</h3>
-        <p>{event.transportation.note}</p>
-      </article> : null}
-      {event.hashtag || event.playlist ? <article>
-        <h3>Música y fotografías</h3>
-        {event.hashtag ? <p className="wedding-hashtag">{event.hashtag}</p> : null}
-        {event.playlist ? <a className="planning-link-v25" href={event.playlist.url} target="_blank" rel="noreferrer">{event.playlist.label}<span aria-hidden="true">↗</span></a> : null}
-      </article> : null}
     </div>
   </section>;
 }
@@ -265,8 +234,6 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
           </article>
         </div>
       </section> : null}
-
-      <GuestPlanning event={event}/>
 
       {faq.length ? <section className="faq-v2" id="preguntas"><ScrollMark place="sink" opacity={0.07}><SpeckleDisc tone="currentColor"/></ScrollMark><header><h2>Antes de venir</h2></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
 
