@@ -7,6 +7,7 @@ import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './component
 import { Ampersand, ArchMark, CacaoPodMark, SpeckleDisc, WedgeMark, WineGlassMark } from './art/ReferenceMarks';
 import { ScrollMark } from './art/ScrollMark';
 import { AddToCalendar } from './components/AddToCalendar';
+import { AthMovilMark } from './components/AthMovilMark';
 import { VenueMap } from './components/VenueMap';
 import { HeroStillLife as DrawnHeroStillLife } from './components/VisualAssetsPolishedComplete';
 import { faqFor } from './config/event';
@@ -79,15 +80,6 @@ function CoupleWordmark({ first, second }: { first: string; second: string }) {
   return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.webp`} srcSet={`${import.meta.env.BASE_URL}private-assets/wordmark-450.webp 450w, ${import.meta.env.BASE_URL}private-assets/wordmark.webp 900w`} sizes="(max-width: 900px) 94vw, 43vw" alt={`${first} y ${second}`} width="900" height="600" loading="eager" decoding="async" fetchPriority="high"/></span>;
 }
 
-function PaymentGlyph() {
-  return <svg className="line-icon payment-glyph" viewBox="0 0 64 64" aria-hidden="true">
-    <rect x="17" y="5" width="30" height="54" rx="5"/>
-    <path d="M28 51h8"/>
-    <circle cx="32" cy="28" r="9"/>
-    <path d="M32 22v12M29 25h5a2.5 2.5 0 0 1 0 5h-4a2.5 2.5 0 0 0 0 5h5"/>
-  </svg>;
-}
-
 function GiftNumber({ number }: { number: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -102,7 +94,7 @@ function GiftNumber({ number }: { number: string }) {
   }
 
   return <button className="gift-number" type="button" onClick={() => void copyNumber()} aria-label={`Copiar número de ATH Móvil ${number}`}>
-    <span><PaymentGlyph/>ATH Móvil</span>
+    <span><AthMovilMark/></span>
     <strong>{number.replaceAll('-', ' · ')}</strong>
     <small aria-live="polite">{copied ? 'Copiado' : 'Toque para copiar'}</small>
   </button>;
