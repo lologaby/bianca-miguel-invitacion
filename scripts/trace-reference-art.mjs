@@ -331,27 +331,55 @@ const MW = mark.info.width, MH = mark.info.height;
 const inkMask = new Uint8Array(MW * MH);
 for (let p = 0; p < MW * MH; p++) inkMask[p] = mark.data[p] < 128 ? 1 : 0;
 
-/** The ampersand is the rightmost glyph in the lockup. */
+/*
+ * Catalogue every glyph in the lockup, then pick the three that are wanted:
+ * the ampersand (rightmost, spanning both lines), and the initials that open
+ * each line — B from BIANCA, M from MIGUEL. Taking the letters from the artwork
+ * rather than setting them in one of the site's own faces is the point: the
+ * monogram in the header is then the couple's actual lockup, not an imitation.
+ */
 const seenInk = new Uint8Array(MW * MH);
-let ampersandMask = null, ampersandRight = -1;
-for (let s = 0; s < MW * MH; s++) {
-  if (!inkMask[s] || seenInk[s]) continue;
+const glyphs = [];
+for (let s0 = 0; s0 < MW * MH; s0++) {
+  if (!inkMask[s0] || seenInk[s0]) continue;
   const comp = new Uint8Array(MW * MH);
-  const stack = [s];
-  let n = 0, maxX = -1;
+  const stack = [s0];
+  let n = 0, minX = MW, maxX = -1, minY = MH, maxY = -1;
   while (stack.length) {
     const p = stack.pop();
     if (seenInk[p] || !inkMask[p]) continue;
     const x = p % MW, y = (p / MW) | 0;
     seenInk[p] = 1; comp[p] = 1; n++;
+    if (x < minX) minX = x;
     if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
     if (x > 0) stack.push(p - 1);
     if (x < MW - 1) stack.push(p + 1);
     if (y > 0) stack.push(p - MW);
     if (y < MH - 1) stack.push(p + MW);
   }
-  if (n > 2000 && maxX > ampersandRight) { ampersandRight = maxX; ampersandMask = comp; }
+  if (n > 2000) glyphs.push({ mask: comp, minX, maxX, minY, maxY, midY: (minY + maxY) / 2 });
 }
+
+const ampersandMask = glyphs.reduce((best, g) => (g.maxX > best.maxX ? g : best)).mask;
+
+/* The ampersand straddles both lines, so split the rest on the lockup's midline. */
+const lockupMid = (Math.min(...glyphs.map((g) => g.minY)) + Math.max(...glyphs.map((g) => g.maxY))) / 2;
+const notAmpersand = glyphs.filter((g) => g.mask !== ampersandMask);
+const firstOf = (line) => line.reduce((best, g) => (g.minX < best.minX ? g : best)).mask;
+const initialB = firstOf(notAmpersand.filter((g) => g.midY < lockupMid));
+const initialM = firstOf(notAmpersand.filter((g) => g.midY >= lockupMid));
+
+const traceGlyph = (mask, scale) =>
+  normalise(contours(mask, MW, MH).map((c) => rdp(c, 1.1)), scale);
+
+const bGlyph = traceGlyph(initialB, 200);
+const mGlyph = traceGlyph(initialM, 200);
+const INITIAL_B_PATH = bGlyph.contours.map((c) => toPath(c, { corner: 68, tension: 0.44 })).join('');
+const INITIAL_M_PATH = mGlyph.contours.map((c) => toPath(c, { corner: 68, tension: 0.44 })).join('');
+console.log(`initials  B ${bGlyph.viewBox}  M ${mGlyph.viewBox}`);
+
 const amp = normalise(contours(ampersandMask, MW, MH).map((c) => rdp(c, 1.1)), 200);
 const AMPERSAND_PATH = amp.contours.map((c) => toPath(c, { corner: 68, tension: 0.44 })).join('');
 console.log(`amp    viewBox=${amp.viewBox} chars=${AMPERSAND_PATH.length}`);
@@ -386,5 +414,14 @@ export const POD_RIBS =
 export const AMPERSAND_VIEWBOX = '${amp.viewBox}';
 export const AMPERSAND_PATH =
   '${AMPERSAND_PATH}';
+
+/** The couple's initials, cut from the lockup rather than set in another face. */
+export const INITIAL_B_VIEWBOX = '${bGlyph.viewBox}';
+export const INITIAL_B_PATH =
+  '${INITIAL_B_PATH}';
+
+export const INITIAL_M_VIEWBOX = '${mGlyph.viewBox}';
+export const INITIAL_M_PATH =
+  '${INITIAL_M_PATH}';
 `);
 console.log(`\nwrote ${TARGET}`);

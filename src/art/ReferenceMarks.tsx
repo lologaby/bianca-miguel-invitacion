@@ -16,6 +16,10 @@ import type { CSSProperties } from 'react';
 import {
   AMPERSAND_PATH,
   AMPERSAND_VIEWBOX,
+  INITIAL_B_PATH,
+  INITIAL_B_VIEWBOX,
+  INITIAL_M_PATH,
+  INITIAL_M_VIEWBOX,
   GLASS_PATH,
   GLASS_VIEWBOX,
   POD_OUTLINE,
@@ -154,6 +158,29 @@ export function ShoulderMark({ className, tone = CREAM, style }: MarkProps) {
   return (
     <svg className={className} style={style} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 0H100V58A42 42 0 0 1 58 100H0Z" fill={tone} />
+    </svg>
+  );
+}
+
+/**
+ * The couple's initials, cut out of their own lockup.
+ *
+ * Set in the site's serif these were an imitation of the logo; taken from the
+ * artwork they are the logo. Only correct for Bianca and Miguel, so the caller
+ * checks the names before reaching for them.
+ */
+export function InitialB({ className, tone = INK, style }: MarkProps) {
+  return (
+    <svg className={className} style={style} viewBox={INITIAL_B_VIEWBOX} fill={tone} aria-hidden="true">
+      <path d={INITIAL_B_PATH} fillRule="evenodd" />
+    </svg>
+  );
+}
+
+export function InitialM({ className, tone = INK, style }: MarkProps) {
+  return (
+    <svg className={className} style={style} viewBox={INITIAL_M_VIEWBOX} fill={tone} aria-hidden="true">
+      <path d={INITIAL_M_PATH} fillRule="evenodd" />
     </svg>
   );
 }

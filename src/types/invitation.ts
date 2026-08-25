@@ -71,10 +71,10 @@ export const localDemoInvitation: InvitationPayload = {
   },
   event: {
     couple: { first: 'Bianca', second: 'Miguel' },
-    dateLabel: '00 de mes de 0000',
-    dateShort: '00 · MES',
-    start: '2027-01-01T16:00:00-04:00',
-    end: '2027-01-02T02:00:00-04:00',
+    dateLabel: '26 de diciembre de 2026',
+    dateShort: '26 · DICIEMBRE',
+    start: '2026-12-26T16:00:00-04:00',
+    end: '2026-12-27T02:00:00-04:00',
     timezone: 'America/Puerto_Rico',
     timeLabel: '4:00 p. m.',
     ceremony: {
@@ -93,7 +93,7 @@ export const localDemoInvitation: InvitationPayload = {
     },
     dressCode: {
       label: 'Cóctel / Formal',
-      note: 'Sin código de color: use el que prefiera.',
+      note: 'Sin código de color. La bodega tiene luz tenue y una atmósfera cálida; tome el ambiente como inspiración.',
     },
     gifts: {
       heading: 'Un detalle',
@@ -102,17 +102,17 @@ export const localDemoInvitation: InvitationPayload = {
     },
     story: {
       paragraphs: [
-        'Párrafo de demostración sobre el lugar elegido y lo que se vivirá allí antes de la cena.',
+        'Elegimos Ponce, y una bodega de vinos para recibirle. Allí habrá una cata de vino y chocolate antes de la cena.',
       ],
     },
-    weatherNote: 'Nota de demostración sobre el clima al llegar y qué telas resultan más cómodas.',
+    weatherNote: 'Diciembre en Ponce sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
     faq: [
-      { id: 'companions', q: '¿Puedo llevar acompañantes?', a: 'Respuesta de demostración sobre las personas incluidas en la invitación.' },
-      { id: 'attire-colors', q: '¿Hay colores reservados?', a: 'Respuesta de demostración sobre los colores y la luz del lugar.' },
-      { id: 'indoor-spaces', q: '¿Todo será bajo techo?', a: 'Respuesta de demostración sobre los espacios interiores.' },
-      { id: 'rsvp-deadline', q: '¿Hasta cuándo puedo confirmar?', a: 'Respuesta de demostración con la fecha límite.' },
-      { id: 'parking', q: '¿Habrá estacionamiento?', a: 'Respuesta de demostración sobre el estacionamiento.' },
-      { id: 'drinks', q: '¿Habrá bebidas sin alcohol?', a: 'Respuesta de demostración sobre la barra.' },
+      { id: 'companions', q: '¿Puedo llevar acompañantes?', a: 'La invitación indica la cantidad de personas de su núcleo familiar que están incluidas. Por la planificación y la capacidad de la celebración, agradecemos que la asistencia se limite a ese número.' },
+      { id: 'attire-colors', q: '¿Hay colores específicos para la vestimenta?', a: 'No tenemos un código de color. La recepción será en una bodega de vinos, de atmósfera cálida, íntima y de luz tenue; puede tomar ese ambiente como inspiración y usar su creatividad al elegir.' },
+      { id: 'indoor-spaces', q: '¿La ceremonia y la recepción serán bajo techo?', a: 'Sí. Ambas se llevarán a cabo en espacios cerrados y con aire acondicionado, para su comodidad durante toda la celebración.' },
+      { id: 'rsvp-deadline', q: '¿Hasta cuándo tengo para confirmar?', a: 'Agradecemos confirmar no más tarde del 15 de octubre de 2026. Eso nos permite cerrar a tiempo los detalles finales.' },
+      { id: 'parking', q: '¿Habrá estacionamiento?', a: 'Para la ceremonia habrá estacionamiento en los predios de la iglesia. En la recepción los espacios de la bodega son limitados, aunque hay sitio en las calles y áreas cercanas; le recomendamos llegar con tiempo.' },
+      { id: 'drinks', q: '¿Habrá bebidas sin alcohol?', a: 'Sí. Como parte de la recepción habrá una experiencia especial que incluye bebidas alcohólicas, y servicio de cash bar para quien desee más. También habrá opciones sin alcohol.' },
     ],
   },
 };

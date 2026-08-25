@@ -430,23 +430,7 @@
   opacity: .9;
 }
 
-/* the tasting card: the reception's three moments, listed like a menu */
-.tasting-list {
-  border-block-start: 1px solid rgba(246, 238, 228, .28);
-  list-style: none;
-  margin-block: 1.6rem 0;
-  max-inline-size: 34rem;
-  padding: 0;
-}
 
-.tasting-list li {
-  align-items: baseline;
-  border-block-end: 1px solid rgba(246, 238, 228, .16);
-  display: flex;
-  font: 400 clamp(.95rem, 2.7vw, 1.05rem)/1.4 var(--serif);
-  gap: .9rem;
-  padding-block: .72rem;
-}
 
 /*
  * No leaders. A leader carries the eye to a value; these ran to empty space,
@@ -665,4 +649,65 @@
 .itinerary-card.reception-stage {
   border-block-start: 1px solid rgba(39, 44, 36, .18);
   padding-block: clamp(1rem, 3.5vw, 1.5rem) !important;
+}
+
+/* --- the reception's run, inside the one itinerary ------------------------
+ *
+ * These three moments briefly lived up in "Brindemos", which split the schedule
+ * across two sections that were not even next to each other — so the itinerary
+ * stopped reading as one thing. They belong under the reception they happen at,
+ * indented to the same column as its heading so the timeline stays a timeline.
+ */
+.reception-run {
+  border-block-start: 1px solid rgba(39, 44, 36, .16);
+  list-style: none;
+  margin: .2rem 0 0;
+  padding: 0;
+}
+
+.reception-run li {
+  border-block-end: 1px solid rgba(39, 44, 36, .1);
+  color: var(--forest, #272c24);
+  font: 400 clamp(.92rem, 2.6vw, 1rem)/1.45 var(--serif);
+  padding-block: .62rem;
+}
+
+.reception-run li:last-child {
+  border-block-end: 0;
+}
+
+/*
+ * Line the run up under the reception's heading rather than under its icon.
+ * Flush with the icon column it reads as a sibling of the two stops instead of
+ * as what happens inside one of them.
+ */
+.reception-run {
+  margin-inline-start: 3.9rem;
+}
+
+/* --- the monogram is the lockup ------------------------------------------
+ *
+ * The header used to set B and M in the site's serif beside the logo's own
+ * ampersand, so two thirds of the monogram imitated the artwork and one third
+ * was the artwork. All three glyphs are cut from the lockup now.
+ *
+ * The letters are optically heavier than the ampersand, which is a hairline
+ * didone, so the ampersand carries a little more height to hold its own.
+ */
+.craft-monogram {
+  align-items: center;
+  display: inline-flex;
+  gap: .3em;
+}
+
+.monogram-letter {
+  block-size: .82em;
+  fill: currentColor;
+  display: block;
+  inline-size: auto;
+}
+
+.craft-monogram i .mark-ampersand {
+  block-size: .68em;
+  transform: none;
 }

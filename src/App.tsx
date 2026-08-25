@@ -4,7 +4,7 @@ import { InteractiveWineGlass } from './components/InteractiveWineGlass';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
-import { Ampersand, ArchMark, CacaoPodMark, SpeckleDisc, WedgeMark, WineGlassMark } from './art/ReferenceMarks';
+import { Ampersand, ArchMark, CacaoPodMark, InitialB, InitialM, SpeckleDisc, WedgeMark, WineGlassMark } from './art/ReferenceMarks';
 import { ScrollMark } from './art/ScrollMark';
 import { AddToCalendar } from './components/AddToCalendar';
 import { VenueMap } from './components/VenueMap';
@@ -47,6 +47,9 @@ function Countdown({ start }: { start: string }) {
 }
 
 function Header({ event }: { event: PrivateEvent }) {
+  /* The initials are cut from the lockup, so they only speak for these names. */
+  const monogramFromLockup =
+    event.couple.first.startsWith('B') && event.couple.second.startsWith('M');
   const [active, setActive] = useState<(typeof nav)[number][0]>('celebracion');
   const [day = event.dateShort, month = ''] = event.dateShort.split('·').map((part) => part.trim());
 
@@ -67,7 +70,9 @@ function Header({ event }: { event: PrivateEvent }) {
   }, []);
 
   return <header className="craft-header">
-    <a className="craft-monogram" href="#inicio" aria-label="Inicio"><span>{event.couple.first[0]}</span><i><Ampersand className="mark-ampersand" tone="currentColor"/></i><span>{event.couple.second[0]}</span></a>
+    <a className="craft-monogram" href="#inicio" aria-label="Inicio">{monogramFromLockup
+      ? <><InitialB className="monogram-letter" tone="currentColor"/><i><Ampersand className="mark-ampersand" tone="currentColor"/></i><InitialM className="monogram-letter" tone="currentColor"/></>
+      : <><span>{event.couple.first[0]}</span><i><Ampersand className="mark-ampersand" tone="currentColor"/></i><span>{event.couple.second[0]}</span></>}</a>
     <nav aria-label="Secciones de la invitación">{nav.map(([id, label]) => <a key={id} href={`#${id}`} aria-current={active === id ? 'location' : undefined} onClick={() => setActive(id)}>{label}</a>)}</nav>
     <a className="header-date" href="#celebracion" aria-label={'Ver la celebración del ' + event.dateLabel}>
       <span>{day}</span>{month ? <span>{month}</span> : null}
@@ -102,8 +107,6 @@ function GiftNumber({ number }: { number: string }) {
 function WineStory({ event }: { event: PrivateEvent }) {
   const paragraphs = event.story?.paragraphs ?? [];
 
-  const moments = event.reception.moments ?? [];
-
   return <section className="wine-story-v28" aria-labelledby="wine-story-title">
     <div className="wine-story-inner">
       <figure className="wine-glass-aside">
@@ -115,9 +118,6 @@ function WineStory({ event }: { event: PrivateEvent }) {
         {paragraphs.length ? <div className="wine-story-narrative">
           {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </div> : null}
-        {moments.length ? <ol className="tasting-list">
-          {moments.map((moment) => <li key={moment}>{moment}</li>)}
-        </ol> : null}
       </div>
     </div>
   </section>;
@@ -140,6 +140,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
   useScrollProgress();
   const ceremonyTime = event.ceremony.timeLabel ?? event.timeLabel;
   const receptionTime = event.reception.timeLabel ?? 'Por confirmar';
+  const receptionMoments = event.reception.moments ?? [];
   const faq = faqFor(event);
   return <div className="site-shell">
     <div className="scroll-track" aria-hidden="true"><span></span></div>
@@ -194,8 +195,10 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
               <LineIcon name="wine"/>
               <div><span>Recepción</span><h3>{event.reception.name}</h3><p>{event.reception.city ?? event.reception.note}</p></div>
               {event.reception.mapsUrl && event.reception.mapsUrl !== '#' ? <a className="round-action" href={event.reception.mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir indicaciones de la recepción">↗</a> : null}
-              
             </article>
+            {receptionMoments.length ? <ol className="reception-run" aria-label="Durante la recepción">
+              {receptionMoments.map((moment) => <li key={moment}>{moment}</li>)}
+            </ol> : null}
           </li>
         </ol>
       </section>
