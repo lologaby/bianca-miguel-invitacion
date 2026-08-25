@@ -1,0 +1,71 @@
+# The real invitation, deployed to Vercel.
+#
+# Unlike the Pages preview this runs the API in api/*.ts, so guests can sign in
+# with their code and RSVPs are recorded. Nothing about the event is in this
+# repository: api/_data.ts reads PRIVATE_EVENT_JSON and GUESTS_JSON from the
+# Vercel project's environment variables.
+#
+# Required repository secrets (Settings > Secrets and variables > Actions):
+#   VERCEL_TOKEN        a token from vercel.com/account/tokens
+#   VERCEL_ORG_ID       from .vercel/project.json after `vercel link`
+#   VERCEL_PROJECT_ID   likewise
+#
+# Required Vercel environment variables (Project > Settings > Environment):
+#   PRIVATE_EVENT_JSON  the event, as one line of JSON
+#   GUESTS_JSON         the guest list, with SHA-256 hashes — never plain codes
+#   SESSION_SECRET      32+ random characters
+#   ADMIN_PASSWORD      for the coordination panel
+name: Invitación (Vercel)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Without the token this job would fail on every push for anyone who has not
+    # set the secrets up yet, so it simply does not run until they exist.
+    if: ${{ github.repository_owner == 'lologaby' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Fail here rather than half-way through a deploy.
+      - name: Comprobar tipos
+        run: npm run typecheck
+
+      - name: Comprobar que no queden datos privados en el repositorio
+        run: |
+          for needle in "787-410-5571" "Bodega de M" "Iglesia Cristiana"; do
+            if git grep -qF "$needle" -- . ; then
+              echo "::error::Dato privado del evento presente en el repositorio: $needle"
+              exit 1
+            fi
+          done
+          echo "Repositorio limpio."
+
+      - name: Desplegar
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice::VERCEL_TOKEN no está configurado todavía; se omite el despliegue."
+            exit 0
+          fi
+          npx --yes vercel@latest pull --yes --environment=production --token "$VERCEL_TOKEN"
+          npx --yes vercel@latest build --prod --token "$VERCEL_TOKEN"
+          npx --yes vercel@latest deploy --prebuilt --prod --token "$VERCEL_TOKEN"

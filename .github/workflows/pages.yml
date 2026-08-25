@@ -1,0 +1,66 @@
+# Design preview on GitHub Pages.
+#
+# This is NOT the invitation. Pages is static hosting, so there is no worker and
+# no /api/*: nobody can sign in with a code and no RSVP can be recorded. The
+# build sets VITE_DEMO_PREVIEW=1, which opens the gate straight onto the demo
+# invitation — placeholder venues, a placeholder date, no payment number. The
+# real event lives only in the host's PRIVATE_EVENT_JSON and is in no bundle.
+#
+# Published at https://lologaby.github.io/bianca-miguel-invitacion/
+name: Vista previa de diseño
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it midway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build:pages
+
+      # A preview that leaks what the gate protects would defeat the point.
+      - name: Verificar que el bundle no lleve datos privados
+        run: |
+          for needle in "787-410-5571" "Bodega de M" "Disc" "Ponce"; do
+            if grep -rqF "$needle" dist-pages/assets/; then
+              echo "::error::El bundle de la vista previa contiene datos privados: $needle"
+              exit 1
+            fi
+          done
+          echo "Bundle limpio."
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

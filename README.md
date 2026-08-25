@@ -32,6 +32,24 @@ Agrega el `linkHash`, el `codeHash`, nombre, cupos y acompañantes en `GUESTS_JS
 
 La URL `?coordinacion=1` solicita la contraseña configurada en `ADMIN_PASSWORD`. El panel muestra asistentes totales, invitaciones declinadas, pendientes, acompañantes y canciones. Los datos se leen desde el mismo registro autoritativo del RSVP.
 
+## Despliegue
+
+Dos destinos, desde `main`:
+
+| Destino | Qué es | Workflow |
+| --- | --- | --- |
+| **Vercel** | La invitación real. Ejecuta `api/*.ts`, así que la puerta autentica y el RSVP se guarda. | `.github/workflows/vercel.yml` |
+| **GitHub Pages** | Vista previa de diseño en `https://lologaby.github.io/bianca-miguel-invitacion/`. Estático: sin API, nadie entra con código y no se guarda nada. Se compila con `VITE_DEMO_PREVIEW=1`, que abre directamente la invitación de demostración. | `.github/workflows/pages.yml` |
+
+La vista previa lleva datos de marcador a propósito. El evento real —lugares, fecha y número de ATH Móvil— nunca forma parte de ningún bundle: vive en `PRIVATE_EVENT_JSON` en el hosting, tanto para el worker como para las funciones de Vercel. Ambos workflows fallan si detectan esos datos en el repositorio.
+
+Compilar la vista previa en local:
+
+```bash
+npm run build:pages
+npx vite preview --config vite.preview.pages.config.ts
+```
+
 ## Configuración de producción
 
 Configura en el proveedor de hosting las variables descritas en `.env.example`:

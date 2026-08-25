@@ -24,6 +24,13 @@ export function InvitationGate({ onReveal }: Props) {
   const finished = useRef(false);
   const fallbackTimer = useRef<number | null>(null);
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  /*
+   * Design-preview builds (GitHub Pages) have no API behind them, so the gate
+   * could never open and the invitation could never be reviewed. With this flag
+   * the demo invitation is shown straight away — and only ever the demo, which
+   * carries placeholder venues and no real number.
+   */
+  const isDemoBuild = import.meta.env.VITE_DEMO_PREVIEW === '1';
 
   function finishReveal() {
     if (finished.current || !pending.current) return;
@@ -74,7 +81,12 @@ export function InvitationGate({ onReveal }: Props) {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const url = new URL(window.location.href);
-    if (isLocal && url.searchParams.get('qa') === 'content') {
+    // ?vista=entrada and ?vista=sobre stay reachable so both screens can be reviewed
+    if (isDemoBuild && !reviewMode) {
+      onReveal(localDemoInvitation);
+      return;
+    }
+    if ((isLocal || isDemoBuild) && url.searchParams.get('qa') === 'content') {
       onReveal(localDemoInvitation);
       return;
     }
@@ -85,7 +97,7 @@ export function InvitationGate({ onReveal }: Props) {
       window.history.replaceState({}, '', url.pathname + url.search + url.hash);
       return;
     }
-    if (isLocal || reviewMode === 'entrada') return;
+    if (isLocal || isDemoBuild || reviewMode === 'entrada') return;
     void fetch('/api/session', { headers: { accept: 'application/json' } }).then(async (response) => {
       if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return;
       const invitation = await response.json() as InvitationPayload;
@@ -107,7 +119,7 @@ export function InvitationGate({ onReveal }: Props) {
       input.current?.focus();
       return;
     }
-    if (isLocal && value.toUpperCase() === 'INVITACION-DEMO') {
+    if ((isLocal || isDemoBuild) && value.toUpperCase() === 'INVITACION-DEMO') {
       beginEnvelopeReveal(localDemoInvitation);
       return;
     }
@@ -162,7 +174,7 @@ export function InvitationGate({ onReveal }: Props) {
                 />
                 <button disabled={busy || opening}>{busy ? 'Comprobando…' : 'Abrir sobre'}</button>
               </div>
-              {isLocal && <small>Prueba local: <code>INVITACION-DEMO</code></small>}
+              {(isLocal || isDemoBuild) && <small>Prueba: <code>INVITACION-DEMO</code></small>}
             </form>
           )}
           <p className="form-status" role="status" aria-live="polite">{status}</p>

@@ -1,6 +1,8 @@
 node_modules/
 dist/
 dist-qa/
+dist-pages/
+.vercel/
 output/
 .playwright-cli/
 design-source/
