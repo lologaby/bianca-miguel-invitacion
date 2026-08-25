@@ -1,0 +1,371 @@
+/*
+ * The reference's marks, reused past the cover.
+ *
+ * The point of pulling the artwork apart is that the pieces travel: the couple's
+ * own ampersand carries the monogram and the footer, and the cacao pod signs the
+ * chocolate half of the page. Loaded after the versioned layers so these win.
+ */
+
+/* --- the couple's ampersand, live wherever an "&" was typed --- */
+
+.craft-monogram i,
+.footer-names i {
+  align-items: center;
+  display: inline-flex;
+}
+
+.mark-ampersand {
+  display: block;
+  fill: currentColor;
+  /* the traced glyph is 179.7 x 200, so height drives it and width follows */
+  inline-size: auto;
+}
+
+.craft-monogram i .mark-ampersand {
+  block-size: .74em;
+  /* the didone glyph sits optically high next to the initials */
+  transform: translateY(.04em);
+}
+
+.footer-names i {
+  margin-inline: .32em;
+  vertical-align: baseline;
+}
+
+.footer-names i .mark-ampersand {
+  block-size: .92em;
+  /* sits it on the display type's optical centre rather than its baseline */
+  transform: translateY(.08em);
+}
+
+/* --- hosts for the scroll marks ---------------------------------------
+ *
+ * Each mark is pinned inside its section and cropped by it, so a mark can hang
+ * off an edge without ever widening the page.
+ */
+
+.celebration-summary-v26,
+.itinerary-v3,
+.guest-details-v3,
+.faq-v2,
+.distilled-rsvp {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+/* keep the real content above the watermarks */
+.celebration-summary-v26 > *:not(.scroll-mark),
+.itinerary-v3 > *:not(.scroll-mark),
+.guest-details-v3 > *:not(.scroll-mark),
+.faq-v2 > *:not(.scroll-mark),
+.distilled-rsvp > *:not(.scroll-mark) {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- save the date -------------------------------------------------------
+ *
+ * The reference site puts "Add to calendar" in its hero. This concept's hero is
+ * a poster, so the action sits with the countdown instead — the point in the
+ * page where a guest actually decides to save the date.
+ */
+
+.calendar-save {
+  align-items: center;
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: 650 .64rem/1 var(--sans);
+  gap: .7rem;
+  letter-spacing: .16em;
+  margin-top: 1.5rem;
+  min-height: 46px;
+  padding: 0 1.15rem;
+  text-transform: uppercase;
+  /* the countdown column stretches its children; keep this hugging its label */
+  align-self: flex-start;
+  inline-size: max-content;
+  max-inline-size: 100%;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+
+.calendar-save b {
+  font-size: .95rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.calendar-save:hover {
+  background: currentColor;
+}
+
+/* the label has to flip against the filled state, so recolour it directly */
+.calendar-save:hover span,
+.calendar-save:hover b {
+  color: var(--client-cream, #f6eee4);
+  mix-blend-mode: normal;
+}
+
+@media (hover: none) {
+  .calendar-save:hover { background: transparent; }
+  .calendar-save:hover span,
+  .calendar-save:hover b { color: inherit; }
+}
+
+/* --- scroll cue ----------------------------------------------------------
+ *
+ * The cover fills the viewport and, being a poster, gave no signal that the rest
+ * of the invitation was below it. A hairline that draws itself downward, echoing
+ * the rule under the overline in the client's artwork.
+ */
+
+.hero-scroll-cue {
+  align-items: flex-start;
+  block-size: 3.4rem;
+  display: flex;
+  inline-size: 2.5rem;
+  inset-block-end: 1.1rem;
+  inset-inline-start: 50%;
+  justify-content: center;
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.hero-scroll-cue span {
+  background: #272c24;
+  block-size: 2.6rem;
+  display: block;
+  inline-size: 1px;
+  opacity: .3;
+  position: relative;
+}
+
+/* the travelling dot — the part that reads as "there is more below" */
+.hero-scroll-cue span::after {
+  background: #5e2023;
+  block-size: .3rem;
+  border-radius: 50%;
+  content: '';
+  inline-size: .3rem;
+  inset-inline-start: 50%;
+  position: absolute;
+  inset-block-start: 0;
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scroll-cue span::after {
+    animation: hero-cue-travel 2.6s var(--ease) infinite;
+  }
+}
+
+.hero-scroll-cue:hover span { opacity: .5; }
+
+@keyframes hero-cue-travel {
+  0% { opacity: 0; transform: translate(-50%, 0); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, 2.3rem); }
+}
+
+
+/* --- two subjects, two sections ---------------------------------------
+ *
+ * "Vestimenta y regalos" used to share one heading, which read as a list of
+ * chores. Split apart, each gets a plain heading and its own breathing room.
+ */
+
+.dress-section-v28 + .gift-section-v28 {
+  padding-block-start: 0;
+}
+
+.dress-section-v28 .guest-detail-grid,
+.gift-section-v28 .guest-detail-grid {
+  grid-template-columns: 1fr;
+}
+
+.dress-section-v28 .dress-detail,
+.gift-section-v28 .gift-detail {
+  border: 0;
+  padding-inline: 0;
+}
+
+/* the gift line is one thought and a number; it needs no second heading */
+.gift-section-v28 .gift-detail > p {
+  margin-block-start: 0;
+  max-inline-size: 46ch;
+}
+
+/* --- the payment glyph -------------------------------------------------
+ *
+ * Sits with the ATH Móvil label at text size, in the same single-stroke system
+ * as the church and wine icons, so it reads as part of the set rather than as a
+ * pasted-in badge.
+ */
+
+.gift-number > span {
+  align-items: center;
+  display: inline-flex;
+  gap: .55em;
+}
+
+.payment-glyph {
+  block-size: 1.45em;
+  fill: none;
+  flex: none;
+  inline-size: auto;
+  opacity: .72;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3.4;
+}
+
+/* --- numerals ----------------------------------------------------------
+ *
+ * Cormorant Garamond defaults to OLDSTYLE figures, where 1 sits at x-height
+ * like a small-cap I and 0 like an o. On a payment number that is not a style
+ * choice, it is a way to send money to a stranger — "410" reads as "4IO".
+ * tabular-nums alone does not switch them off; lining-nums does.
+ */
+.gift-number strong,
+.countdown-v2 b,
+.itinerary-stop > time,
+.date-word h2,
+.header-date,
+.celebration-summary-events span {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* --- the addressee -----------------------------------------------------
+ *
+ * Separated from the couple's lockup by a rule and set in ink rather than wine,
+ * so it reads as who the invitation is addressed to and not as a third name in
+ * the announcement.
+ */
+
+.client-hero-personalization {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-block-start: clamp(2.2rem, 6vw, 3.4rem);
+  position: relative;
+}
+
+.client-hero-personalization::before {
+  background: currentColor;
+  block-size: 1px;
+  content: '';
+  inline-size: 2.2rem;
+  margin-block-end: .9rem;
+  opacity: .3;
+}
+
+/* a legacy layer sets `.client-hero-personalization span { color: wine
+   !important }`; these have to out-rank it to read as an address label */
+.client-hero-personalization .hero-addressee-label {
+  color: var(--forest, #272c24) !important;
+  font: 400 .62rem/1 var(--sans);
+  letter-spacing: .3em;
+  opacity: .62;
+  text-transform: uppercase;
+}
+
+.client-hero-personalization .hero-addressee-name {
+  color: var(--ink, #0d0e0b) !important;
+  font: 400 clamp(1.05rem, 3.4vw, 1.35rem)/1.2 var(--serif);
+  letter-spacing: .015em;
+}
+
+/* --- hero balance ------------------------------------------------------
+ *
+ * With the marks moved to the scroll, the cover is mostly open cream. Centre
+ * the type in it so the space reads as composed rather than as the bottom
+ * half being empty.
+ */
+
+.client-hero-copy {
+  justify-content: center;
+  padding-block: clamp(3rem, 12vh, 7rem) clamp(5rem, 18vh, 9rem);
+}
+
+/* --- itinerary header ---------------------------------------------------
+ *
+ * The desktop layer sticks this header with `top: calc(var(--header-height) +
+ * 2rem)`. The mobile layer sets `position: static` to switch that off, but a
+ * later stylesheet puts `position: relative` back — which revives the offset and
+ * shoves the heading 136px down, straight over the first stop on the timeline.
+ *
+ * Clearing `top` as well is what actually kills it, whatever wins on `position`.
+ */
+@media (max-width: 900px) {
+  .itinerary-v3 > header {
+    inset-block-start: auto;
+    position: static;
+  }
+}
+
+/* --- the cover fills its viewport --------------------------------------
+ *
+ * v27 locked the hero to `aspect-ratio: 941/1672` and `width: min(36rem, ...)`
+ * because the cover used to be a flat 941x1672 photograph of the client's
+ * poster. It is a CSS composition now, so those constraints only served to
+ * squeeze the page into a portrait strip with dead ground either side on any
+ * landscape screen.
+ */
+
+.client-concept-hero {
+  min-height: calc(100svh - var(--header-height));
+}
+
+.client-hero-art,
+.client-hero-copy {
+  aspect-ratio: auto;
+  max-height: none;
+  min-height: calc(100svh - var(--header-height));
+  width: 100%;
+}
+
+@media (min-width: 901px) {
+  .client-hero-art,
+  .client-hero-copy {
+    width: 100%;
+  }
+
+  /* the type stays a measured column even when the ground goes full width */
+  .client-hero-copy > * {
+    margin-inline: auto;
+    max-inline-size: 34rem;
+  }
+}
+
+/* --- addressee, unbroken ------------------------------------------------
+ *
+ * In the portrait strip the column was narrow enough to hyphenate a surname
+ * mid-word ("RODRÍGUE / Z"). Give it room and forbid the break.
+ */
+
+.client-hero-personalization {
+  inline-size: 100%;
+}
+
+.client-hero-personalization .hero-addressee-name {
+  /* a name is one line. `balance` was splitting it across two on its own. */
+  hyphens: none;
+  max-inline-size: none;
+  overflow-wrap: normal;
+  text-wrap: nowrap;
+  word-break: keep-all;
+}
+
+/* only if the name genuinely cannot fit does it wrap, and then between words */
+@media (max-width: 380px) {
+  .client-hero-personalization .hero-addressee-name {
+    text-wrap: balance;
+  }
+}

@@ -180,3 +180,57 @@
     display: none;
   }
 }
+
+/* --- v28: the traced silhouette ---------------------------------------
+ *
+ * The glass is no longer a line drawing. It is the same silhouette the client's
+ * artwork uses, filled flat, with the wine sitting inside it — so the two-tone
+ * move from the cover carries into the one thing on the page that moves.
+ *
+ * Everything is clipped to the silhouette, so these need no geometry of their own.
+ */
+
+.interactive-wine-glass__vessel {
+  fill: var(--client-cream, #f6eee4);
+}
+
+.interactive-wine-glass__wine {
+  fill: var(--wine-glass-wine);
+  stroke: none;
+}
+
+.interactive-wine-glass__surface {
+  fill: none;
+  /* a hairline of the paper colour reads as the meniscus catching the light */
+  stroke: color-mix(in srgb, var(--client-cream, #f6eee4) 55%, transparent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.interactive-wine-glass__stream {
+  fill: none;
+  stroke: var(--wine-glass-wine);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+/* the old line-drawing parts are gone from the markup */
+.interactive-wine-glass__outline,
+.interactive-wine-glass__rim,
+.interactive-wine-glass__stem,
+.interactive-wine-glass__base,
+.interactive-wine-glass__base-highlight,
+.interactive-wine-glass__highlight,
+.interactive-wine-glass__bowl-wash,
+.interactive-wine-glass__shadow {
+  display: none;
+}
+
+/*
+ * The stage used to draw a hairline "table" for the old line-drawing glass to
+ * stand on. Against the filled silhouette it just crosses the stem.
+ */
+.wine-glass-stage-v25::before {
+  display: none;
+}

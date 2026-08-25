@@ -6,6 +6,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { GLASS_PATH, GLASS_VIEWBOX } from '../art/traced-marks';
 import './interactive-wine-glass.css';
 
 type OrientationPermission = 'granted' | 'denied';
@@ -35,6 +36,9 @@ interface LiquidPhysics {
   pointerTilt: number;
   orientationTilt: number;
   scrollKick: number;
+  /** Vertical displacement of the whole surface — the "gravity" of the pour. */
+  bob: number;
+  bobVelocity: number;
   splash: number;
   pointerActive: boolean;
   lastPointerX: number;
@@ -45,10 +49,22 @@ interface LiquidPhysics {
   orientationPermissionGranted: boolean;
 }
 
-const SURFACE_LEFT = 82;
-const SURFACE_RIGHT = 278;
-const SURFACE_TOP = 180;
-const SURFACE_BOTTOM = 333;
+/*
+ * All of these are in the traced glass's own units (see GLASS_VIEWBOX). The
+ * surface deliberately overshoots the silhouette on both sides — the clip path
+ * trims it to the bowl, so the wine meets the glass wall exactly however the
+ * bowl curves.
+ *
+ * Measured off the silhouette: the bowl runs from the rim down to y≈152, where
+ * it necks into the stem. The wine must never spill past that.
+ */
+const SURFACE_LEFT = -8;
+const SURFACE_RIGHT = 129.5;
+/* A poured glass sits at the bowl's widest point, not at the rim. */
+const SURFACE_TOP = 74;
+const SURFACE_BOTTOM = 148;
+const BOWL_BASE = 156;
+const GLASS_CENTRE = 60.75;
 const SURFACE_POINTS = 34;
 const FRAME = 1000 / 60;
 
@@ -82,7 +98,7 @@ function makeSurface(
 }
 
 function makeLiquidPath(surface: string[]) {
-  return `M ${surface.join(' L ')} L ${SURFACE_RIGHT + 18} 350 L ${SURFACE_LEFT - 18} 350 Z`;
+  return `M ${surface.join(' L ')} L ${SURFACE_RIGHT} ${BOWL_BASE} L ${SURFACE_LEFT} ${BOWL_BASE} Z`;
 }
 
 function makeSurfacePath(surface: string[]) {
@@ -122,6 +138,8 @@ export function InteractiveWineGlass({
     pointerTilt: 0,
     orientationTilt: 0,
     scrollKick: 0,
+    bob: 0,
+    bobVelocity: 0,
     splash: 0,
     pointerActive: false,
     lastPointerX: 0,
@@ -213,12 +231,14 @@ export function InteractiveWineGlass({
     let lastScrollY = window.scrollY;
     let lastScrollTime = performance.now();
 
-    const draw = (fill: number, tilt: number, phase: number, amplitude: number) => {
-      const level = SURFACE_BOTTOM - (SURFACE_BOTTOM - SURFACE_TOP) * clamp(fill, 0, 1.055);
+    const draw = (fill: number, tilt: number, phase: number, amplitude: number, bob = 0) => {
+      const resting = SURFACE_BOTTOM - (SURFACE_BOTTOM - SURFACE_TOP) * clamp(fill, 0, 1.055);
+      // never let the slosh climb out of the bowl or drain below its base
+      const level = clamp(resting + bob, 6, BOWL_BASE - 4);
       const surface = makeSurface(level, tilt, phase, amplitude);
       liquidPath.setAttribute('d', makeLiquidPath(surface));
       surfacePath.setAttribute('d', makeSurfacePath(surface));
-      stream.setAttribute('d', `M 180 54 L 180 ${Math.max(70, level - 2).toFixed(1)}`);
+      stream.setAttribute('d', `M ${GLASS_CENTRE} 4 L ${GLASS_CENTRE} ${Math.max(10, level - 1).toFixed(1)}`);
 
       const streamVisibility = fill < 0.78 ? clamp(fill * 4, 0, 0.68) : clamp((1 - fill) * 3.1, 0, 0.68);
       stream.style.opacity = String(streamVisibility);
@@ -283,6 +303,12 @@ export function InteractiveWineGlass({
       physics.tilt += physics.tiltVelocity * step;
       physics.tilt = clamp(physics.tilt, -15, 15);
 
+      // a damped spring back to rest — heavy enough to overshoot once, like liquid
+      physics.bobVelocity += -physics.bob * 0.11 * step;
+      physics.bobVelocity *= Math.pow(0.86, step);
+      physics.bob += physics.bobVelocity * step;
+      physics.bob = clamp(physics.bob, -16, 16);
+
       physics.scrollKick *= Math.pow(0.83, step);
       physics.splash *= Math.pow(0.91, step);
       physics.phase += elapsed * (0.0032 + physics.splash * 0.0028);
@@ -294,13 +320,16 @@ export function InteractiveWineGlass({
         Math.abs(requestedTilt - physics.tilt) > 0.025 ||
         Math.abs(physics.tiltVelocity) > 0.0025;
       const surfaceIsMoving =
-        physics.splash > 0.012 || Math.abs(physics.scrollKick) > 0.012;
+        physics.splash > 0.012 ||
+        Math.abs(physics.scrollKick) > 0.012 ||
+        Math.abs(physics.bob) > 0.05 ||
+        Math.abs(physics.bobVelocity) > 0.05;
       const shouldContinue = fillIsMoving || tiltIsMoving || surfaceIsMoving;
       const pourEnergy = Math.min(1, Math.abs(physics.fillVelocity) * 15);
       const amplitude = shouldContinue
         ? 0.45 + Math.abs(physics.tiltVelocity) * 0.6 + physics.splash * 5.2 + pourEnergy * 3.2
         : 0;
-      draw(physics.fill, physics.tilt, physics.phase, amplitude);
+      draw(physics.fill, physics.tilt, physics.phase, amplitude, physics.bob);
       if (shouldContinue) scheduleFrame();
     };
 
@@ -347,7 +376,9 @@ export function InteractiveWineGlass({
 
       if (reduce || !physics.visible || !physics.pageVisible || Math.abs(velocity) < 0.22) return;
       physics.splash = clamp(physics.splash + Math.abs(velocity) * 0.22, 0, 1.2);
-      physics.scrollKick = clamp(physics.scrollKick + velocity * 1.7, -5.5, 5.5);
+      // the wine lags behind the glass: scrolling down throws the surface up
+      physics.bobVelocity = clamp(physics.bobVelocity - velocity * 0.9, -26, 26);
+      physics.scrollKick = clamp(physics.scrollKick + velocity * 0.5, -2.4, 2.4);
       scheduleFrame();
     };
 
@@ -464,23 +495,29 @@ export function InteractiveWineGlass({
     >
       <svg
         className="interactive-wine-glass__art"
-        viewBox="0 0 360 520"
+        viewBox={GLASS_VIEWBOX}
         role="img"
         aria-labelledby={`${titleId} ${descriptionId}`}
         preserveAspectRatio="xMidYMid meet"
       >
         <title id={titleId}>{ariaLabel}</title>
         <desc id={descriptionId}>
-          El vino se sirve al aparecer la copa y su superficie responde con ondas sutiles al movimiento.
+          El vino se sirve al aparecer la copa y su superficie se inclina con el desplazamiento de la página.
         </desc>
         <defs>
+          {/*
+            The silhouette itself is the clip. Anything drawn inside is bounded by
+            the real glass wall, so the wine never has to be shaped by hand.
+          */}
           <clipPath id={clipId}>
-            <path d="M82 72 L278 72 C276 205 246 294 180 330 C114 294 84 205 82 72 Z" />
+            <path d={GLASS_PATH} />
           </clipPath>
         </defs>
 
         <g ref={motionGroupRef} className="interactive-wine-glass__motion">
-          <g className="interactive-wine-glass__liquid" clipPath={`url(#${clipId})`}>
+          <g clipPath={`url(#${clipId})`}>
+            {/* the empty glass, in the reference's flat two-tone language */}
+            <rect className="interactive-wine-glass__vessel" x="-10" y="-10" width="142" height="320" />
             <path
               ref={liquidPathRef}
               className="interactive-wine-glass__wine"
@@ -491,16 +528,8 @@ export function InteractiveWineGlass({
               className="interactive-wine-glass__surface"
               d={initialSurfacePath}
             />
-            <path ref={streamRef} className="interactive-wine-glass__stream" d="M 180 54 L 180 331" />
+            <path ref={streamRef} className="interactive-wine-glass__stream" d={`M ${GLASS_CENTRE} 4 L ${GLASS_CENTRE} 4`} />
           </g>
-
-          <path
-            className="interactive-wine-glass__outline"
-            d="M82 72 C84 205 114 294 180 330 C246 294 276 205 278 72"
-          />
-          <path className="interactive-wine-glass__rim" d="M82 72 H278" />
-          <path className="interactive-wine-glass__stem" d="M180 330 L180 443" />
-          <path className="interactive-wine-glass__base" d="M112 463 Q180 447 248 463" />
         </g>
       </svg>
 

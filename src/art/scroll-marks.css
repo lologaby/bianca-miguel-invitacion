@@ -1,0 +1,87 @@
+/*
+ * Marks released down the scroll.
+ *
+ * Every one of these is decoration behind real copy, so they are pinned out of
+ * the flow, made unclickable, and held at a low opacity set per instance. The
+ * placement classes are deliberately coarse — a mark that needs pixel nudging is
+ * a mark in the wrong section.
+ */
+
+.scroll-mark {
+  contain: layout paint;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.scroll-mark svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-mark {
+    transform: translateY(1.6rem);
+    transition:
+      opacity 1.1s cubic-bezier(.16, 1, .3, 1) var(--mark-delay, 0s),
+      transform 1.3s cubic-bezier(.16, 1, .3, 1) var(--mark-delay, 0s);
+  }
+}
+
+.scroll-mark.is-shown {
+  opacity: var(--mark-opacity, .1);
+  transform: none;
+}
+
+/* --- placements ------------------------------------------------------- */
+
+/* a tall mark hugging the left edge, half off the page */
+.scroll-mark--edge-left {
+  block-size: min(58%, 26rem);
+  inline-size: auto;
+  inset-block-start: 12%;
+  inset-inline-start: -6%;
+}
+
+/* the mirror of the above */
+.scroll-mark--edge-right {
+  block-size: min(58%, 26rem);
+  inline-size: auto;
+  inset-block-start: 10%;
+  inset-inline-end: -7%;
+}
+
+/* an arch breaking the top edge of a section */
+.scroll-mark--crest {
+  block-size: 22%;
+  inline-size: min(52%, 22rem);
+  inset-block-start: -3%;
+  inset-inline-end: 6%;
+}
+
+/* a disc anchored low, mostly cropped away */
+.scroll-mark--sink {
+  aspect-ratio: 1;
+  inline-size: min(34%, 15rem);
+  inset-block-end: -12%;
+  inset-inline-start: -8%;
+}
+
+/* a wedge in a bottom corner */
+.scroll-mark--corner {
+  block-size: 26%;
+  inline-size: min(30%, 13rem);
+  inset-block-end: 0;
+  inset-inline-end: 0;
+}
+
+@media (max-width: 720px) {
+  .scroll-mark--edge-left,
+  .scroll-mark--edge-right { block-size: min(42%, 17rem); }
+  .scroll-mark--crest { block-size: 16%; inline-size: 58%; }
+  .scroll-mark--sink { inline-size: 42%; }
+  .scroll-mark--corner { block-size: 20%; inline-size: 38%; }
+}
