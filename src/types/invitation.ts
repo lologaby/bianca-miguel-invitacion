@@ -89,7 +89,7 @@ export const localDemoInvitation: InvitationPayload = {
       city: 'Ciudad, Puerto Rico',
       timeLabel: '6:00 p. m.',
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Puerto+Rico',
-      moments: ['Cóctel de bienvenida', 'Cata de vino y chocolates', 'Cena y baile'],
+      moments: ['Cóctel de bienvenida', 'Vino y chocolate', 'Cena y baile'],
     },
     dressCode: {
       label: 'Cóctel / Formal',

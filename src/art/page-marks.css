@@ -448,13 +448,11 @@
   padding-block: .72rem;
 }
 
-/* the leaders that make a list read as a menu rather than as bullet points */
-.tasting-list li::after {
-  border-block-end: 1px dotted rgba(246, 238, 228, .3);
-  content: '';
-  flex: 1;
-  translate: 0 -.25em;
-}
+/*
+ * No leaders. A leader carries the eye to a value; these ran to empty space,
+ * and with a rule above and below each row it was seven horizontal lines for
+ * three items. The rules alone read as a menu.
+ */
 
 /* --- RSVP: one alignment ------------------------------------------------
  *
@@ -563,4 +561,108 @@
   .guest-details-v3 > header {
     margin-block-end: clamp(1.1rem, 4vw, 1.8rem) !important;
   }
+}
+
+/* --- RSVP, second pass --------------------------------------------------- */
+
+/*
+ * The submit sat at 72% alpha with `justify-content: space-between`, a serif
+ * label flush left and a lone diamond flush right across the full width — the
+ * shape and weight of a disabled select, not of the most important control on
+ * the page.
+ */
+.distilled-rsvp .rsvp-submit {
+  align-items: center !important;
+  gap: .8rem;
+  justify-content: center !important;
+}
+
+.distilled-rsvp .rsvp-submit:disabled {
+  /* legible while inert: dim the border, keep the label readable */
+  border-color: rgba(94, 32, 35, .38) !important;
+  color: rgba(94, 32, 35, .92) !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.distilled-rsvp .rsvp-submit.is-ready {
+  background: var(--wine, #5e2023) !important;
+  border-color: var(--wine, #5e2023) !important;
+  color: var(--client-cream, #f6eee4) !important;
+}
+
+/*
+ * The answer cards carried a chamfered clip-path over a 1px border, so the clip
+ * cut the border away at each bevel and every card rendered as four detached
+ * segments with open corners. It read as a rendering fault, and the chamfer
+ * appears nowhere else on the page.
+ */
+.distilled-rsvp .attendance-card {
+  clip-path: none !important;
+}
+
+/* the caption was heavier than the answer it captions */
+.distilled-rsvp .attendance-card b {
+  font-weight: 600 !important;
+}
+
+.distilled-rsvp .attendance-card small {
+  font-weight: 400 !important;
+  opacity: .78;
+}
+
+/* a hairline under the resting card, so it reads as something to choose */
+.distilled-rsvp .attendance-card {
+  transition: border-color .2s var(--ease, ease), background .2s var(--ease, ease);
+}
+
+.distilled-rsvp .attendance-card:has(input:checked) {
+  border-color: var(--wine, #5e2023) !important;
+}
+
+/* the glass watermark was crossing the answer cards; decoration stays outside */
+.distilled-rsvp .scroll-mark--edge-right {
+  inset-block-start: 2%;
+  inset-inline-end: -14%;
+}
+
+/* --- the glass reads as a thumbnail at 77px --------------------------------- */
+@media (max-width: 720px) {
+  .wine-story-inner {
+    column-gap: clamp(1rem, 4vw, 2rem);
+    grid-template-columns: minmax(6rem, 30%) 1fr;
+  }
+}
+
+/* --- times never break ----------------------------------------------------
+ *
+ * "4:00 p. m." wrapped to "4:00 p." / "m." in the timeline's narrow desktop
+ * column. The space inside the abbreviation is a real space in the data, so it
+ * is held together here rather than by smuggling a non-breaking space into the
+ * content.
+ */
+.itinerary-stop > time,
+.celebration-summary-events span,
+.itinerary-card span {
+  white-space: nowrap;
+}
+
+/* --- one treatment for both stops -----------------------------------------
+ *
+ * The ceremony was a rule-only row and the reception a filled taupe panel. The
+ * panel's padding pushed its icon 23px, its eyebrow and heading further still,
+ * and its arrow the other way — two items in one list with not one edge in
+ * agreement. The taupe was also a fourth off-palette greige.
+ *
+ * Both are rule-only now. The reception keeps its emphasis in the wine eyebrow.
+ */
+.itinerary-card.reception-stage {
+  background: transparent !important;
+  padding-inline: 0 !important;
+}
+
+.itinerary-card.ceremony-stage,
+.itinerary-card.reception-stage {
+  border-block-start: 1px solid rgba(39, 44, 36, .18);
+  padding-block: clamp(1rem, 3.5vw, 1.5rem) !important;
 }
