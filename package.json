@@ -8,11 +8,13 @@
     "build": "tsc -b && vite build --config vite.deploy.v23.config.ts",
     "typecheck": "tsc -b --pretty false",
     "check": "npm run typecheck && npm run build",
-    "build:pages": "tsc -b && vite build --config vite.preview.pages.config.ts"
+    "build:pages": "tsc -b && vite build --config vite.preview.pages.config.ts",
+    "build:vercel": "tsc -b && vite build --config vite.deploy.vercel.config.ts"
   },
   "dependencies": {
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "@upstash/redis": "^1.36.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.53.1",
