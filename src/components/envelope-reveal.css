@@ -20,7 +20,8 @@
 }
 
 .envelope-reveal-title {
-  color: #d8c69f;
+  /* was #d8c69f — a gold from no part of the client's palette */
+  color: #f6eee4;
   font: 600 clamp(1.05rem, 3vw, 1.35rem)/1.25 var(--serif);
   letter-spacing: .02em;
   margin: 0 0 clamp(2.8rem, 8vh, 5.25rem);
@@ -156,8 +157,6 @@
   width: 2.85rem;
 }
 
-.stationery-envelope__seal i { color: #d8c69f; font-size: .72em; }
-
 .envelope-reveal-note {
   color: #dce1d9;
   font: 650 .68rem/1.4 var(--sans);
@@ -215,64 +214,107 @@
   .stationery-envelope__card { animation: bm-reduced-confirm .18s ease-out both; transform: translateY(-42%); }
 }
 
-/* --- v28: printed, not moulded ----------------------------------------
+/* --- v28: a flat paper envelope ----------------------------------------
  *
- * The envelope used to be a brown-and-gold rectangle with a glossy wax seal:
- * gradients, a drop shadow, an inset gold ring — none of it in the client's
- * palette, and none of it in the flat matte language the rest of the site is
- * built from. It is now paper: the approved cream, hard edges, and the same
- * print grain the cover carries.
+ * What was wrong, in order of how much it showed:
+ *
+ * The grain tile is 220px, sized for a full-bleed cover. On an envelope of
+ * roughly 300px it stopped being grain and became grey blocks — the artefacts
+ * that read as dirt on the paper. Paper this small does not need texture.
+ *
+ * A drop-shadow under the envelope: the artwork is flat and matte throughout,
+ * and a soft shadow is the one thing that cannot be printed.
+ *
+ * Two rotated hairlines drawn as "seams", plus an embossed pod, on an object
+ * that is already only 300px wide. Both are gone; the seal carries the identity.
+ *
+ * The two paper tones are now tints of the client's cream rather than the tans
+ * they had drifted into.
  */
 
 .stationery-envelope {
+  filter: none;
   isolation: isolate;
 }
 
-/* the grain that makes the cream read as stock rather than as a fill */
-.stationery-envelope__front::after,
+.stationery-envelope__back {
+  background: #f6eee4;
+}
+
+.stationery-envelope__front {
+  background: #eae1d5;
+}
+
+.stationery-envelope__flap {
+  background: #f6eee4;
+}
+
+/* the fold is one hairline of the palette's own green, not a drawn seam */
 .stationery-envelope__flap::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
+  background: none;
+  border-block-end: 1px solid rgba(71, 85, 72, .16);
   content: '';
   inset: 0;
-  mix-blend-mode: multiply;
-  opacity: .14;
   pointer-events: none;
   position: absolute;
 }
 
-/* the seal is a flat disc of wine, the way the arch and the discs are flat */
+/* --- the seal --------------------------------------------------------------
+ *
+ * A flat disc of wine carrying the couple's monogram, cut from their own
+ * lockup: the geometric B and M with the didone ampersand between them. The
+ * ampersand alone was too fine to read at this size and looked like a scuff.
+ */
+
 .stationery-envelope__seal {
   background: #5e2023 !important;
   border: 0 !important;
+  block-size: 3.6rem !important;
   box-shadow: none !important;
   color: #f6eee4 !important;
+  inline-size: 3.6rem !important;
+  inset-block-end: -1.3rem !important;
 }
 
+.envelope-monogram {
+  align-items: baseline;
+  display: inline-flex;
+  gap: .18em;
+  justify-content: center;
+}
+
+/* the initials are heavy and the ampersand is a hairline, so they are sized
+   against each other by eye rather than to the same height */
 /*
- * A wax seal carries one mark. Three glyphs at .72rem inside a 2.85rem disc read
- * as cramped type, so the seal is the couple's own ampersand alone — the same
- * glyph the header and the footer carry.
+ * A rule in the gate's icon system puts `fill: none; stroke: currentColor` on
+ * every svg inside the envelope — right for the single-stroke line icons, wrong
+ * for letterforms, which came out as hairline outlines instead of solid glyphs.
+ * These are type, so they are filled and never stroked.
  */
+.envelope-initial,
+.envelope-initial path,
+.envelope-ampersand,
+.envelope-ampersand path {
+  fill: #f6eee4 !important;
+  stroke: none !important;
+}
+
+/* sized so the three glyphs sit inside the disc with air around them */
+.envelope-initial {
+  block-size: .78rem;
+  inline-size: auto;
+}
+
 .envelope-ampersand {
-  block-size: 1.5rem;
-  fill: currentColor;
+  block-size: .66rem;
   inline-size: auto;
+  opacity: .92;
 }
 
-/*
- * The cacao pod, blind-embossed into the envelope face: the same cream as the
- * paper, darkened a shade by multiply, so it catches only at an angle. It is the
- * chocolate half of the tasting, stated without adding a colour.
- */
-.envelope-pod {
-  block-size: 62%;
-  color: #8d8272;
-  inline-size: auto;
-  inset-block-end: 6%;
-  inset-inline-start: 8%;
-  mix-blend-mode: multiply;
-  opacity: .16;
-  pointer-events: none;
-  position: absolute;
+.envelope-monogram {
+  max-inline-size: 72%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stationery-envelope__seal { display: none; }
 }

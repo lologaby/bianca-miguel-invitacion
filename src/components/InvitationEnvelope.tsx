@@ -1,5 +1,5 @@
 import { AnimationEvent, useEffect, useRef } from 'react';
-import { Ampersand, CacaoPodMark } from '../art/ReferenceMarks';
+import { Ampersand, InitialB, InitialM } from '../art/ReferenceMarks';
 import type { InvitationPayload } from '../types/invitation';
 import './envelope-reveal.css';
 
@@ -39,14 +39,14 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
           </> : <span className="stationery-card__promise">Reservado para ti</span>}
           <span className="stationery-card__rule" />
         </article>
-        <div className="stationery-envelope__front">
-          <CacaoPodMark className="envelope-pod" tone="currentColor" />
-          <span className="stationery-envelope__seam left" />
-          <span className="stationery-envelope__seam right" />
-        </div>
+        <div className="stationery-envelope__front" />
         <div className="stationery-envelope__flap" />
         <span className="stationery-envelope__seal">
-          <Ampersand className="envelope-ampersand" tone="currentColor" />
+          <span className="envelope-monogram">
+            <InitialB className="envelope-initial" tone="#f6eee4" />
+            <Ampersand className="envelope-ampersand" tone="#f6eee4" />
+            <InitialM className="envelope-initial" tone="#f6eee4" />
+          </span>
         </span>
       </div>
 
