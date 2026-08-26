@@ -25,3 +25,6 @@ event-content.local.yaml
 .crop.mjs
 .slice.mjs
 .zoom.mjs
+
+.vercel
+.env*
