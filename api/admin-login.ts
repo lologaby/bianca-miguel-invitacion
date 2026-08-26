@@ -1,9 +1,7 @@
-import { Redis } from '@upstash/redis';
+import { redis } from './_redis.js';
 import { clientIp, jsonError, type ApiRequest, type ApiResponse } from './_security.js';
 import { signAdminSession, validAdminPassword } from './_admin.js';
 import { createHash } from 'node:crypto';
-
-const redis = Redis.fromEnv();
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'no-store');

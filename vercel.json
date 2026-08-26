@@ -38,5 +38,10 @@
       "source": "/((?!api|assets|private-assets|favicon).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/private-asset.ts": {
+      "includeFiles": "worker/private-assets/**"
+    }
+  }
 }

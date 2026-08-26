@@ -32,6 +32,13 @@ const readableCode = () =>
   ['', ''].map(() => Array.from({ length: 4 }, () => ALPHABET[randomInt(ALPHABET.length)]).join('')).join('-');
 
 const code = String(flag('--code') || readableCode()).trim().toUpperCase();
+
+/*
+ * Both servers strip anything that is not a letter or a digit before hashing,
+ * so the hash has to be of the stripped form. The guest still sees the dashes —
+ * they are only there to make the code readable and are not part of the secret.
+ */
+const normalised = code.replace(/[^A-Z0-9]/g, '');
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 
 const record = {
@@ -39,7 +46,7 @@ const record = {
   name,
   partyLimit,
   plusOneAllowed: partyLimit > 1,
-  codeHash: sha(code),
+  codeHash: sha(normalised),
 };
 
 const linkBase = flag('--link');

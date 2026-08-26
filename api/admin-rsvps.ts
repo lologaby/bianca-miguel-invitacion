@@ -1,11 +1,9 @@
-import { Redis } from '@upstash/redis';
+import { redis } from './_redis.js';
 import { isAdmin } from './_admin.js';
 import { readGuests } from './_data.js';
 import { jsonError, type ApiRequest, type ApiResponse } from './_security.js';
 
 interface StoredRsvp { attendance: 'yes' | 'no'; partySize: number; plusOneName?: string; song?: string; updatedAt: string }
-const redis = Redis.fromEnv();
-
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));

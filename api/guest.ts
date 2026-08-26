@@ -1,9 +1,7 @@
+import { redis } from './_redis.js';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { Redis } from '@upstash/redis';
 import { publicGuest, readGuests, readPrivateEvent } from './_data.js';
 import { clientIp, jsonError, signSession, type ApiRequest, type ApiResponse } from './_security.js';
-
-const redis = Redis.fromEnv();
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'no-store');

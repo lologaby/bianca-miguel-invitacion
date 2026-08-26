@@ -1,6 +1,6 @@
-import { Redis } from '@upstash/redis';
+import { redis } from './_redis.js';
 import { jsonError, readSession, type ApiRequest, type ApiResponse } from './_security.js';
-const redis = Redis.fromEnv(); const text = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
+const text = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));

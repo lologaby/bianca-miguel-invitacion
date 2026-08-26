@@ -405,7 +405,15 @@ async function sha256Hex(value: string) {
 
 async function privateGuestForCredentials(body: GuestCredentialBody | null, env: Env) {
   if (!body) return null;
-  const code = typeof body.code === 'string' ? body.code.trim().toUpperCase().slice(0, 128) : '';
+  /*
+   * Strip everything that is not a letter or a digit before hashing, exactly
+   * as api/guest.ts does. The two servers used to disagree here, so a code
+   * that opened the invitation on one host was rejected by the other. It also
+   * means the guest can type BM-VINO-2026, bm vino 2026 or bmvino2026.
+   */
+  const code = typeof body.code === 'string'
+    ? body.code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 128)
+    : '';
   const linkToken = typeof body.linkToken === 'string' ? body.linkToken.trim().slice(0, 256) : '';
   if (!code && !linkToken) return null;
 
