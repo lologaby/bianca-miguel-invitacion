@@ -49,9 +49,9 @@ La URL `?coordinacion=1` solicita la contraseña configurada en `ADMIN_PASSWORD`
 
 Dos destinos, desde `main`:
 
-| Destino | Qué es | Workflow |
+| Destino | Qué es | Cómo despliega |
 | --- | --- | --- |
-| **Vercel** | La invitación real. Ejecuta `api/*.ts`, así que la puerta autentica y el RSVP se guarda. | `.github/workflows/vercel.yml` |
+| **Vercel** — [bianca-miguel-invitacion.vercel.app](https://bianca-miguel-invitacion.vercel.app) | La invitación real. Ejecuta `api/*.ts`, así que la puerta autentica y el RSVP se guarda en Redis. | Integración de Git de Vercel, en cada push a `main`. Sin workflow ni token. |
 | **GitHub Pages** | Vista previa de diseño en `https://lologaby.github.io/bianca-miguel-invitacion/`. Estático: sin API, nadie entra con código y no se guarda nada. Se compila con `VITE_DEMO_PREVIEW=1`, que abre directamente la invitación de demostración. | `.github/workflows/pages.yml` |
 
 La vista previa lleva datos de marcador a propósito. El evento real —lugares, fecha y número de ATH Móvil— nunca forma parte de ningún bundle: vive en `PRIVATE_EVENT_JSON` en el hosting, tanto para el worker como para las funciones de Vercel. Ambos workflows fallan si detectan esos datos en el repositorio.

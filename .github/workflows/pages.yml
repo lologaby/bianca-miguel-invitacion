@@ -7,6 +7,9 @@
 # real event lives only in the host's PRIVATE_EVENT_JSON and is in no bundle.
 #
 # Published at https://lologaby.github.io/bianca-miguel-invitacion/
+#
+# The real invitation lives at https://bianca-miguel-invitacion.vercel.app and is
+# deployed by Vercel's own Git integration on every push — no workflow, no token.
 name: Vista previa de diseño
 
 on:
