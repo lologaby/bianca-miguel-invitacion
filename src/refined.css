@@ -29,7 +29,8 @@
 .private-note { align-self: end; color: #aeb7ac; font: 650 .57rem/1 var(--sans); justify-self: end; letter-spacing: .15em; margin: 0 0 1rem; text-transform: uppercase; writing-mode: vertical-rl; }
 
 .header-date > span:only-child { font: 650 .6rem/1.2 var(--sans); letter-spacing: .12em; max-width: 9rem; text-align: right; }
-.date-word h2 { font-size: clamp(2.8rem, 6vw, 5rem); line-height: .85; }
+/* DICIEMBRE is one unbreakable word: at 6vw it needed 370px in a 317px cell and ran across the divider */
+.date-word h2 { font-size: clamp(2.8rem, 4.4vw, 4.6rem); line-height: .85; }
 .distilled-hero .hero-copy-v2 > p { max-width: 22rem; }
 .distilled-hero .hero-actions-v2 { display: none; }
 .distilled-visual::before { inset: clamp(1rem, 3vw, 2.5rem); }
