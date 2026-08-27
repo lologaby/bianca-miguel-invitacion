@@ -371,11 +371,35 @@ const firstOf = (line) => line.reduce((best, g) => (g.minX < best.minX ? g : bes
 const initialB = firstOf(notAmpersand.filter((g) => g.midY < lockupMid));
 const initialM = firstOf(notAmpersand.filter((g) => g.midY >= lockupMid));
 
-const traceGlyph = (mask, scale) =>
-  normalise(contours(mask, MW, MH).map((c) => rdp(c, 1.1)), scale);
+/*
+ * Both letters must come out at the same cap height.
+ *
+ * `normalise` fits each shape to its own longest side, which is right for a
+ * standalone mark and wrong for letters that will sit side by side: the B is
+ * taller than it is wide and the M is wider than it is tall, so fitting each to
+ * 200 units drew the M at 75% of the B. They are the same height in the
+ * lockup — 169px each — and they have to stay that way.
+ *
+ * So: trace both, then scale both by the SAME factor, taken from cap height.
+ */
+const CAP_HEIGHT = 200;
 
-const bGlyph = traceGlyph(initialB, 200);
-const mGlyph = traceGlyph(initialM, 200);
+function traceAtCapHeight(mask) {
+  const traced = contours(mask, MW, MH).map((c) => rdp(c, 1.1));
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const c of traced) for (const [x, y] of c) {
+    if (x < x0) x0 = x; if (x > x1) x1 = x;
+    if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  const k = CAP_HEIGHT / (y1 - y0);
+  return {
+    contours: traced.map((c) => c.map(([x, y]) => [(x - x0) * k, (y - y0) * k])),
+    viewBox: `0 0 ${((x1 - x0) * k).toFixed(1)} ${CAP_HEIGHT.toFixed(1)}`,
+  };
+}
+
+const bGlyph = traceAtCapHeight(initialB);
+const mGlyph = traceAtCapHeight(initialM);
 const INITIAL_B_PATH = bGlyph.contours.map((c) => toPath(c, { corner: 68, tension: 0.44 })).join('');
 const INITIAL_M_PATH = mGlyph.contours.map((c) => toPath(c, { corner: 68, tension: 0.44 })).join('');
 console.log(`initials  B ${bGlyph.viewBox}  M ${mGlyph.viewBox}`);

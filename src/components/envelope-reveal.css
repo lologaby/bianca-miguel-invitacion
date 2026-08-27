@@ -300,20 +300,31 @@
   inset-inline-start: 50% !important;
 }
 
+/*
+ * The monogram: B, the ampersand, M — all three cut from the couple's lockup.
+ *
+ * Two things had to be right for the letters to look like one word.
+ *
+ * The tracer used to fit each glyph to its own longest side, so the B (taller
+ * than wide) and the M (wider than tall) came out at different cap heights and
+ * the M drew at 75% of the B. Both are normalised to one cap height now.
+ *
+ * And these must not shrink: a max-inline-size on this row made flex squeeze all
+ * three, which cost the M most because it is the widest, and a squeezed glyph
+ * letterboxes inside its own box and looks smaller still. The row is sized by
+ * its contents instead.
+ */
 .envelope-monogram {
-  align-items: baseline;
+  align-items: center;
   display: inline-flex;
-  gap: .18em;
+  gap: .08em;
   justify-content: center;
 }
 
-/* the initials are heavy and the ampersand is a hairline, so they are sized
-   against each other by eye rather than to the same height */
 /*
- * A rule in the gate's icon system puts `fill: none; stroke: currentColor` on
- * every svg inside the envelope — right for the single-stroke line icons, wrong
- * for letterforms, which came out as hairline outlines instead of solid glyphs.
- * These are type, so they are filled and never stroked.
+ * The gate's icon system puts `fill: none; stroke: currentColor` on every svg
+ * inside the envelope. Right for single-stroke icons, wrong for letterforms —
+ * it turns them into hollow outlines. These are type: filled, never stroked.
  */
 .envelope-initial,
 .envelope-initial path,
@@ -323,20 +334,24 @@
   stroke: none !important;
 }
 
-/* sized so the three glyphs sit inside the disc with air around them */
-.envelope-initial {
-  block-size: .78rem;
-  inline-size: auto;
-}
-
+/*
+ * The same icon system also sizes every svg in the gate to a fixed 1.45rem
+ * square, which flattened all three glyphs to identical boxes and threw the
+ * widths away. Height is set here and width follows the viewBox.
+ */
+.envelope-initial,
 .envelope-ampersand {
-  block-size: .66rem;
-  inline-size: auto;
-  opacity: .92;
+  block-size: .72rem !important;
+  flex: none;
+  inline-size: auto !important;
+  max-inline-size: none !important;
+  min-inline-size: 0 !important;
 }
 
-.envelope-monogram {
-  max-inline-size: 72%;
+/* the didone ampersand is a hairline beside two heavy caps, so it carries a
+   little extra height to hold its own without shouting */
+.envelope-ampersand {
+  block-size: .8rem !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
