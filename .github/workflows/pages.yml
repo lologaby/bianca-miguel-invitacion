@@ -51,10 +51,16 @@ jobs:
             echo "::error::El bundle de la vista previa contiene un número de teléfono."
             exit 1
           fi
-          if grep -rqiE "iglesia|bodega de" dist-pages/assets/ ; then
-            echo "::error::El bundle de la vista previa contiene un lugar real."
-            exit 1
-          fi
+          # Asserting the placeholders SURVIVED beats banning words: swapping in a
+          # real venue removes them, and no private value has to be written here.
+          # The previous check banned "iglesia" and "bodega de", which are ordinary
+          # Spanish that the demo copy uses, so it failed every run on itself.
+          for marcador in "Lugar de ceremonia" "Lugar de recepción" "Ciudad, Puerto Rico"; do
+            if ! grep -rqF "$marcador" dist-pages/assets/; then
+              echo "::error::Falta el marcador de lugar \"$marcador\": la vista previa podría llevar un lugar real."
+              exit 1
+            fi
+          done
           echo "Bundle limpio."
 
       - uses: actions/configure-pages@v5

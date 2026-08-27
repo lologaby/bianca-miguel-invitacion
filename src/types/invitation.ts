@@ -102,10 +102,10 @@ export const localDemoInvitation: InvitationPayload = {
     },
     story: {
       paragraphs: [
-        'Elegimos Ponce, y una bodega de vinos para recibirle. Allí habrá una cata de vino y chocolate antes de la cena.',
+        'Elegimos nuestra ciudad, y una bodega de vinos para recibirle. Allí habrá una cata de vino y chocolate antes de la cena.',
       ],
     },
-    weatherNote: 'Diciembre en Ponce sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
+    weatherNote: 'Diciembre aquí sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
     faq: [
       { id: 'companions', q: '¿Puedo llevar acompañantes?', a: 'La invitación indica la cantidad de personas de su núcleo familiar que están incluidas. Por la planificación y la capacidad de la celebración, agradecemos que la asistencia se limite a ese número.' },
       { id: 'attire-colors', q: '¿Hay colores específicos para la vestimenta?', a: 'No tenemos un código de color. La recepción será en una bodega de vinos, de atmósfera cálida, íntima y de luz tenue; puede tomar ese ambiente como inspiración y usar su creatividad al elegir.' },

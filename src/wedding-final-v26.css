@@ -420,10 +420,20 @@ body,
   color: #272c24;
 }
 
-.stationery-envelope__card b i,
-.stationery-card__rule::after {
+/*
+ * These two were sharing a declaration block, and only the rule's dot wants a
+ * background. On the ampersand it painted wine type on a wine box, so the
+ * glyph disappeared into a solid red rectangle between the initials — dead
+ * centre of the card. The ampersand is an SVG now, but keep them apart so a
+ * typed one can never come back looking like a redaction mark.
+ */
+.stationery-envelope__card b i {
   color: #5e2023;
+}
+
+.stationery-card__rule::after {
   background: #5e2023;
+  color: #5e2023;
 }
 
 .stationery-envelope__card > span:not(.stationery-card__rule) {
