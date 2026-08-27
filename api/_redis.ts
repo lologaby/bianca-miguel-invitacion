@@ -34,6 +34,24 @@ export const redis = {
   async expire(key: string, seconds: number) {
     return (await connection()).expire(key, seconds);
   },
+
+  /**
+   * Count an attempt, and say whether the caller is over the limit.
+   *
+   * Returns `true` when the store is unreachable. Rate limiting exists to stop
+   * someone grinding through invitation codes, so losing Redis has to mean
+   * "refuse", not "let everyone through" — and it must refuse without throwing,
+   * which previously surfaced as a bare FUNCTION_INVOCATION_FAILED.
+   */
+  async overLimit(key: string, max: number, windowSeconds: number) {
+    try {
+      const attempts = await this.incr(key);
+      if (attempts === 1) await this.expire(key, windowSeconds);
+      return attempts > max;
+    } catch {
+      return true;
+    }
+  },
   async set(key: string, value: unknown) {
     return (await connection()).set(key, JSON.stringify(value));
   },

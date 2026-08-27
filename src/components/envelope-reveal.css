@@ -233,12 +233,28 @@
  */
 
 .stationery-envelope {
-  filter: none;
+  filter: none !important;
   isolation: isolate;
 }
 
+/*
+ * The gold-brown frame the client kept seeing: `1px solid rgba(128,101,69,.45)`
+ * on the envelope back AND the same border on the card inside it, so two
+ * rectangles in a colour from no part of the palette. An earlier pass changed
+ * the fills here and left the borders, which is why it survived.
+ */
 .stationery-envelope__back {
   background: #f6eee4;
+  border: 0 !important;
+}
+
+/*
+ * The card is the invitation, and before the envelope opens it should not be
+ * visible at all. Its own border was showing through as the inner rectangle.
+ */
+.stationery-envelope__card {
+  background: #f6eee4 !important;
+  border: 0 !important;
 }
 
 .stationery-envelope__front {
@@ -273,7 +289,15 @@
   box-shadow: none !important;
   color: #f6eee4 !important;
   inline-size: 3.6rem !important;
-  inset-block-end: -1.3rem !important;
+  /*
+   * The flap is 61% of the envelope's height and its apex is the point the seal
+   * closes. Anchored to the bottom edge the disc floated in the middle of the
+   * body, sealing nothing — which is most of why the envelope read as wrong.
+   */
+  inset-block-end: auto !important;
+  inset-block-start: 61% !important;
+  transform: translate(-50%, -50%) !important;
+  inset-inline-start: 50% !important;
 }
 
 .envelope-monogram {

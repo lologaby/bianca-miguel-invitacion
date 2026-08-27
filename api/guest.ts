@@ -8,9 +8,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));
   if (!req.headers['content-type']?.includes('application/json')) return res.status(415).json(jsonError('invalid_content_type', 'Contenido no válido.'));
   const ipHash = createHash('sha256').update(clientIp(req)).digest('hex').slice(0, 20);
-  const attempts = await redis.incr(`guest-attempt:${ipHash}`);
-  if (attempts === 1) await redis.expire(`guest-attempt:${ipHash}`, 600);
-  if (attempts > 12) return res.status(429).json(jsonError('rate_limited', 'Intenta nuevamente más tarde.'));
+  if (await redis.overLimit(`guest-attempt:${ipHash}`, 12, 600)) return res.status(429).json(jsonError('rate_limited', 'Intenta nuevamente más tarde.'));
 
   const codeValue = req.body?.code;
   const linkValue = req.body?.linkToken;
