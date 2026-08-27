@@ -130,6 +130,9 @@ export function InvitationGate({ onReveal }: Props) {
         return;
       }
       const invitation = await response.json() as InvitationPayload;
+      // ?vista=sobre keeps this component mounted, so the holding screen has to
+      // come down here or it covers the envelope it was waiting for
+      setCheckingSession(false);
       if (reviewMode === 'sobre') beginEnvelopeReveal(invitation);
       else onReveal(invitation);
     }).catch(() => setCheckingSession(false)).finally(() => window.clearTimeout(guard));
