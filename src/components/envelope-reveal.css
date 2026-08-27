@@ -70,11 +70,22 @@
   letter-spacing: -.03em;
 }
 
-.stationery-envelope__card b i {
-  color: #6c3040;
-  font-size: .55em;
-  font-weight: 400;
-  margin: 0 .2em;
+/*
+ * The card's monogram uses the couple's own ampersand, like the seal and the
+ * header do. It was a typed "&" in #6c3040 — a plum from outside the palette,
+ * and a fourth ampersand drawing on a page that already had one.
+ */
+.stationery-envelope__card b {
+  align-items: center;
+  display: inline-flex;
+  gap: .12em;
+}
+
+.card-ampersand {
+  block-size: .58em !important;
+  fill: #5e2023 !important;
+  inline-size: auto !important;
+  stroke: none !important;
 }
 
 .stationery-envelope__card > span:not(.stationery-card__rule) {
@@ -290,14 +301,18 @@
   color: #f6eee4 !important;
   inline-size: 3.6rem !important;
   /*
-   * The flap is 61% of the envelope's height and its apex is the point the seal
-   * closes. Anchored to the bottom edge the disc floated in the middle of the
-   * body, sealing nothing — which is most of why the envelope read as wrong.
+   * The flap is 61% of the envelope's height and its apex is where the seal
+   * closes; anchored to the bottom edge the disc floated mid-body, sealing
+   * nothing.
+   *
+   * Centred with inset arithmetic rather than a translate, because
+   * `bm-seal-release` animates transform to lift the seal away as the flap
+   * opens — a transform here wins over the animation and freezes the seal on
+   * top of the opening envelope.
    */
   inset-block-end: auto !important;
-  inset-block-start: 61% !important;
-  transform: translate(-50%, -50%) !important;
-  inset-inline-start: 50% !important;
+  inset-block-start: calc(61% - 1.8rem) !important;
+  inset-inline-start: calc(50% - 1.8rem) !important;
 }
 
 /*
@@ -317,7 +332,9 @@
 .envelope-monogram {
   align-items: center;
   display: inline-flex;
-  gap: .08em;
+  /* absolute, not em: the glyphs are sized in rem, so an em gap would track a
+     font-size none of them actually use */
+  gap: .1rem;
   justify-content: center;
 }
 
@@ -348,10 +365,13 @@
   min-inline-size: 0 !important;
 }
 
-/* the didone ampersand is a hairline beside two heavy caps, so it carries a
-   little extra height to hold its own without shouting */
+/*
+ * Traced at the same ink height as the caps the ampersand reads as a third
+ * letter — "B & M" instead of a monogram. Set below the cap line it joins the
+ * initials instead of competing with them, which is how it sits in the logo.
+ */
 .envelope-ampersand {
-  block-size: .8rem !important;
+  block-size: .6rem !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

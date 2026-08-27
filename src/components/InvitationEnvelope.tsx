@@ -3,6 +3,13 @@ import { Ampersand, InitialB, InitialM } from '../art/ReferenceMarks';
 import type { InvitationPayload } from '../types/invitation';
 import './envelope-reveal.css';
 
+const CARD_ANIMATIONS = new Set([
+  'bm-envelope-card-open',
+  'bm-envelope-reduced-confirm',
+  'bm-card-rise',
+  'bm-reduced-confirm',
+]);
+
 interface Props {
   invitation?: InvitationPayload | null;
   opening?: boolean;
@@ -18,9 +25,16 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
     if (opening) status.current?.focus({ preventScroll: true });
   }, [opening]);
 
+  /*
+   * Two stylesheets style this envelope and the later one wins: wedding-
+   * interactions.css drives the card with `bm-envelope-card-open`, while
+   * envelope-reveal.css declares `bm-card-rise` for the same element. Match
+   * either family so a cascade change cannot silently drop the reveal back to
+   * the gate's 2.3s fallback timer.
+   */
   function finishOnCard(event: AnimationEvent<HTMLElement>) {
     if (!opening) return;
-    if (event.animationName === 'bm-envelope-card-open' || event.animationName === 'bm-envelope-reduced-confirm') onComplete();
+    if (CARD_ANIMATIONS.has(event.animationName)) onComplete();
   }
 
   return (
@@ -34,7 +48,11 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
         <article className="stationery-envelope__card" onAnimationEnd={finishOnCard}>
           <span className="stationery-card__rule" />
           {invitation ? <>
-            <b>{firstInitial}<i>&amp;</i>{secondInitial}</b>
+            <b>
+              {firstInitial}
+              <Ampersand className="card-ampersand" tone="#5e2023" />
+              {secondInitial}
+            </b>
             <span>{invitation.event.couple.first} &amp; {invitation.event.couple.second} · {invitation.event.dateLabel}</span>
           </> : <span className="stationery-card__promise">Reservado para ti</span>}
           <span className="stationery-card__rule" />
