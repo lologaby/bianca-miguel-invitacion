@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { localDemoInvitation, type InvitationPayload } from '../types/invitation';
 import { InvitationEnvelope } from './InvitationEnvelope';
 import './mystery-gate.css';
@@ -32,6 +32,29 @@ export function InvitationGate({ onReveal }: Props) {
    */
   const isDemoBuild = import.meta.env.VITE_DEMO_PREVIEW === '1';
 
+  /*
+   * Both of these used to reveal from a useEffect, which runs AFTER paint: the
+   * gate drew a full dark screen — wax seal and all — for one frame and then
+   * vanished. That flash is the "pop" a guest reports. Decide it here and
+   * reveal in a layout effect, so the gate is never painted at all.
+   */
+  const skipGate = (isDemoBuild && !reviewMode)
+    || ((isLocal || isDemoBuild) && initialUrl.searchParams.get('qa') === 'content');
+
+  /*
+   * A guest who already holds a session cookie used to watch the whole gate —
+   * dark screen, envelope, wax seal — paint for as long as /api/session took
+   * and then vanish. That is the "pop" a guest sees on reopening the link.
+   * Hold a plain background until the answer is in, so nothing pops.
+   */
+  const [checkingSession, setCheckingSession] = useState(
+    !skipGate && !isLocal && !isDemoBuild && reviewMode !== 'entrada' && !initialLinkToken,
+  );
+
+  useLayoutEffect(() => {
+    if (skipGate) onReveal(localDemoInvitation);
+  }, []);
+
   function finishReveal() {
     if (finished.current || !pending.current) return;
     finished.current = true;
@@ -44,14 +67,22 @@ export function InvitationGate({ onReveal }: Props) {
 
   function beginEnvelopeReveal(invitation: InvitationPayload) {
     pending.current = invitation;
+    /*
+     * Reduced motion means no envelope, not a fast one. Mounting it for 260ms
+     * and tearing it down again is the same "pop": a dark screen with a wax
+     * seal that appears and disappears inside a third of a second.
+     */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finishReveal();
+      return;
+    }
     setPendingInvitation(invitation);
     setCode('');
     setLinkToken(null);
     setHasError(false);
     setStatus('Invitación confirmada. Abriendo…');
     setOpening(true);
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    fallbackTimer.current = window.setTimeout(finishReveal, reducedMotion ? 260 : 2300);
+    fallbackTimer.current = window.setTimeout(finishReveal, 2300);
   }
 
   async function authorize(body: { code?: string; linkToken?: string }) {
@@ -82,14 +113,7 @@ export function InvitationGate({ onReveal }: Props) {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const url = new URL(window.location.href);
     // ?vista=entrada and ?vista=sobre stay reachable so both screens can be reviewed
-    if (isDemoBuild && !reviewMode) {
-      onReveal(localDemoInvitation);
-      return;
-    }
-    if ((isLocal || isDemoBuild) && url.searchParams.get('qa') === 'content') {
-      onReveal(localDemoInvitation);
-      return;
-    }
+    if (skipGate) return;
     const token = url.searchParams.get('invite');
     if (token) {
       setLinkToken(token);
@@ -98,12 +122,17 @@ export function InvitationGate({ onReveal }: Props) {
       return;
     }
     if (isLocal || isDemoBuild || reviewMode === 'entrada') return;
+    // never leave the holding screen up if the network stalls
+    const guard = window.setTimeout(() => setCheckingSession(false), 2500);
     void fetch('/api/session', { headers: { accept: 'application/json' } }).then(async (response) => {
-      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return;
+      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
+        setCheckingSession(false);
+        return;
+      }
       const invitation = await response.json() as InvitationPayload;
       if (reviewMode === 'sobre') beginEnvelopeReveal(invitation);
       else onReveal(invitation);
-    }).catch(() => undefined);
+    }).catch(() => setCheckingSession(false)).finally(() => window.clearTimeout(guard));
   }, []);
 
   useEffect(() => () => {
@@ -131,6 +160,10 @@ export function InvitationGate({ onReveal }: Props) {
     setShowCode(true);
     window.setTimeout(() => input.current?.focus(), 0);
   }
+
+  if (skipGate) return null;
+  // the background alone — no envelope, no seal, nothing to pop
+  if (checkingSession) return <main className="private-gate mystery-gate is-checking" aria-busy="true" />;
 
   return (
     <main className={'private-gate mystery-gate' + (opening ? ' is-opening' : '') + (hasError ? ' has-error' : '')}>
