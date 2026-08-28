@@ -711,3 +711,57 @@
   block-size: .68em;
   transform: none;
 }
+
+/* --- what the client's review caught ---------------------------------- */
+
+/*
+ * 1. The hero text was centred on the VIEWPORT while the artwork behind it is
+ *    two fields: cream to 78%, then the green band. So the logo crossed the
+ *    edge by 37px, the date line by 17px, and a guest name any longer than the
+ *    demo one ran onto the green and lost its last letters. Centre the copy in
+ *    the cream field instead, which is where it always belonged.
+ */
+@media (max-width: 620px) {
+  .client-hero-copy {
+    inset-inline-start: -11%;
+  }
+}
+
+/*
+ * 2. The FAQ's open indicator filled with dark green and rotated into an ×.
+ *    A filled disc is the heaviest mark on a page built from hairlines, and an
+ *    × reads as "delete", not "close". Keep the hairline ring and let the plus
+ *    become a minus — the one pair everybody reads without thinking.
+ */
+.faq-v2 details[open] summary i {
+  background: transparent;
+  transform: none;
+}
+
+.faq-v2 details[open] summary i::before {
+  transform: translate(-50%, -50%);
+}
+
+.faq-v2 details[open] summary i::after {
+  opacity: 0;
+}
+
+/*
+ * 3. The rule's ornament was an invented mark — a tilted oval with a crossed
+ *    stem inside it, which read as a hash. Nothing on this page is invented:
+ *    every mark comes from the couple's own artwork. The wine dot already
+ *    carries this job on the itinerary, the card rules and the map, so it
+ *    carries it here too.
+ */
+.editorial-rule .editorial-rule-mark {
+  block-size: .34rem;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
+  inline-size: .34rem;
+  transform: none;
+}
+
+.editorial-rule .editorial-rule-mark i {
+  display: none;
+}
