@@ -8,6 +8,9 @@
 
 /* --- the couple's ampersand, live wherever an "&" was typed --- */
 
+/* the glyph is display:block, so its host has to be inline-flex — inside a plain
+   inline <i> a block child breaks the line and the ampersand lands on its own */
+.couple-wordmark i,
 .craft-monogram i,
 .footer-names i {
   align-items: center;
@@ -710,4 +713,40 @@
 .craft-monogram i .mark-ampersand {
   block-size: .68em;
   transform: none;
+}
+
+/*
+ * The couple's names, set in type instead of a cropped bitmap. This mirrors
+ * .footer-names, with the ampersand in wine rather than the footer's paper
+ * because the hero sits on paper. Loaded last so it clears the old crop rules.
+ */
+.couple-wordmark {
+  color: var(--ink);
+  display: block;
+  font: 400 clamp(3.4rem, 12.5vw, 6rem)/.94 var(--serif);
+  letter-spacing: -.04em;
+  margin: 0;
+  text-align: center;
+}
+
+/* keeps the ampersand tied to the first name. Left to wrap on its own it took a
+   line to itself, flush left, while both names stayed centred. */
+.couple-wordmark > span {
+  white-space: nowrap;
+}
+
+/* the same proportion .footer-names uses: .6em on the host, .92em of that on
+   the glyph. Without an explicit block-size the SVG takes its intrinsic size
+   and blows the line box out to 408px. */
+.couple-wordmark i {
+  color: var(--wine);
+  font-size: .6em;
+  font-style: normal;
+  margin-inline: .3em;
+  vertical-align: baseline;
+}
+
+.couple-wordmark i .mark-ampersand {
+  block-size: .92em;
+  transform: translateY(.08em);
 }

@@ -81,7 +81,14 @@ function Header({ event }: { event: PrivateEvent }) {
 }
 
 function CoupleWordmark({ first, second }: { first: string; second: string }) {
-  return <span className="client-wordmark-crop"><img src={`${import.meta.env.BASE_URL}private-assets/wordmark.webp`} srcSet={`${import.meta.env.BASE_URL}private-assets/wordmark-450.webp 450w, ${import.meta.env.BASE_URL}private-assets/wordmark.webp 900w`} sizes="(max-width: 900px) 94vw, 43vw" alt={`${first} y ${second}`} width="900" height="600" loading="eager" decoding="async" fetchPriority="high"/></span>;
+  /*
+   * These were a bitmap — wordmark.webp, 366x244 natural, drawn at 299x199 and
+   * then clipped by overflow:hidden to 275x93, so 53% of its height was thrown
+   * away and a phone upscaled what was left 2.45x, beside razor-sharp live
+   * text. Set in type, using the footer's treatment, which was already the best
+   * setting of these names on the page.
+   */
+  return <span className="couple-wordmark"><span>{first}<i><Ampersand className="mark-ampersand" tone="currentColor"/></i></span>{second}</span>;
 }
 
 function GiftNumber({ number }: { number: string }) {

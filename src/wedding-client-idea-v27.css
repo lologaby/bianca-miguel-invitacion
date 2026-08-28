@@ -82,10 +82,6 @@
   width: 82%;
 }
 
-.client-hero-copy .client-wordmark-crop {
-  width: 100%;
-}
-
 .client-hero-theme {
   color: #0d0e0b;
   font: 700 clamp(.57rem, 2.35vw, .75rem)/1.35 var(--sans);
