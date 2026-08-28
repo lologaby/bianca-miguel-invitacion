@@ -2,6 +2,7 @@ import { rsvpSchema } from '../db/schema';
 import type { Guest, InvitationPayload, PrivateEvent } from '../src/types/invitation';
 import wordmarkDataUrl from './private-assets/wordmark.webp?inline';
 import wordmarkMobileDataUrl from './private-assets/wordmark-450.webp?inline';
+import wordmarkLargeDataUrl from './private-assets/wordmark-1350.webp?inline';
 import {
   clearFailedAccess,
   ensureGuestAuthTables,
@@ -78,6 +79,7 @@ function decodeDataUrl(dataUrl: string) {
 const privateBrandAssets = new Map([
   ['/private-assets/wordmark.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkDataUrl) }],
   ['/private-assets/wordmark-450.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkMobileDataUrl) }],
+  ['/private-assets/wordmark-1350.webp', { contentType: 'image/webp', body: decodeDataUrl(wordmarkLargeDataUrl) }],
 ]);
 
 const previewGuest: PrivateGuestRecord = {

@@ -81,14 +81,21 @@ function Header({ event }: { event: PrivateEvent }) {
 }
 
 function CoupleWordmark({ first, second }: { first: string; second: string }) {
+  const asset = (file: string) => `${import.meta.env.BASE_URL}private-assets/${file}`;
   /*
-   * These were a bitmap — wordmark.webp, 366x244 natural, drawn at 299x199 and
-   * then clipped by overflow:hidden to 275x93, so 53% of its height was thrown
-   * away and a phone upscaled what was left 2.45x, beside razor-sharp live
-   * text. Set in type, using the footer's treatment, which was already the best
-   * setting of these names on the page.
+   * The couple's own logo — their mark, not a typeset substitute for it.
+   *
+   * `sizes` describes the IMG, which the crop draws at 108.63% of its box, not
+   * the box itself. Declared as the box it under-reported the width, a phone
+   * picked the 450w candidate for a slot needing about 1100 device pixels, and
+   * the logo was enlarged 2.45x — soft, with visible ringing beside live text.
    */
-  return <span className="couple-wordmark"><span>{first}<i><Ampersand className="mark-ampersand" tone="currentColor"/></i></span>{second}</span>;
+  return <span className="client-wordmark-crop"><img
+    src={asset('wordmark.webp')}
+    srcSet={`${asset('wordmark-450.webp')} 450w, ${asset('wordmark.webp')} 900w, ${asset('wordmark-1350.webp')} 1350w`}
+    sizes="(max-width: 900px) 102vw, 47vw"
+    alt={`${first} y ${second}`} width="900" height="600"
+    loading="eager" decoding="async" fetchPriority="high"/></span>;
 }
 
 function GiftNumber({ number }: { number: string }) {

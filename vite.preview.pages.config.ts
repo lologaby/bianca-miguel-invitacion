@@ -26,7 +26,7 @@ function bundleWordmark(): Plugin {
     async closeBundle() {
       const out = fileURLToPath(new URL('./dist-pages/private-assets/', import.meta.url));
       await mkdir(out, { recursive: true });
-      for (const file of ['wordmark.webp', 'wordmark-450.webp']) {
+      for (const file of ['wordmark.webp', 'wordmark-450.webp', 'wordmark-1350.webp']) {
         await copyFile(fileURLToPath(new URL(`./worker/private-assets/${file}`, import.meta.url)), out + file);
       }
     },

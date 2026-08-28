@@ -105,6 +105,24 @@ body,
 
 
 
+.client-wordmark-crop {
+  aspect-ratio: 1657 / 562;
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.client-wordmark-crop img {
+  display: block;
+  height: auto;
+  left: -5.49%;
+  max-width: none;
+  position: absolute;
+  top: -48.22%;
+  width: 108.63%;
+}
+
 .client-wordmark-fallback {
   align-items: center;
   color: var(--client-black);

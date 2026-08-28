@@ -12,6 +12,7 @@ import { readSession, type ApiRequest } from './_security.js';
 const FILES: Record<string, string> = {
   'wordmark.webp': '../worker/private-assets/wordmark.webp',
   'wordmark-450.webp': '../worker/private-assets/wordmark-450.webp',
+  'wordmark-1350.webp': '../worker/private-assets/wordmark-1350.webp',
 };
 
 interface AssetResponse {

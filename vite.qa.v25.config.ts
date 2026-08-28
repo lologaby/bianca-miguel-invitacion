@@ -7,6 +7,7 @@ function privatePreviewAssets(): Plugin {
   const assets = new Map([
     ['/private-assets/wordmark.webp', fileURLToPath(new URL('./worker/private-assets/wordmark.webp', import.meta.url))],
     ['/private-assets/wordmark-450.webp', fileURLToPath(new URL('./worker/private-assets/wordmark-450.webp', import.meta.url))],
+    ['/private-assets/wordmark-1350.webp', fileURLToPath(new URL('./worker/private-assets/wordmark-1350.webp', import.meta.url))],
   ]);
 
   return {
