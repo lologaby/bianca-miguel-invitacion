@@ -18,7 +18,8 @@ import './venue-map.css';
  */
 export function VenueMap({ event }: { event: PrivateEvent }) {
   const query = `${event.reception.name}, ${event.reception.city ?? event.reception.note}`;
-  const embed = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`;
+  // z=16 rather than 15: a tighter frame carries fewer unrelated pins and road shields
+  const embed = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=16&output=embed`;
   const directions = event.reception.mapsUrl && event.reception.mapsUrl !== '#'
     ? event.reception.mapsUrl
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -47,10 +48,21 @@ export function VenueMap({ event }: { event: PrivateEvent }) {
           loading="lazy"
           referrerPolicy="origin"
         />
-        <a className="venue-map-action" href={directions} target="_blank" rel="noreferrer">
-          Cómo llegar<span aria-hidden="true">↗</span>
-        </a>
+        {/*
+          Our own mark on the venue. Google's query embed drops no pin, so the
+          frame arrived with no indication of which building anyone was looking
+          at. The embed centres on the match, so the centre is the place.
+        */}
+        <span className="venue-map-pin" aria-hidden="true" />
       </div>
+
+      {/*
+        Below the frame, not floating inside it: sitting at the bottom centre it
+        landed on Google's own attribution strip, with the logo showing through.
+      */}
+      <a className="venue-map-action" href={directions} target="_blank" rel="noreferrer">
+        Cómo llegar<span aria-hidden="true">↗</span>
+      </a>
     </section>
   );
 }

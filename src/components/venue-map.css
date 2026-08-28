@@ -89,29 +89,41 @@
   filter: none;
 }
 
-.venue-map-action {
-  align-items: center;
-  z-index: 2;
-  background: var(--client-cream, #f6eee4);
-  color: var(--forest, #272c24);
-  display: inline-flex;
-  font: 650 .66rem/1 var(--sans);
-  gap: .6rem;
-  inset-block-end: 1.1rem;
+/* our mark on the venue, since the query embed drops no pin of its own */
+.venue-map-pin {
+  background: var(--wine, #5e2023);
+  border: .28rem solid var(--client-cream, #f6eee4);
+  border-radius: 50%;
+  block-size: .95rem;
+  box-shadow: 0 .12rem .5rem rgba(8, 18, 13, .35);
+  inline-size: .95rem;
+  inset-block-start: 50%;
   inset-inline-start: 50%;
-  letter-spacing: .16em;
-  min-block-size: 46px;
-  padding-inline: 1.25rem;
+  pointer-events: none;
   position: absolute;
-  text-decoration: none;
-  text-transform: uppercase;
-  transform: translateX(-50%);
-  transition: background .25s var(--ease, ease), color .25s var(--ease, ease);
+  transform: translate(-50%, -50%);
+  z-index: 2;
 }
 
-.venue-map-action:hover {
-  background: var(--wine, #5e2023);
-  color: var(--client-cream, #f6eee4);
+/* a text link under the frame, in the register of the rest of the page */
+.venue-map-action {
+  align-items: center;
+  color: var(--wine, #5e2023);
+  display: inline-flex;
+  font: 650 .66rem/1 var(--sans);
+  gap: .5rem;
+  letter-spacing: .16em;
+  margin-block-start: 1.1rem;
+  min-block-size: 44px;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-underline-offset: .35em;
+  transition: color .25s var(--ease, ease);
+}
+
+.venue-map-action:hover,
+.venue-map-action:focus-visible {
+  text-decoration: underline;
 }
 
 @media (prefers-reduced-motion: reduce) {
