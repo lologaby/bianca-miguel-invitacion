@@ -46,7 +46,6 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     {attendance === 'yes' && <div className="conditional-fields">
       <label>Número de asistentes<select name="partySize" defaultValue="1">{Array.from({ length: guest.partyLimit }, (_, index) => <option key={index + 1}>{index + 1}</option>)}</select></label>
       {guest.plusOneAllowed && <label>Nombre de acompañante<input name="plusOneName" maxLength={80} defaultValue={guest.companionNames?.[0] ?? ''}/></label>}
-      <label>Sugerencia musical<input name="song" maxLength={120} placeholder="Canción — Artista"/><small className="field-note">¿Qué canción le gustaría escuchar en la recepción?</small></label>
       <details className="rsvp-more"><summary>Alergias o accesibilidad</summary><div><label>Alergias o necesidades alimentarias<textarea name="dietary" rows={3} maxLength={300}/></label><label>Necesidades de accesibilidad<textarea name="accessibility" rows={3} maxLength={300}/></label></div></details>
     </div>}
     <button className={`button wine rsvp-submit${attendance ? ' is-ready' : ''}`} disabled={busy || !attendance}>

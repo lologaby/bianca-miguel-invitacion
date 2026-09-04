@@ -116,13 +116,12 @@ export function AdminDashboard() {
       <p className="admin-summary"><strong>{totals.attending}</strong> personas asistirán <i></i><strong>{totals.declined}</strong> invitaciones declinaron <i></i><strong>{totals.pending}</strong> pendientes</p>
       <div className="admin-table-wrap">
         <table>
-          <thead><tr><th>Invitación</th><th>Respuesta</th><th>Asistentes</th><th>Acompañante</th><th>Canción</th><th>Actualización</th></tr></thead>
+          <thead><tr><th>Invitación</th><th>Respuesta</th><th>Asistentes</th><th>Acompañante</th><th>Actualización</th></tr></thead>
           <tbody>{records.map((record) => <tr key={record.guestId}>
             <td><b>{record.name}</b><span>{record.invited} {record.invited === 1 ? 'lugar reservado' : 'lugares reservados'}</span></td>
             <td><span className={`admin-state ${record.attendance}`}>{record.attendance === 'yes' ? 'Asistirá' : record.attendance === 'no' ? 'No asistirá' : 'Pendiente'}</span></td>
             <td>{record.attendance === 'yes' ? record.partySize : '—'}</td>
             <td>{record.plusOneName || '—'}</td>
-            <td>{record.song || '—'}</td>
             <td>{record.updatedAt ? new Intl.DateTimeFormat('es-PR', { dateStyle: 'medium' }).format(new Date(record.updatedAt)) : '—'}</td>
           </tr>)}</tbody>
         </table>

@@ -41,7 +41,9 @@
 }
 
 @media (min-width: 721px) {
-  .venue-map-frame { aspect-ratio: 21 / 9; }
+  /* 21/9 was right for one map across the width; two side by side want a
+     squarer frame, or each one becomes a letterbox slit */
+  .venue-map-frame { aspect-ratio: 3 / 2; }
 }
 
 /* the layer the map covers when it loads */
@@ -128,4 +130,39 @@
 
 @media (prefers-reduced-motion: reduce) {
   .venue-map-embed { transition: none; }
+}
+
+/* --- two places: the ceremony and the reception ------------------------ */
+
+.venue-map-places {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+@media (min-width: 721px) {
+  .venue-map-places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.venue-map-place {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+/* which of the two this is — the one label a guest actually needs */
+.venue-map-label {
+  color: var(--wine, #5e2023);
+  font: 650 .62rem/1 var(--sans);
+  letter-spacing: .18em;
+  margin: 0 0 .55rem;
+  text-transform: uppercase;
+}
+
+.venue-map-place .venue-map-address {
+  margin-block: 0 1rem;
+}
+
+/* the link sits under its own frame, so it must not stretch to the column */
+.venue-map-place .venue-map-action {
+  align-self: start;
 }

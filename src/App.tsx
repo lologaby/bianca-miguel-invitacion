@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
-import { InteractiveWineGlass } from './components/InteractiveWineGlass';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
@@ -121,14 +120,14 @@ function GiftNumber({ number }: { number: string }) {
 function WineStory({ event }: { event: PrivateEvent }) {
   const paragraphs = event.story?.paragraphs ?? [];
 
-  return <section className="wine-story-v28" aria-labelledby="wine-story-title">
+  /*
+   * The welcome, with no glass beside it. The client asked for less wine in the
+   * greeting itself — the tasting is the reception's story, not the hello.
+   */
+  return <section className="wine-story-v28 is-welcome" aria-labelledby="wine-story-title">
     <div className="wine-story-inner">
-      <figure className="wine-glass-aside">
-        <InteractiveWineGlass ariaLabel="Copa de vino servida que se mueve con el desplazamiento de la página" />
-      </figure>
-
       <div className="wine-story-copy">
-        <h2 id="wine-story-title">Brindemos</h2>
+        <h2 id="wine-story-title">Queremos que seas parte<br/>de este día tan especial</h2>
         {paragraphs.length ? <div className="wine-story-narrative">
           {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </div> : null}

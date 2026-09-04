@@ -765,3 +765,17 @@
 .editorial-rule .editorial-rule-mark i {
   display: none;
 }
+
+/*
+ * The welcome lost its glass, so the copy no longer sits in the 1fr beside a
+ * column that is not there any more. One column, a readable measure, centred.
+ */
+.wine-story-v28.is-welcome .wine-story-inner {
+  grid-template-columns: minmax(0, 1fr);
+  max-inline-size: 44rem;
+  text-align: center;
+}
+
+.wine-story-v28.is-welcome .wine-story-copy h2 {
+  text-wrap: balance;
+}
