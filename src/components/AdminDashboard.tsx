@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { GuestPortal } from './GuestPortal';
 import './admin.css';
 
 interface AdminRecord {
@@ -127,6 +128,9 @@ export function AdminDashboard() {
         </table>
       </div>
       <p className="admin-status" role="status" aria-live="polite">{status}</p>
+
+      {/* the list itself, and where a new invitation is created and shared */}
+      {isDemo ? null : <GuestPortal/>}
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import { redis } from './_redis.js';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { publicGuest, readGuests, readPrivateEvent } from './_data.js';
+import { publicGuest, readPrivateEvent } from './_data.js';
+import { allGuests } from './_guests-store.js';
 import { clientIp, jsonError, signSession, type ApiRequest, type ApiResponse } from './_security.js';
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
@@ -17,7 +18,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (!code && !linkToken) return res.status(400).json(jsonError('invalid_invitation', 'Invitación no válida.'));
 
   try {
-    const guests = readGuests();
+    const guests = await allGuests();
     const candidate = createHash('sha256').update(linkToken || code).digest();
     const match = guests.find((guest) => {
       const storedValue = linkToken ? guest.linkHash : guest.codeHash;

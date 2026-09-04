@@ -40,3 +40,179 @@
   .admin-summary { align-items: flex-start; flex-direction: column; }
   .admin-summary i { display: none; }
 }
+
+/* --- the guest list, and issuing an invitation ------------------------- */
+
+.guest-portal {
+  border-top: 1px solid var(--admin-line);
+  margin-block-start: clamp(2.5rem, 6vw, 4rem);
+  padding-block-start: clamp(2rem, 5vw, 3rem);
+}
+
+.guest-portal-head {
+  align-items: baseline;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-block-end: 1.5rem;
+}
+
+.guest-portal-head h2 {
+  font: 400 clamp(1.5rem, 4vw, 2rem)/1.1 var(--serif);
+  margin: 0;
+}
+
+.guest-portal-head p {
+  color: #5e5d55;
+  font-size: .82rem;
+  margin: 0;
+}
+
+.guest-portal-add {
+  align-items: end;
+  border: 1px solid var(--admin-line);
+  border-radius: 3px;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  margin-block-end: 2rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+@media (min-width: 720px) {
+  .guest-portal-add { grid-template-columns: minmax(0, 1fr) 7rem auto auto; }
+}
+
+.guest-portal-add label {
+  display: grid;
+  gap: .4rem;
+  min-inline-size: 0;
+}
+
+.guest-portal-add label > span {
+  font: 650 .62rem/1 var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.guest-portal-add input[type="text"],
+.guest-portal-add input:not([type]),
+.guest-portal-add input[type="number"] {
+  border: 1px solid var(--admin-line);
+  border-radius: 2px;
+  font: 400 1rem/1.4 var(--sans);
+  min-block-size: 48px;
+  padding: .5rem .7rem;
+}
+
+/* a checkbox is a control: the box itself is small, so the label carries the
+   target — 48px, which clears Apple's 44pt and Material's 48dp together */
+/* `.guest-portal-add label > span` is 0,1,2 and was winning: the box stacked
+   above its text and the text came out in small caps. Matched here on the same
+   ground so the checkbox reads as a checkbox. */
+.guest-portal-add label.guest-portal-check {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: .6rem;
+  min-block-size: 48px;
+}
+
+.guest-portal-check input {
+  block-size: 1.15rem;
+  inline-size: 1.15rem;
+}
+
+.guest-portal-add .guest-portal-check > span {
+  font: 400 .88rem/1.35 var(--sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.guest-portal-add button {
+  min-block-size: 48px;
+}
+
+.guest-portal-list {
+  display: grid;
+  gap: .75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.guest-portal-list li {
+  align-items: start;
+  border: 1px solid var(--admin-line);
+  border-radius: 3px;
+  display: grid;
+  gap: 1rem;
+  padding: clamp(.9rem, 2.5vw, 1.2rem);
+}
+
+@media (min-width: 720px) {
+  .guest-portal-list li { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+}
+
+.guest-portal-list li.is-issued {
+  border-color: rgba(94, 32, 35, .4);
+}
+
+.guest-portal-who b {
+  display: block;
+  font: 500 1.05rem/1.3 var(--serif);
+}
+
+.guest-portal-who span {
+  color: #5e5d55;
+  font: 400 .8rem/1.5 var(--sans);
+}
+
+.guest-portal-note {
+  color: #5e5d55;
+  font: 400 .78rem/1.5 var(--sans);
+}
+
+.guest-portal-issued p {
+  align-items: baseline;
+  display: flex;
+  gap: .6rem;
+  margin: 0 0 .4rem;
+}
+
+.guest-portal-issued span {
+  color: #5e5d55;
+  flex: none;
+  font: 650 .58rem/1 var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.guest-portal-issued code {
+  font: 500 .92rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+
+.guest-portal-code code {
+  font-size: 1.05rem;
+  letter-spacing: .08em;
+}
+
+.guest-portal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-block-start: .8rem;
+}
+
+.guest-portal-actions button {
+  min-block-size: 48px;
+  min-inline-size: 6.5rem;
+}
+
+.guest-portal-issued small {
+  color: var(--wine, #5e2023);
+  display: block;
+  font: 400 .74rem/1.5 var(--sans);
+  margin-block-start: .6rem;
+}

@@ -52,6 +52,11 @@ export const redis = {
       return true;
     }
   },
+  async get<T>(key: string): Promise<T | null> {
+    const raw = await (await connection()).get(key);
+    if (typeof raw !== 'string') return null;
+    try { return JSON.parse(raw) as T; } catch { return null; }
+  },
   async set(key: string, value: unknown) {
     return (await connection()).set(key, JSON.stringify(value));
   },

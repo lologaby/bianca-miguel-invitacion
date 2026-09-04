@@ -1,6 +1,6 @@
 import { redis } from './_redis.js';
 import { isAdmin } from './_admin.js';
-import { readGuests } from './_data.js';
+import { allGuests } from './_guests-store.js';
 import { jsonError, type ApiRequest, type ApiResponse } from './_security.js';
 
 interface StoredRsvp { attendance: 'yes' | 'no'; partySize: number; plusOneName?: string; song?: string; updatedAt: string }
@@ -9,7 +9,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'GET') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));
   if (!isAdmin(req)) return res.status(401).json(jsonError('unauthorized', 'Acceso no autorizado.'));
   let guests;
-  try { guests = readGuests(); } catch { return res.status(503).json(jsonError('not_configured', 'La lista de invitados aún no está configurada.')); }
+  try { guests = await allGuests(); } catch { return res.status(503).json(jsonError('not_configured', 'La lista de invitados aún no está configurada.')); }
   const keys = guests.map((guest) => `rsvp:bianca-placeholder-2026:${guest.id}`);
   const responses = keys.length ? await redis.mget<(StoredRsvp | null)[]>(...keys) : [];
   const records = guests.map((guest, index) => {
