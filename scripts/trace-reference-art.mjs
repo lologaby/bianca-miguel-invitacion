@@ -292,7 +292,16 @@ for (let step = 1; step <= 9; step++) {
 
 /* Down the left side, then back up the right — one closed, symmetric outline. */
 const leftEdge = [...bowlBody, ...neck].map(([y, half]) => [GLASS_CENTRE_X - half, y]);
-leftEdge.push([GLASS_CENTRE_X - STEM_HALF, FOOT_TOP]);
+/*
+ * Walk the stem instead of jumping it. With a single point at each end, the
+ * curve fitter had 300 units of near-vertical run to bow through: the left and
+ * right edges crossed, the winding cancelled, and a hairline crack opened down
+ * the middle of the stem — the client saw the stem as simply missing. Points
+ * every fortieth of the run leave the fit nothing to overshoot.
+ */
+for (let step = 1; step <= 8; step++) {
+  leftEdge.push([GLASS_CENTRE_X - STEM_HALF, BOWL_DEPTH + (FOOT_TOP - BOWL_DEPTH) * (step / 8)]);
+}
 leftEdge.push([GLASS_CENTRE_X - FOOT_HALF, FOOT_END - 6]);
 leftEdge.push([GLASS_CENTRE_X - FOOT_HALF, FOOT_END]);
 

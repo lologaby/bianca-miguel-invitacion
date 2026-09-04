@@ -76,8 +76,12 @@
 /* the glass rises out of the bottom edge, changing tone across the band */
 .cover-glass {
   block-size: auto;
-  /* deep enough to be cropped, shallow enough that the bowl still reads */
-  inset-block-end: -12%;
+  /*
+   * The glass used to hang 12% below the edge and be cropped on purpose. The
+   * client reads that as a broken object — the stem and the foot simply are not
+   * there. The whole silhouette sits inside the frame now: bowl, stem, foot.
+   */
+  inset-block-end: 2.5%;
 }
 
 /* --- print grain --- */
@@ -124,7 +128,7 @@
   }
 
   .cover-glass {
-    inset-block-end: -14%;
+    inset-block-end: 3%;
     /* overridden inline for portrait; landscape pulls it to the right margin */
     inset-inline-start: auto !important;
     inset-inline-end: 4%;
