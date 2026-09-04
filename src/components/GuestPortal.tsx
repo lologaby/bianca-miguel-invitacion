@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { CSSProperties, FormEvent, useEffect, useState } from 'react';
 
 interface PortalGuest {
   id: string;
@@ -119,12 +119,17 @@ export function GuestPortal() {
       </form>
 
       <ul className="guest-portal-list">
-        {guests.map((guest) => {
+        {guests.map((guest, row) => {
           const entry = issued[guest.id];
           return (
-            <li key={guest.id} className={entry ? 'is-issued' : undefined}>
+            <li
+              key={guest.id}
+              className={entry ? 'is-issued' : undefined}
+              /* staggers the ink down the list, so it reads as one hand writing */
+              style={{ '--row': Math.min(row, 14) } as CSSProperties}
+            >
               <div className="guest-portal-who">
-                <b>{guest.name}</b>
+                <b className="ink-write">{guest.name}</b>
                 <span>{guest.partyLimit} {guest.partyLimit === 1 ? 'lugar' : 'lugares'}{guest.plusOneAllowed ? ' · con acompañante' : ''}</span>
               </div>
 

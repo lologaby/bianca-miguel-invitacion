@@ -216,3 +216,67 @@
   font: 400 .74rem/1.5 var(--sans);
   margin-block-start: .6rem;
 }
+
+/* --- the names write themselves ---------------------------------------
+ *
+ * A mask sweeps across each name with a soft, wet leading edge, so the ink
+ * arrives on the page instead of the text switching on. The text underneath is
+ * ordinary DOM the whole time — readable by a screen reader, selectable, and
+ * searchable — which is the difference between this and a typing effect.
+ *
+ * The mask position is a registered custom property so it can be interpolated.
+ * Where @property is unsupported, var(--ink) is invalid at computed-value time,
+ * mask-image falls back to none, and the name simply appears. */
+@property --ink {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.ink-write {
+  animation: ink-flow 820ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--row, 0) * 70ms);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--ink) - 9%),
+    rgba(0, 0, 0, .45) calc(var(--ink) - 2%),
+    rgba(0, 0, 0, .12) var(--ink),
+    transparent calc(var(--ink) + 4%)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--ink) - 9%),
+    rgba(0, 0, 0, .45) calc(var(--ink) - 2%),
+    rgba(0, 0, 0, .12) var(--ink),
+    transparent calc(var(--ink) + 4%)
+  );
+}
+
+@keyframes ink-flow {
+  from { --ink: 0%; }
+  to { --ink: 118%; }
+}
+
+/* a nib settles before it writes: the row lifts the last few pixels as the ink
+   catches up, which is the whole difference between "animated" and "alive" */
+.guest-portal-list li {
+  animation: ink-settle 520ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--row, 0) * 70ms);
+}
+
+@keyframes ink-settle {
+  from { opacity: 0; transform: translate3d(0, .5rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-write,
+  .guest-portal-list li {
+    animation: none;
+  }
+
+  .ink-write {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
