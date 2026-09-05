@@ -779,3 +779,77 @@
 .wine-story-v28.is-welcome .wine-story-copy h2 {
   text-wrap: balance;
 }
+
+/*
+ * The closing glass. Small, off to one side, and the last thing on the page —
+ * a toy rather than a statement, which is the only wine the client wanted left
+ * outside the reception's own story.
+ */
+.closing-glass {
+  display: flex;
+  justify-content: flex-end;
+  padding-block: clamp(1.5rem, 4vw, 2.5rem) clamp(2.5rem, 6vw, 4rem);
+  padding-inline: clamp(1.15rem, 5vw, 4rem);
+  pointer-events: none;
+}
+
+/* the component sizes itself to min(100%, 31rem) for the stage it used to live
+   on; here it is a small object pushed to the margin, so say so explicitly and
+   let an auto start-margin carry it right whatever the flex context does */
+.closing-glass .interactive-wine-glass {
+  /*
+   * The component was built for a dark stage, where its outline is cream. On
+   * this cream ground that made the whole glass disappear and left only the
+   * wine and the pour stream floating — which read as a broken object, not a
+   * glass. These are the same four tokens, for a light ground.
+   */
+  --wine-glass-forest: #272c24;
+  --wine-glass-paper: #f6eee4;
+  --wine-glass-brass: rgba(39, 44, 36, .38);
+  --wine-glass-wine: #5e2023;
+  block-size: auto;
+  contain: none;
+  /* small, but a hairline outline below about 4rem stops reading at all */
+  inline-size: clamp(4.2rem, 11vw, 5.6rem);
+  margin: 0 0 0 auto;
+  max-inline-size: none;
+  min-inline-size: 0;
+  opacity: .9;
+  row-gap: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .closing-glass { opacity: .75; }
+}
+
+/*
+ * One content block in a two-column grid. The second column was never filled,
+ * so at 1440 the section reserved 920px of dead space and pushed everything
+ * against the left edge — 115px of margin on one side against 920 on the other.
+ * One column, centred, with a measure that keeps the line readable.
+ */
+.celebration-summary-v26 {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+.celebration-summary-copy {
+  max-inline-size: 34rem;
+}
+
+/*
+ * The glass body is painted #f6eee4 — the same cream as this page — because the
+ * component was built for a dark stage. Measured on the live page: the vessel's
+ * computed fill equalled the section background exactly, so the silhouette was
+ * invisible and only the wine showed, which read as a puddle rather than a
+ * glass. A faint forest tint gives it back its shape without adding weight.
+ */
+.closing-glass .interactive-wine-glass__vessel {
+  fill: rgba(39, 44, 36, .085);
+}
+
+.closing-glass .interactive-wine-glass__surface {
+  opacity: .5;
+  stroke: rgba(39, 44, 36, .55);
+}

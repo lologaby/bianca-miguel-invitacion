@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
+import { InteractiveWineGlass } from './components/InteractiveWineGlass';
 import { InvitationGate } from './components/InvitationGate';
 import { RsvpForm } from './components/RsvpForm';
 import { HeroStillLife as ClientCoverArt, LineIcon, VineRule } from './components/VisualAssets';
@@ -244,6 +245,14 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
       {faq.length ? <section className="faq-v2" id="preguntas"><ScrollMark place="sink" opacity={0.07}><SpeckleDisc tone="currentColor"/></ScrollMark><header><h2>Antes de venir</h2></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
 
       <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><ScrollMark place="edge-right" opacity={0.08}><WineGlassMark tone="currentColor"/></ScrollMark><VineRule/><RsvpForm guest={guest}/></section>
+      {/*
+        The last thing on the page, and the only playful one: a small glass off
+        to one side whose wine leans with the scroll. It is a toy, so it is
+        aria-hidden and carries no meaning anyone needs.
+      */}
+      <aside className="closing-glass" aria-hidden="true">
+        <InteractiveWineGlass ariaLabel="" />
+      </aside>
     </main>
     <footer className="footer-v2"><div className="footer-names">{event.couple.first}<i><Ampersand className="mark-ampersand" tone="currentColor"/></i>{event.couple.second}</div><VineRule inverted/><div className="footer-meta"><span>{event.dateLabel}</span><span>{event.ceremony.city}</span></div></footer>
   </div>;

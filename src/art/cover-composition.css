@@ -69,7 +69,13 @@
 .cover-pod {
   block-size: 22%;
   inline-size: auto;
-  inset-block-end: -9%;
+  /*
+   * Whole, like the glass. The pod is a thing a guest recognises — a cacao pod
+   * with its stalk — and slicing 98px off its base read as a rendering fault,
+   * not as a composition. The abstract fields either side may still bleed;
+   * objects may not.
+   */
+  inset-block-end: 2.5%;
   inset-inline-start: 12%;
 }
 
@@ -123,7 +129,7 @@
 
   .cover-pod {
     block-size: 34%;
-    inset-block-end: -12%;
+    inset-block-end: 3%;
     inset-inline-start: 5%;
   }
 
