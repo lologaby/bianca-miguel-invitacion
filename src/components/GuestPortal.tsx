@@ -33,6 +33,7 @@ export function GuestPortal() {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [copied, setCopied] = useState('');
+  const [confirming, setConfirming] = useState('');
 
   async function load() {
     try {
@@ -101,6 +102,26 @@ Código: ${entry.code}`;
       }
     }
     await copy(guest.id, text);
+  }
+
+  async function remove(guest: PortalGuest) {
+    setBusy(true);
+    try {
+      const response = await fetch('/api/admin-guests', {
+        method: 'DELETE',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: guest.id }),
+      });
+      if (!response.ok) throw new Error('remove');
+      setGuests((list) => list.filter((item) => item.id !== guest.id));
+      setIssued(({ [guest.id]: _gone, ...rest }) => rest);
+      setConfirming('');
+      setStatus(`${guest.name} se eliminó de la lista.`);
+    } catch {
+      setStatus('No pudimos eliminar la invitación. Inténtalo de nuevo.');
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function copy(key: string, value: string) {
@@ -173,11 +194,21 @@ Código: ${entry.code}`;
                   </div>
                   <small>Guárdalo ahora: el código no se puede volver a mostrar.</small>
                 </div>
-              ) : (
-                <span className="guest-portal-note">
-                  {guest.editable ? 'Código entregado' : 'Desde la lista del hosting'}
-                </span>
-              )}
+              ) : null}
+
+              <div className="guest-portal-remove">
+                {confirming === guest.id ? (
+                  <>
+                    <span>Su enlace y su código dejarán de funcionar.</span>
+                    <button type="button" className="is-danger" onClick={() => remove(guest)} disabled={busy}>
+                      Sí, eliminar
+                    </button>
+                    <button type="button" onClick={() => setConfirming('')}>Conservar</button>
+                  </>
+                ) : (
+                  <button type="button" onClick={() => setConfirming(guest.id)}>Eliminar</button>
+                )}
+              </div>
             </li>
           );
         })}

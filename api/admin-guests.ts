@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { isAdmin } from './_admin.js';
-import { addedGuests, allGuests, guestId, hashCode, hashToken, readableCode, saveAddedGuests } from './_guests-store.js';
+import { addedGuests, allGuests, guestId, hashCode, hashToken, readableCode, removedIds, saveAddedGuests, saveRemovedIds } from './_guests-store.js';
 import { jsonError, type ApiRequest, type ApiResponse } from './_security.js';
 
 const MAX_GUESTS = 400;
@@ -29,10 +29,28 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         name: guest.name,
         partyLimit: guest.partyLimit,
         plusOneAllowed: guest.plusOneAllowed,
-        // whether this one can be re-issued from here, or lives in GUESTS_JSON
         editable: added.has(guest.id),
       })),
     });
+  }
+
+  if (req.method === 'DELETE') {
+    const id = text(req.body?.id, 200);
+    if (!id) return res.status(400).json(jsonError('invalid_id', 'Falta la invitación a eliminar.'));
+    const everyone = await allGuests();
+    if (!everyone.some((guest) => guest.id === id)) {
+      return res.status(404).json(jsonError('not_found', 'Esa invitación ya no existe.'));
+    }
+    try {
+      const added = await addedGuests();
+      const remaining = added.filter((guest) => guest.id !== id);
+      if (remaining.length !== added.length) await saveAddedGuests(remaining);
+      // came from the host's list: remember the removal instead
+      else await saveRemovedIds([...new Set([...(await removedIds()), id])]);
+    } catch {
+      return res.status(503).json(jsonError('store_unavailable', 'No se pudo eliminar. Inténtalo de nuevo.'));
+    }
+    return res.status(200).json({ removed: id });
   }
 
   if (req.method !== 'POST') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));

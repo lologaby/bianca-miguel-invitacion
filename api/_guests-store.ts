@@ -16,6 +16,25 @@ import { readGuests, type GuestRecord } from './_data.js';
  */
 const KEY = 'guests:bianca-placeholder-2026';
 
+/*
+ * Deleting a guest that came from GUESTS_JSON cannot mean rewriting the
+ * environment variable, so their id is remembered here instead and filtered out
+ * everywhere. The couple should not have to care which list someone came from.
+ */
+const REMOVED_KEY = 'guests:removed:bianca-placeholder-2026';
+
+export async function removedIds(): Promise<string[]> {
+  try {
+    return (await redis.get<string[]>(REMOVED_KEY)) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function saveRemovedIds(list: string[]) {
+  await redis.set(REMOVED_KEY, list);
+}
+
 export async function addedGuests(): Promise<GuestRecord[]> {
   try {
     return (await redis.get<GuestRecord[]>(KEY)) ?? [];
@@ -28,8 +47,10 @@ export async function allGuests(): Promise<GuestRecord[]> {
   let seed: GuestRecord[] = [];
   try { seed = readGuests(); } catch { seed = []; }
   const added = await addedGuests();
+  const gone = new Set(await removedIds());
   const seen = new Set(seed.map((guest) => guest.id));
-  return [...seed, ...added.filter((guest) => !seen.has(guest.id))];
+  return [...seed, ...added.filter((guest) => !seen.has(guest.id))]
+    .filter((guest) => !gone.has(guest.id));
 }
 
 export async function saveAddedGuests(list: GuestRecord[]) {
