@@ -280,3 +280,88 @@
     mask-image: none;
   }
 }
+
+/* --- the espacios stepper ----------------------------------------------
+ *
+ * Built for a thumb first: two 48px keys either side of the number, so the
+ * common case never opens a keyboard. The field still accepts typing, and is
+ * allowed to sit empty while someone types — that is what a number input would
+ * not do, and why a 0 used to get stuck in the box. */
+.guest-portal-narrow {
+  display: grid;
+  gap: .4rem;
+  min-inline-size: 0;
+}
+
+.guest-portal-field-label {
+  font: 650 .62rem/1 var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.guest-portal-stepper {
+  align-items: stretch;
+  border: 1px solid var(--admin-line);
+  border-radius: 2px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  overflow: hidden;
+}
+
+.guest-portal-stepper button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  cursor: pointer;
+  font: 400 1.35rem/1 var(--sans);
+  min-block-size: 48px;
+  padding: 0;
+}
+
+.guest-portal-stepper button:disabled {
+  cursor: default;
+  opacity: .3;
+}
+
+.guest-portal-stepper button:first-child { border-inline-end: 1px solid var(--admin-line); }
+.guest-portal-stepper button:last-child { border-inline-start: 1px solid var(--admin-line); }
+
+.guest-portal-add .guest-portal-stepper input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  border: 0;
+  border-radius: 0;
+  font: 400 1.05rem/1 var(--sans);
+  min-block-size: 48px;
+  padding: 0;
+  text-align: center;
+}
+
+/* --- phone first -------------------------------------------------------
+ *
+ * The couple will do this from a phone, standing next to each other, deciding
+ * who to invite. Everything below is the default; the wider layout is the
+ * exception added at 720px. */
+.guest-portal-add {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.guest-portal-add button[type="submit"],
+.guest-portal-add > button {
+  inline-size: 100%;
+}
+
+.guest-portal-actions button {
+  flex: 1 1 8rem;
+}
+
+@media (min-width: 720px) {
+  .guest-portal-add > button { inline-size: auto; }
+  .guest-portal-actions button { flex: 0 0 auto; }
+}
+
+/* a long code or link must wrap, never widen the card */
+.guest-portal-issued p {
+  flex-wrap: wrap;
+}
