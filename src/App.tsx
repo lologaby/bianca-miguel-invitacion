@@ -119,7 +119,15 @@ function GiftNumber({ number }: { number: string }) {
 }
 
 function WineStory({ event }: { event: PrivateEvent }) {
-  const paragraphs = event.story?.paragraphs ?? [];
+  /*
+   * The couple's own words, and the one piece of copy on this page that is not
+   * read from the event data. It names no venue, no city and no number, so it
+   * carries nothing that has to stay on the host — and keeping it here means it
+   * is the same on the invitation and on the preview, with nothing to set twice.
+   */
+  const paragraphs = [
+    'Elegimos celebrar rodeados de quienes amamos y con Dios en el centro de este nuevo comienzo. Con Él presente, confiamos en que lo mejor está por venir —y que el mejor vino aún está por servirse.',
+  ];
 
   /*
    * The welcome, with no glass beside it. The client asked for less wine in the

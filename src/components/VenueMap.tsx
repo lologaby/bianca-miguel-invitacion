@@ -22,8 +22,8 @@ import './venue-map.css';
  */
 export function VenueMap({ event }: { event: PrivateEvent }) {
   const places = [
-    { id: 'ceremonia', label: 'La ceremonia', place: event.ceremony },
-    { id: 'recepcion', label: 'La recepción', place: event.reception },
+    { id: 'ceremonia', label: 'Ceremonia', place: event.ceremony },
+    { id: 'recepcion', label: 'Recepción', place: event.reception },
   ].filter(({ place }) => place?.name);
 
   return (

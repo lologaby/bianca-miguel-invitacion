@@ -853,3 +853,16 @@
   opacity: .5;
   stroke: rgba(39, 44, 36, .55);
 }
+
+/*
+ * The header is fixed and 96px tall, and every anchor target had
+ * scroll-margin-top: 0 — so tapping CELEBRACIÓN, LUGAR or PREGUNTAS parked the
+ * section's heading underneath it. Reserve the header's height plus a little
+ * air, so a jump lands on the title rather than past it.
+ */
+#celebracion,
+#lugar,
+#preguntas,
+#rsvp {
+  scroll-margin-block-start: clamp(6.5rem, 15vw, 8rem);
+}
