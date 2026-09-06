@@ -100,11 +100,6 @@ export const localDemoInvitation: InvitationPayload = {
       message: 'Su presencia es el regalo. Si desea obsequiarnos algo, puede hacerlo en efectivo o por ATH Móvil.',
       athMovil: '000-000-0000',
     },
-    story: {
-      paragraphs: [
-        'Elegimos nuestra ciudad, y una bodega de vinos para recibirle. Allí habrá una cata de vino y chocolate antes de la cena.',
-      ],
-    },
     weatherNote: 'Diciembre aquí sigue cálido. Todo será en interiores, con aire acondicionado — las telas frescas se agradecen.',
     faq: [
       { id: 'companions', q: '¿Puedo llevar acompañantes?', a: 'La invitación indica la cantidad de personas de su núcleo familiar que están incluidas. Por la planificación y la capacidad de la celebración, agradecemos que la asistencia se limite a ese número.' },
