@@ -19,16 +19,52 @@ const nav = [['celebracion', 'Celebración'], ['lugar', 'Lugar'], ['preguntas', 
 
 function useScrollProgress() {
   useEffect(() => {
-    let queued = false;
+    const root = document.documentElement;
+    const hero = document.getElementById('inicio');
+    const itinerary = document.querySelector<HTMLElement>('.itinerary-list');
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
     const update = () => {
-      const distance = document.documentElement.scrollHeight - window.innerHeight;
-      document.documentElement.style.setProperty('--scroll-progress', `${distance > 0 ? window.scrollY / distance : 0}`);
-      queued = false;
+      frame = 0;
+      const viewport = window.innerHeight;
+      const distance = root.scrollHeight - viewport;
+      const cover = hero?.getBoundingClientRect();
+      const timeline = itinerary?.getBoundingClientRect();
+      root.style.setProperty('--scroll-progress', String(distance > 0 ? clamp(window.scrollY / distance) : 0));
+      if (cover && hero) {
+        const progress = preference.matches ? 0 : clamp(-cover.top / cover.height);
+        hero.style.setProperty('--cover-departure', String(progress));
+        hero.style.setProperty('--cover-drift', String(progress * 14) + 'px');
+        hero.style.setProperty('--cue-play-state', cover.bottom > 0 && !document.hidden ? 'running' : 'paused');
+      }
+      if (timeline && itinerary) {
+        const progress = preference.matches ? 1 : clamp((viewport * .65 - timeline.top) / timeline.height);
+        itinerary.style.setProperty('--itinerary-progress', String(progress));
+      }
     };
-    const onScroll = () => { if (!queued) { window.requestAnimationFrame(update); queued = true; } };
+    const schedule = () => { if (!frame && !document.hidden) frame = window.requestAnimationFrame(update); };
+    const onVisibility = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      update();
+    };
+    const resize = new ResizeObserver(schedule);
+    resize.observe(document.body);
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    document.addEventListener('visibilitychange', onVisibility);
+    preference.addEventListener('change', schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      resize.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      document.removeEventListener('visibilitychange', onVisibility);
+      preference.removeEventListener('change', schedule);
+      root.style.removeProperty('--scroll-progress');
+    };
   }, []);
 }
 
@@ -54,19 +90,25 @@ function Header({ event }: { event: PrivateEvent }) {
   const [day = event.dateShort, month = ''] = event.dateShort.split('·').map((part) => part.trim());
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((first, second) => Math.abs(first.boundingClientRect.top) - Math.abs(second.boundingClientRect.top));
-      const id = visible[0]?.target.id as (typeof nav)[number][0] | undefined;
-      if (id) setActive(id);
-    }, { rootMargin: '-24% 0px -62% 0px', threshold: [0, .1, .4] });
-
-    nav.forEach(([id]) => {
-      const section = document.getElementById(id);
-      if (section) observer.observe(section);
-    });
-    return () => observer.disconnect();
+    const sections = nav.map(([id]) => document.getElementById(id));
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      let current: (typeof nav)[number][0] = 'celebracion';
+      sections.forEach((section, index) => {
+        if (section && section.getBoundingClientRect().top <= window.innerHeight * .3) current = nav[index][0];
+      });
+      setActive(current);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
   }, []);
 
   return <header className="craft-header">
@@ -93,7 +135,7 @@ function CoupleWordmark({ first, second }: { first: string; second: string }) {
   return <span className="client-wordmark-crop"><img
     src={asset('wordmark.webp')}
     srcSet={`${asset('wordmark-450.webp')} 450w, ${asset('wordmark.webp')} 900w, ${asset('wordmark-1350.webp')} 1350w`}
-    sizes="(max-width: 900px) 102vw, 47vw"
+    sizes="(max-width: 620px) 78vw, (max-width: 900px) 86vw, 40rem"
     alt={`${first} y ${second}`} width="900" height="600"
     loading="eager" decoding="async" fetchPriority="high"/></span>;
 }
@@ -188,7 +230,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
       <WineStory event={event}/>
 
       <section className="date-v2" aria-label="Cuenta regresiva">
-        <div className="date-icon"><LineIcon name="calendar"/></div>
+        <div className="date-icon"><svg className="line-icon date-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M7 3v4m10-4v4M3 10h18M7 14h2m4 0h2m-8 4h2"/></svg></div>
         <div className="date-word"><span>La fecha</span><h2>{event.dateShort}</h2><span>{event.ceremony.city}</span></div>
         <div className="date-countdown"><p>Cuenta regresiva</p><Countdown start={event.start}/><AddToCalendar event={event}/></div>
         <div className="pour-line" aria-hidden="true"><span></span></div>

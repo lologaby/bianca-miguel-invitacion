@@ -1,35 +1,26 @@
-/*
- * The cover: cream ground, the palette's colour fields, and the reference's
- * marks cropped at the edges. Everything is anchored in percentages so the same
- * composition holds in portrait and landscape.
- */
+/* The original artwork, reflowed across the cover. The two glass copies share
+   coordinates; the actual curved green field clips the light copy. */
 .cover-composition {
+  --band-start: 78;
+  --glass-start: 66;
+  --glass-width: 26;
+  --glass-bottom: 2.5%;
   background: var(--client-cream, #f6eee4);
   inset: 0;
   overflow: hidden;
   position: absolute;
 }
-
-.cover-composition > * {
-  position: absolute;
-}
-
-/* --- colour fields --- */
-
-/*
- * The eucalyptus edge. It tapers as it rises rather than stopping at a hard
- * step, so the boundary reads as a drawn silhouette instead of a crop.
- */
+.cover-composition > * { position: absolute; }
 .cover-band {
   background: #475548;
   border-end-start-radius: 34% 20%;
   border-start-start-radius: 58% 42%;
-  inline-size: calc(100% - var(--band-x));
+  inline-size: calc((100 - var(--band-start)) * 1%);
   inset-block: 0;
   inset-inline-end: 0;
+  overflow: hidden;
+  z-index: 2;
 }
-
-/* the dark shoulder the reference tucks into its top-left corner */
 .cover-corner {
   background: #272c24;
   block-size: 13%;
@@ -38,25 +29,19 @@
   inset-block-start: 0;
   inset-inline-start: 0;
 }
-
-/* the grainier wedge of cream the reference runs down its left side */
 .cover-texture-wedge {
   background: #efe6da;
   clip-path: polygon(0 30%, 30% 70%, 0 70%);
   inset: 0;
   mix-blend-mode: multiply;
-  opacity: .5;
+  opacity: .35;
 }
-
-/* --- marks, each cut by an edge --- */
-
 .cover-arch {
   block-size: 12%;
   inline-size: 40%;
   inset-block-end: -4%;
   inset-inline-start: -6%;
 }
-
 .cover-wedge {
   block-size: 13%;
   inline-size: 20%;
@@ -64,101 +49,49 @@
   inset-inline-start: 34%;
   opacity: .9;
 }
-
-/* only the top of the pod clears the bottom edge */
 .cover-pod {
   block-size: 22%;
   inline-size: auto;
-  /*
-   * Whole, like the glass. The pod is a thing a guest recognises — a cacao pod
-   * with its stalk — and slicing 98px off its base read as a rendering fault,
-   * not as a composition. The abstract fields either side may still bleed;
-   * objects may not.
-   */
   inset-block-end: 2.5%;
   inset-inline-start: 12%;
 }
-
-/* the glass rises out of the bottom edge, changing tone across the band */
-.cover-glass {
+.cover-glass,
+.cover-glass-light {
   block-size: auto;
-  /*
-   * The glass used to hang 12% below the edge and be cropped on purpose. The
-   * client reads that as a broken object — the stem and the foot simply are not
-   * there. The whole silhouette sits inside the frame now: bowl, stem, foot.
-   */
-  inset-block-end: 2.5%;
+  inset-block-end: var(--glass-bottom);
+  position: absolute;
+  translate: 0 var(--cover-drift, 0px);
 }
-
-/* --- print grain --- */
-
+.cover-glass {
+  inline-size: calc(var(--glass-width) * 1%);
+  inset-inline-start: calc(var(--glass-start) * 1%);
+  z-index: 1;
+}
+.cover-glass-light {
+  inline-size: calc(var(--glass-width) / (100 - var(--band-start)) * 100%);
+  inset-inline-start: calc((var(--glass-start) - var(--band-start)) / (100 - var(--band-start)) * 100%);
+  max-inline-size: none;
+}
 .cover-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 220px 220px;
   inset: 0;
   mix-blend-mode: multiply;
-  opacity: .16;
+  opacity: .055;
   pointer-events: none;
+  z-index: 3;
 }
-
-/*
- * Landscape. With the height gone, marks anchored to the bottom edge would pile
- * on top of the type, so they spread to the left and right margins instead and
- * the band widens to hold the right side.
- */
 @media (min-width: 901px) {
-  .cover-composition { --band-x: 84%; }
-
+  .cover-composition { --band-start: 84; --glass-start: 88; --glass-width: 8; --glass-bottom: 3%; }
   .cover-corner { block-size: 22%; inline-size: 11%; }
-
   .cover-texture-wedge { clip-path: polygon(0 18%, 17% 78%, 0 78%); }
-
-  .cover-arch {
-    block-size: 22%;
-    inline-size: 17%;
-    inset-block-end: -6%;
-    inset-inline-start: -2%;
-  }
-
-  .cover-wedge {
-    block-size: 20%;
-    inline-size: 8%;
-    inset-inline-start: 15%;
-  }
-
-  .cover-pod {
-    block-size: 34%;
-    inset-block-end: 3%;
-    inset-inline-start: 5%;
-  }
-
-  .cover-glass {
-    inset-block-end: 3%;
-    /* overridden inline for portrait; landscape pulls it to the right margin */
-    inset-inline-start: auto !important;
-    inset-inline-end: 4%;
-    width: 8% !important;
-  }
+  .cover-arch { block-size: 22%; inline-size: 17%; inset-block-end: -6%; inset-inline-start: -2%; }
+  .cover-wedge { block-size: 20%; inline-size: 8%; inset-inline-start: 15%; }
+  .cover-pod { block-size: 34%; inset-block-end: 3%; inset-inline-start: 5%; }
 }
-
-/* --- arrival --- */
-
 @media (prefers-reduced-motion: no-preference) {
-  .cover-composition > *:not(.cover-grain) {
-    animation: cover-mark-arrival 900ms cubic-bezier(.16, 1, .3, 1) both;
-  }
-
-  .cover-band { animation-delay: 40ms; }
-  .cover-corner { animation-delay: 110ms; }
-  .cover-texture-wedge { animation-delay: 90ms; }
-  .cover-arch { animation-delay: 260ms; }
-  .cover-wedge { animation-delay: 300ms; }
-  .cover-pod { animation-delay: 340ms; }
-  .cover-glass { animation-delay: 380ms; }
+  /* One arrival keeps the two halves registered and retains each mark's alpha. */
+  .cover-composition { animation: cover-paper-arrival 700ms ease-out both; }
 }
-
-@keyframes cover-mark-arrival {
-  from { opacity: 0; transform: translateY(1.2%); }
-  to { opacity: 1; transform: none; }
-}
+@keyframes cover-paper-arrival { from { opacity: .65; } to { opacity: 1; } }

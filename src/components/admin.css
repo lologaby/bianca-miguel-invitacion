@@ -225,9 +225,9 @@
  * searchable — which is the difference between this and a typing effect.
  *
  * The mask position is a registered custom property so it can be interpolated.
- * Where @property is unsupported, var(--ink) is invalid at computed-value time,
+ * Where @property is unsupported, var(--guest-ink-reveal) is invalid at computed-value time,
  * mask-image falls back to none, and the name simply appears. */
-@property --ink {
+@property --guest-ink-reveal {
   syntax: '<percentage>';
   inherits: false;
   initial-value: 0%;
@@ -238,23 +238,23 @@
   animation-delay: calc(var(--row, 0) * 70ms);
   -webkit-mask-image: linear-gradient(
     90deg,
-    #000 calc(var(--ink) - 9%),
-    rgba(0, 0, 0, .45) calc(var(--ink) - 2%),
-    rgba(0, 0, 0, .12) var(--ink),
-    transparent calc(var(--ink) + 4%)
+    #000 calc(var(--guest-ink-reveal) - 9%),
+    rgba(0, 0, 0, .45) calc(var(--guest-ink-reveal) - 2%),
+    rgba(0, 0, 0, .12) var(--guest-ink-reveal),
+    transparent calc(var(--guest-ink-reveal) + 4%)
   );
   mask-image: linear-gradient(
     90deg,
-    #000 calc(var(--ink) - 9%),
-    rgba(0, 0, 0, .45) calc(var(--ink) - 2%),
-    rgba(0, 0, 0, .12) var(--ink),
-    transparent calc(var(--ink) + 4%)
+    #000 calc(var(--guest-ink-reveal) - 9%),
+    rgba(0, 0, 0, .45) calc(var(--guest-ink-reveal) - 2%),
+    rgba(0, 0, 0, .12) var(--guest-ink-reveal),
+    transparent calc(var(--guest-ink-reveal) + 4%)
   );
 }
 
 @keyframes ink-flow {
-  from { --ink: 0%; }
-  to { --ink: 118%; }
+  from { --guest-ink-reveal: 0%; }
+  to { --guest-ink-reveal: 118%; }
 }
 
 /* a nib settles before it writes: the row lifts the last few pixels as the ink
@@ -404,3 +404,106 @@
 }
 
 .guest-portal-remove button:disabled { opacity: .5; cursor: default; }
+
+/* A quiet working surface in the invitation's approved palette. */
+.admin-login, .admin-shell {
+  --admin-ivory: #f6eee4;
+  --admin-ink: #272c24;
+  --admin-wine: #5e2023;
+  --admin-line: rgba(39,44,36,.2);
+}
+.admin-shell { max-inline-size: 100rem; margin-inline: auto; }
+.admin-summary { margin-block: 2.5rem; gap: 1rem; }
+.admin-summary > span { display: inline-flex; align-items: baseline; gap: .6rem; }
+.admin-summary strong, .admin-shell td { font-variant-numeric: lining-nums tabular-nums; }
+.admin-state.pending { color: #6b6358; }
+.admin-shell :is(button, input):focus-visible,
+.admin-login :is(a, button, input):focus-visible {
+  outline: 2px solid var(--admin-wine);
+  outline-offset: 3px;
+}
+.guest-portal-stepper :is(button, input):focus-visible { outline-offset: -3px; }
+.guest-portal-add > button,
+.guest-portal-actions button {
+  background: var(--admin-ink);
+  border: 1px solid var(--admin-ink);
+  border-radius: 2px;
+  color: var(--admin-ivory);
+  cursor: pointer;
+  font: 600 .72rem/1.3 var(--sans);
+  letter-spacing: .08em;
+  min-height: 48px;
+  padding: .8rem 1.2rem;
+  text-transform: uppercase;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.guest-portal-actions button + button {
+  background: transparent;
+  color: var(--admin-ink);
+  border-color: var(--admin-line);
+}
+.admin-shell button:hover:not(:disabled) { border-color: var(--admin-wine); }
+.guest-portal-add > button:hover:not(:disabled),
+.guest-portal-actions button:first-child:hover { background: var(--admin-wine); }
+.guest-portal-add > button:disabled { opacity: .55; cursor: wait; }
+.guest-portal-add input { color: var(--admin-ink); background: transparent; accent-color: var(--admin-wine); }
+.guest-portal-add input::placeholder { color: #6b6f63; }
+.guest-portal-who { min-inline-size: 0; overflow-wrap: anywhere; }
+.guest-portal-who b { font-size: 1.25rem; }
+.guest-portal-head { flex-wrap: wrap; }
+.guest-portal-add .guest-portal-check input { flex-shrink: 0; }
+@media (min-width: 720px) {
+  .guest-portal-add { grid-template-columns: minmax(0, 1fr) 11rem; }
+}
+@media (min-width: 1200px) {
+  .guest-portal-add { grid-template-columns: minmax(14rem, 1fr) 10rem minmax(10rem, .6fr) auto; }
+}
+@media (max-width: 700px) {
+  .admin-summary { gap: .85rem; margin-block: 2rem; }
+  .admin-summary > span { gap: .75rem; }
+  .admin-summary strong { min-inline-size: 1.5rem; }
+  .admin-shell table { min-width: 0; }
+  .admin-shell thead {
+    clip-path: inset(50%);
+    block-size: 1px;
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+  .admin-shell tbody { display: grid; }
+  .admin-shell tbody tr {
+    border-block-start: 1px solid var(--admin-line);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem 1.25rem;
+    padding-block: 1.5rem;
+  }
+  .admin-shell td { border: 0; padding: 0; overflow-wrap: anywhere; }
+  .admin-shell td:first-child { grid-column: 1 / -1; }
+  .admin-shell td:first-child b { font-size: 1.35rem; }
+  .admin-shell td[data-label]::before {
+    color: #62675b;
+    content: attr(data-label);
+    display: block;
+    font: 600 .62rem/1.4 var(--sans);
+    letter-spacing: .06em;
+    margin-block-end: .4rem;
+    text-transform: uppercase;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .guest-portal-list li { animation-duration: 300ms; animation-delay: calc(var(--row, 0) * 20ms); }
+  .ink-write { animation-duration: 400ms; animation-delay: calc(var(--row, 0) * 20ms); }
+}
+
+/* The old invitation .pending badge must not style a table status. */
+.admin-shell .admin-state.pending {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}

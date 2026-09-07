@@ -866,3 +866,214 @@
 #rsvp {
   scroll-margin-block-start: clamp(6.5rem, 15vw, 8rem);
 }
+
+/* Visual finish: retain the client's artwork, remove inherited layout drift. */
+::selection { background: #5e2023; color: #f6eee4; }
+html { scrollbar-color: #475548 #f6eee4; }
+.site-shell :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid #5e2023;
+  outline-offset: 4px;
+}
+.site-shell :is(.date-v2, .guest-details-v3) :is(a, button):focus-visible {
+  outline-color: #f6eee4;
+}
+input, textarea { caret-color: #5e2023; }
+.scroll-track { z-index: 1001; height: 2px; pointer-events: none; }
+.scroll-track span { width: 100%; transform: scaleX(var(--scroll-progress, 0)); }
+
+/* Keep all personalized text within the cream field, including long names. */
+.client-hero-copy { min-inline-size: 0; }
+.client-hero-copy .client-hero-date {
+  font: 400 clamp(.95rem, 1.4vw, 1.12rem)/1.5 var(--serif);
+  margin-block: 1rem 0;
+  max-inline-size: 100%;
+  text-wrap: balance;
+}
+.client-hero-personalization .hero-addressee-name {
+  color: #0d0e0b !important;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  text-transform: none;
+  text-wrap: balance;
+  word-break: normal;
+  line-height: 1.4;
+}
+.client-hero-personalization { max-inline-size: 100%; }
+.hero-scroll-cue span::after { animation-play-state: var(--cue-play-state, running); }
+
+@media (max-width: 900px) {
+  .client-hero-copy {
+    inset-inline-start: auto;
+    justify-self: start;
+    width: 78%;
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
+    padding-block: 2.75rem clamp(11rem, 32svh, 17rem);
+  }
+  .client-hero-copy h1 { width: 100%; margin-top: 0; }
+  .client-hero-personalization { margin-block-start: 1.75rem; }
+  .hero-scroll-cue { inset-inline-start: 49%; inset-block-end: 1.25rem; }
+}
+@media (max-width: 620px) and (max-height: 650px) {
+  .client-hero-copy, .client-hero-art { min-height: 36rem; }
+}
+/* The welcome no longer carries the padding of the former two-column scene. */
+.wine-story-v28.is-welcome { padding-block: clamp(3.5rem, 7vw, 6rem); }
+.wine-story-v28.is-welcome .wine-story-copy { padding: 0; justify-items: center; }
+.wine-story-v28.is-welcome .wine-story-copy h2 {
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  line-height: 1.08;
+}
+.wine-story-v28.is-welcome .wine-story-narrative { max-inline-size: 42ch; margin-top: 1.5rem; }
+.wine-story-v28.is-welcome .wine-story-narrative p {
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.65;
+  margin-inline: auto;
+}
+
+/* One compact date block; the calendar remains a working action. */
+.date-v2 {
+  grid-template-columns: 4.5rem minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+}
+.date-v2 > div { border-inline-end: 0; }
+.date-icon { min-height: 0; border: 0; align-self: center; }
+.date-icon .line-icon { width: 2.8rem; height: 2.8rem; }
+.date-word { padding-block: 0; padding-inline: 1.5rem; }
+.date-word h2 {
+  display: block;
+  font-size: clamp(2rem, 3.7vw, 3.4rem);
+  line-height: 1.05;
+  margin-block: 1rem;
+  text-wrap: balance;
+}
+.date-v2 .date-countdown { grid-column: auto; border-block-start: 0; border-inline-start: 1px solid rgba(246,238,228,.2); padding-block: 0; }
+.date-countdown > p { margin-block-start: 0; }
+.calendar-save { font-size: .68rem; letter-spacing: .1em; }
+@media (max-width: 720px) {
+  .date-v2 { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .date-v2 .date-icon { position: absolute; inset: 2.4rem 1.25rem auto auto; }
+  .date-icon .line-icon { width: 1.75rem; height: 1.75rem; }
+  .date-word { padding: 0; }
+  .date-word > span:first-child { padding-inline-end: 2.5rem; }
+  .date-word h2 { font-size: clamp(1.9rem, 8.2vw, 2.5rem); }
+  .date-v2 .date-countdown { border-inline-start: 0; border-block-start: 1px solid rgba(246,238,228,.2); padding: 1.75rem 0 0; }
+  .date-countdown .countdown-v2 { margin-block: 1rem 0; }
+}
+
+/* The timeline fills as the guest reads. Its hours and venues are always visible. */
+.itinerary-v3 { overflow: clip; }
+.itinerary-list::after {
+  background: #5e2023;
+  bottom: 2.5rem;
+  content: '';
+  left: 7.125rem;
+  position: absolute;
+  top: 1rem;
+  transform: scaleY(var(--itinerary-progress, 0));
+  transform-origin: top;
+  width: 1px;
+  pointer-events: none;
+}
+.itinerary-v3 .reception-run {
+  grid-column: 3;
+  grid-template-columns: minmax(0, 1fr);
+  margin-inline-start: 0;
+  padding-inline-start: calc(4rem + clamp(1rem, 2.5vw, 2.25rem));
+}
+.itinerary-v3 .reception-run li {
+  min-height: 0;
+  border-inline-start: 0;
+  padding: .7rem 0;
+}
+.itinerary-v3 .reception-run li::before { content: none; }
+.itinerary-v3 .itinerary-stop > time { font-variant-numeric: lining-nums tabular-nums; }
+@media (min-width: 901px) {
+  .itinerary-v3 > header { position: sticky; inset-block-start: calc(var(--header-height) + 1.5rem); }
+}
+@media (max-width: 900px) {
+  .itinerary-v3 > header { position: static; inset-block-start: auto; }
+}
+@media (max-width: 620px) {
+  .itinerary-list::after { bottom: 1rem; left: .5rem; top: 3.5rem; }
+  .itinerary-v3 .itinerary-stop { padding-bottom: 3rem; }
+  .itinerary-v3 .itinerary-stop:last-child { padding-bottom: 0; }
+  .itinerary-v3 .reception-run { grid-column: 1; padding-inline-start: 3.85rem; }
+}
+
+/* Bound the real motifs instead of sizing absolute spans from a percentage SVG. */
+.scroll-mark--edge-right { aspect-ratio: 148.7 / 300; }
+.distilled-rsvp .scroll-mark--edge-right { aspect-ratio: 118.3 / 300; }
+.closing-glass .interactive-wine-glass {
+  inline-size: clamp(2.8rem, 7vw, 3.5rem);
+  pointer-events: auto;
+}
+.closing-glass .interactive-wine-glass__art { aspect-ratio: 118.3 / 300; }
+.closing-glass .interactive-wine-glass__vessel {
+  fill: rgba(39,44,36,.09);
+  stroke: rgba(39,44,36,.32);
+  stroke-width: .8px;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Native disclosure and scroll timelines enhance supporting browsers without
+   hiding content or taking over normal scrolling elsewhere. */
+@media (prefers-reduced-motion: no-preference) {
+  .client-hero-copy {
+    translate: 0 calc(var(--cover-departure, 0) * -32px);
+    opacity: calc(1 - var(--cover-departure, 0) * .35);
+  }
+  .site-shell .round-action {
+    transition: color 180ms ease, border-color 180ms ease, translate 180ms ease;
+  }
+  @media (hover: hover) {
+    .site-shell .round-action:hover { translate: 2px -2px; }
+  }
+  @supports (animation-timeline: view()) {
+    .site-shell main > section { view-timeline-name: --invitation-section; view-timeline-axis: block; }
+    .scroll-mark {
+      animation: paper-mark-drift linear both;
+      animation-timeline: --invitation-section;
+      animation-range: entry 0% exit 100%;
+    }
+  }
+  @supports (interpolate-size: allow-keywords) {
+    .faq-v2 details { interpolate-size: allow-keywords; }
+    .faq-v2 details::details-content {
+      block-size: 0;
+      opacity: 0;
+      overflow: clip;
+      transition: block-size 260ms ease, opacity 220ms ease, content-visibility 260ms allow-discrete;
+    }
+    .faq-v2 details[open]::details-content { block-size: auto; opacity: 1; }
+  }
+}
+@keyframes paper-mark-drift {
+  from { translate: 0 12px; rotate: -1deg; }
+  to { translate: 0 -12px; rotate: 1deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-mark { opacity: var(--mark-opacity, .1); transform: none; }
+  .itinerary-list::after { transform: none; }
+}
+
+/* Keep the native radio feedback in proportion to its answer. */
+.distilled-rsvp .rsvp-form .attendance-card {
+  align-items: center;
+  flex-direction: row;
+  gap: .8rem;
+  min-height: 88px;
+  padding: 1rem;
+}
+.distilled-rsvp .rsvp-form .choice-mark {
+  flex: 0 0 18px;
+  inline-size: 18px;
+  block-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.date-icon .date-calendar-icon { stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 720px) {
+  .faq-v2 { gap: 1.25rem; }
+  .distilled-rsvp .rsvp-form .attendance-card { padding: .85rem .7rem; gap: .65rem; }
+}

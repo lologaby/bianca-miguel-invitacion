@@ -114,16 +114,16 @@ export function AdminDashboard() {
           <button className="admin-logout" type="button" onClick={logout} disabled={busy}>Cerrar sesión</button>
         </div>
       </header>
-      <p className="admin-summary"><strong>{totals.attending}</strong> personas asistirán <i></i><strong>{totals.declined}</strong> invitaciones declinaron <i></i><strong>{totals.pending}</strong> pendientes</p>
+      <p className="admin-summary"><span><strong>{totals.attending}</strong> personas asistirán</span><i aria-hidden="true"></i><span><strong>{totals.declined}</strong> invitaciones declinaron</span><i aria-hidden="true"></i><span><strong>{totals.pending}</strong> pendientes</span></p>
       <div className="admin-table-wrap">
         <table>
           <thead><tr><th>Invitación</th><th>Respuesta</th><th>Asistentes</th><th>Acompañante</th><th>Actualización</th></tr></thead>
           <tbody>{records.map((record) => <tr key={record.guestId}>
             <td><b>{record.name}</b><span>{record.invited} {record.invited === 1 ? 'lugar reservado' : 'lugares reservados'}</span></td>
-            <td><span className={`admin-state ${record.attendance}`}>{record.attendance === 'yes' ? 'Asistirá' : record.attendance === 'no' ? 'No asistirá' : 'Pendiente'}</span></td>
-            <td>{record.attendance === 'yes' ? record.partySize : '—'}</td>
-            <td>{record.plusOneName || '—'}</td>
-            <td>{record.updatedAt ? new Intl.DateTimeFormat('es-PR', { dateStyle: 'medium' }).format(new Date(record.updatedAt)) : '—'}</td>
+            <td data-label="Respuesta"><span className={`admin-state ${record.attendance}`}>{record.attendance === 'yes' ? 'Asistirá' : record.attendance === 'no' ? 'No asistirá' : 'Pendiente'}</span></td>
+            <td data-label="Asistentes">{record.attendance === 'yes' ? record.partySize : '—'}</td>
+            <td data-label="Acompañante">{record.plusOneName || '—'}</td>
+            <td data-label="Actualización">{record.updatedAt ? new Intl.DateTimeFormat('es-PR', { dateStyle: 'medium' }).format(new Date(record.updatedAt)) : '—'}</td>
           </tr>)}</tbody>
         </table>
       </div>
