@@ -107,18 +107,23 @@ Código: ${entry.code}`;
   async function remove(guest: PortalGuest) {
     setBusy(true);
     try {
-      const response = await fetch('/api/admin-guests', {
+      const response = await fetch(`/api/admin-guests?id=${encodeURIComponent(guest.id)}`, {
         method: 'DELETE',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ id: guest.id }),
+        headers: { accept: 'application/json' },
       });
-      if (!response.ok) throw new Error('remove');
+      if (!response.ok) {
+        // say what the server said, so a failure here is diagnosable next time
+        const detail = await response.json().catch(() => null) as { error?: { message?: string } } | null;
+        throw new Error(detail?.error?.message || `Error ${response.status}`);
+      }
       setGuests((list) => list.filter((item) => item.id !== guest.id));
       setIssued(({ [guest.id]: _gone, ...rest }) => rest);
       setConfirming('');
       setStatus(`${guest.name} se eliminó de la lista.`);
-    } catch {
-      setStatus('No pudimos eliminar la invitación. Inténtalo de nuevo.');
+    } catch (error) {
+      setStatus(error instanceof Error && error.message
+        ? `No se pudo eliminar: ${error.message}`
+        : 'No pudimos eliminar la invitación. Inténtalo de nuevo.');
     } finally {
       setBusy(false);
     }

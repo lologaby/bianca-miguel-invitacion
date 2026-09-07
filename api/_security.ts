@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-export interface ApiRequest { cookies: Record<string, string | undefined>; headers: Record<string, string | string[] | undefined>; body?: Record<string, unknown>; method?: string }
+export interface ApiRequest { cookies: Record<string, string | undefined>; headers: Record<string, string | string[] | undefined>; body?: Record<string, unknown>; query?: Record<string, string | string[] | undefined>; method?: string }
 export interface ApiResponse { setHeader(name: string, value: string): void; status(code: number): ApiResponse; json(value: unknown): void }
 export interface SessionGuest { id: string; name: string; partyLimit: number; plusOneAllowed: boolean; exp: number }
 function secret() { const value = process.env.SESSION_SECRET; if (!value || value.length < 32) throw new Error('SESSION_SECRET is missing or too short'); return value; }

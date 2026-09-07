@@ -35,7 +35,15 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   }
 
   if (req.method === 'DELETE') {
-    const id = text(req.body?.id, 200);
+    /*
+     * The id travels in the query string, not in the body. A DELETE body is not
+     * reliably parsed for a serverless handler — this was the only route in the
+     * API using a method other than GET or POST, and the id arrived empty, so
+     * every delete came back "Falta la invitación a eliminar". The body is still
+     * read as a fallback for anything that does send one.
+     */
+    const fromQuery = req.query?.id;
+    const id = text(Array.isArray(fromQuery) ? fromQuery[0] : fromQuery, 200) || text(req.body?.id, 200);
     if (!id) return res.status(400).json(jsonError('invalid_id', 'Falta la invitación a eliminar.'));
     const everyone = await allGuests();
     if (!everyone.some((guest) => guest.id === id)) {
