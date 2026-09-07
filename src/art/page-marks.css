@@ -1057,23 +1057,130 @@ input, textarea { caret-color: #5e2023; }
   .itinerary-list::after { transform: none; }
 }
 
-/* Keep the native radio feedback in proportion to its answer. */
-.distilled-rsvp .rsvp-form .attendance-card {
-  align-items: center;
-  flex-direction: row;
-  gap: .8rem;
-  min-height: 88px;
-  padding: 1rem;
+
+/* RSVP: one measured column, with a quiet radio mark echoing the itinerary dot. */
+.rsvp-v2.distilled-rsvp .rsvp-form { max-inline-size: 40rem; }
+.rsvp-v2.distilled-rsvp .rsvp-form .attendance-fieldset,
+.rsvp-v2.distilled-rsvp .rsvp-form .attendance-options,
+.rsvp-v2.distilled-rsvp .rsvp-form .conditional-fields {
+  inline-size: 100%;
+  max-inline-size: none;
+  min-inline-size: 0;
 }
-.distilled-rsvp .rsvp-form .choice-mark {
-  flex: 0 0 18px;
-  inline-size: 18px;
-  block-size: 18px;
-  width: 18px;
-  height: 18px;
+.rsvp-v2.distilled-rsvp .rsvp-form .attendance-fieldset {
+  padding: 0;
+  margin-block-end: 0;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form .attendance-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .875rem;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card {
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(71,85,72,.4);
+  border-radius: 3px;
+  box-shadow: none;
+  color: #272c24;
+  display: flex;
+  flex-direction: row;
+  gap: .875rem;
+  margin: 0;
+  min-block-size: 92px;
+  min-inline-size: 0;
+  padding: 1.125rem;
+  text-align: start;
+  transform: none;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card > span:last-child { min-inline-size: 0; }
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card b {
+  color: #272c24;
+  font: 400 clamp(1.125rem, 1.8vw, 1.35rem)/1.15 var(--serif);
+  font-weight: 400 !important;
+  letter-spacing: 0;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card small {
+  color: #596052;
+  font: 400 .8rem/1.45 var(--sans);
+  letter-spacing: 0;
+  margin-block-start: .35rem;
+  opacity: 1;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:has(input:checked) {
+  background: rgba(94,32,35,.045);
+  border-color: #5e2023;
+  box-shadow: none;
+  color: #5e2023;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:has(input:checked) b { color: #5e2023; }
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:has(input:checked) small { color: #596052; }
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:focus-within {
+  outline: 2px solid #5e2023;
+  outline-offset: 3px;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card input:focus-visible { outline: none; }
+.rsvp-answer-mark {
+  block-size: 24px;
+  color: #5e2023;
+  display: block;
+  flex: 0 0 24px;
+  fill: none;
+  inline-size: 24px;
+  overflow: visible;
+}
+.rsvp-answer-mark__ring { stroke: currentColor; stroke-width: 1; opacity: .65; }
+.rsvp-answer-mark__dot {
+  fill: currentColor;
+  opacity: 0;
+  transform: scale(.5);
+  transform-origin: center;
+  transition: opacity 180ms ease, transform 220ms cubic-bezier(.16,1,.3,1);
+}
+.attendance-card:has(input:checked) .rsvp-answer-mark__ring { opacity: 1; }
+.attendance-card:has(input:checked) .rsvp-answer-mark__dot { opacity: 1; transform: scale(1); }
+.rsvp-v2.distilled-rsvp .rsvp-form > .rsvp-submit {
+  border-radius: 3px;
+  gap: .85rem;
+  min-block-size: 56px;
+  margin-block-start: 1.25rem;
+  padding: .875rem 1.25rem;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form > .rsvp-submit > span {
+  font: 400 1.18rem/1.25 var(--serif);
+  letter-spacing: .035em;
+}
+.rsvp-submit-arrow {
+  block-size: 20px;
+  flex: 0 0 20px;
+  fill: none;
+  inline-size: 20px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.25;
+  transition: translate 180ms ease;
+}
+.rsvp-v2.distilled-rsvp .rsvp-form .conditional-fields { margin-block-start: 1.5rem; }
+@media (hover: hover) {
+  .rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:hover {
+    border-color: #5e2023;
+    background: rgba(94,32,35,.025);
+    transform: none;
+  }
+  .rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card:has(input:checked):hover { background: rgba(94,32,35,.065); }
+  .rsvp-submit:not(:disabled):hover .rsvp-submit-arrow { translate: 3px 0; }
+}
+@media (max-width: 620px) {
+  .rsvp-v2.distilled-rsvp .rsvp-form .attendance-options { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card { min-block-size: 80px; padding: 1rem 1.125rem; }
+  .rsvp-v2.distilled-rsvp .rsvp-form label.attendance-card b { font-size: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rsvp-answer-mark__dot, .rsvp-submit-arrow { transition: none; }
+  .rsvp-submit:not(:disabled):hover .rsvp-submit-arrow { translate: none; }
 }
 .date-icon .date-calendar-icon { stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 720px) {
   .faq-v2 { gap: 1.25rem; }
-  .distilled-rsvp .rsvp-form .attendance-card { padding: .85rem .7rem; gap: .65rem; }
 }

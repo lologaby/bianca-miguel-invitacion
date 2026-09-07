@@ -2,6 +2,13 @@ import { FormEvent, useState } from 'react';
 import type { Guest } from '../types/invitation';
 import './rsvp.css';
 
+function AnswerMark() {
+  return <svg className="rsvp-answer-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle className="rsvp-answer-mark__ring" cx="12" cy="12" r="10"/>
+    <circle className="rsvp-answer-mark__dot" cx="12" cy="12" r="4"/>
+  </svg>;
+}
+
 export function RsvpForm({ guest }: { guest: Guest }) {
   const [attendance, setAttendance] = useState<'yes' | 'no' | ''>('');
   const [status, setStatus] = useState('');
@@ -39,8 +46,8 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     <fieldset className="attendance-fieldset" disabled={busy}>
       <legend>Seleccione su respuesta</legend>
       <div className="attendance-options">
-        <label className="attendance-card yes-card"><input type="radio" name="attendance" value="yes" onChange={() => setAttendance('yes')}/><span className="choice-mark" aria-hidden="true">✓</span><span><b>Sí, allí estaré</b><small>Confirmo mi asistencia</small></span></label>
-        <label className="attendance-card no-card"><input type="radio" name="attendance" value="no" onChange={() => setAttendance('no')}/><span className="choice-mark" aria-hidden="true">—</span><span><b>No podré asistir</b><small>Gracias por invitarme</small></span></label>
+        <label className="attendance-card yes-card"><input type="radio" name="attendance" value="yes" onChange={() => setAttendance('yes')}/><AnswerMark/><span><b>Sí, allí estaré</b><small>Confirmo mi asistencia</small></span></label>
+        <label className="attendance-card no-card"><input type="radio" name="attendance" value="no" onChange={() => setAttendance('no')}/><AnswerMark/><span><b>No podré asistir</b><small>Gracias por invitarme</small></span></label>
       </div>
     </fieldset>
     {attendance === 'yes' && <div className="conditional-fields">
@@ -50,7 +57,7 @@ export function RsvpForm({ guest }: { guest: Guest }) {
     </div>}
     <button className={`button wine rsvp-submit${attendance ? ' is-ready' : ''}`} disabled={busy || !attendance}>
       <span>{busy ? 'Guardando…' : attendance === 'no' ? 'Enviar respuesta' : 'Confirmar asistencia'}</span>
-      <i aria-hidden="true" />
+      <svg className="rsvp-submit-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15m-5-5 5 5-5 5"/></svg>
     </button>
     <p className="form-status" role="status" aria-live="polite">{status}</p>
   </form>;
