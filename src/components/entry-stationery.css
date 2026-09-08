@@ -1,0 +1,294 @@
+/* Final entry layer: the invitation's matte paper, wine seal and fine type. */
+.private-gate.mystery-gate {
+  background: #272c24;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: max(1rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left));
+}
+
+.private-gate.mystery-gate::before,
+.invitation-envelope-reveal.is-opening::before {
+  border-color: rgb(246 238 228 / 19%);
+}
+
+.private-gate.mystery-gate > .mystery-gate-composition {
+  flex: none;
+  min-height: 0;
+  margin-block: auto;
+  padding: 2.5rem 0 1.5rem;
+  animation: none;
+  /* A transformed ancestor would contain and clip the fixed opening stage. */
+  transform: none;
+  filter: none;
+  clip-path: none;
+}
+
+.private-gate.mystery-gate h1 {
+  font-size: clamp(3.05rem, 5.6vw, 4.8rem);
+  line-height: .94;
+  letter-spacing: -.025em;
+}
+
+.private-gate.mystery-gate h1 i { color: #f6eee4; }
+
+.private-gate.mystery-gate .mystery-access {
+  max-width: 23rem;
+}
+
+.private-gate.mystery-gate .private-gate-copy {
+  color: rgb(246 238 228 / 84%);
+  font: 400 1.1rem/1.4 var(--serif);
+  max-width: 20rem;
+  margin: 0 auto 1.5rem;
+  text-wrap: balance;
+}
+
+.private-gate.mystery-gate .mystery-code-form > label {
+  color: rgb(246 238 228 / 82%);
+  font: 500 .68rem/1.4 var(--sans);
+  letter-spacing: .12em;
+  margin-bottom: .65rem;
+}
+
+.private-gate.mystery-gate .mystery-code-form > div {
+  border: 0;
+  gap: .65rem;
+  grid-template-columns: minmax(0, 1fr);
+  animation: none;
+}
+
+.private-gate.mystery-gate .mystery-code-form input {
+  background: rgb(246 238 228 / 3%);
+  border: 1px solid rgb(246 238 228 / 44%);
+  border-radius: 0;
+  box-shadow: none;
+  caret-color: #f6eee4;
+  color: #f6eee4;
+  font: 400 1rem/1.4 var(--sans);
+  letter-spacing: .1em;
+  min-height: 3.25rem;
+  padding: .8rem 1rem;
+  text-align: center;
+  width: 100%;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.private-gate.mystery-gate .mystery-code-form input:focus-visible {
+  background: rgb(246 238 228 / 6%);
+  border-color: #f6eee4;
+  box-shadow: none;
+  outline: 1px solid #f6eee4;
+  outline-offset: 3px;
+}
+
+.private-gate.mystery-gate .mystery-code-form button,
+.private-gate.mystery-gate .mystery-reveal {
+  align-items: center;
+  background: #f6eee4 !important;
+  border: 1px solid #f6eee4 !important;
+  border-radius: 0;
+  clip-path: none;
+  color: #272c24 !important;
+  display: flex;
+  font: 400 1.18rem/1.2 var(--serif) !important;
+  gap: 1rem;
+  justify-content: center;
+  letter-spacing: .025em !important;
+  min-height: 3.25rem;
+  padding: .8rem 1rem !important;
+  text-transform: none;
+  width: 100%;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.gate-action-arrow {
+  fill: none;
+  flex: none;
+  height: 1.1rem;
+  stroke: currentColor;
+  stroke-width: 1;
+  width: 1.5rem;
+  transition: transform 180ms ease;
+}
+
+@media (hover: hover) {
+  .private-gate.mystery-gate .mystery-code-form button:hover:not(:disabled),
+  .private-gate.mystery-gate .mystery-reveal:hover:not(:disabled) {
+    background: #e8e0d6 !important;
+    border-color: #e8e0d6 !important;
+    transform: none;
+  }
+  .mystery-access button:hover:not(:disabled) .gate-action-arrow { transform: translateX(.2rem); }
+}
+
+.private-gate.mystery-gate .mystery-code-form button:focus-visible,
+.private-gate.mystery-gate .mystery-reveal:focus-visible,
+.private-gate.mystery-gate .code-toggle:focus-visible {
+  outline: 1px solid #f6eee4;
+  outline-offset: 4px;
+}
+
+.private-gate.mystery-gate .mystery-code-form button:disabled,
+.private-gate.mystery-gate .mystery-reveal:disabled { opacity: .65; cursor: wait; }
+
+.private-gate.mystery-gate .form-status {
+  color: #f6eee4;
+  font-size: .8rem;
+  line-height: 1.5;
+  margin-top: .8rem;
+  max-width: 23rem;
+  min-height: 2.4rem;
+  text-wrap: balance;
+}
+
+.mystery-gate.has-error .mystery-code-form input {
+  border-color: #f6eee4;
+  border-style: dashed;
+}
+
+.private-gate.mystery-gate .private-note {
+  align-self: center;
+  display: block;
+  flex: none;
+  justify-self: center;
+  color: rgb(246 238 228 / 66%);
+  font: 400 .66rem/1.5 var(--sans);
+  letter-spacing: .035em;
+  margin: 0 0 1rem;
+  max-width: 100%;
+  position: static;
+  text-transform: none;
+  transform: none;
+}
+
+.invitation-envelope-reveal {
+  --envelope-width: clamp(14rem, 68vw, 20rem);
+  background: transparent;
+  margin-block: clamp(1.5rem, 3.5svh, 2.25rem);
+  overflow: visible;
+}
+
+.invitation-envelope-reveal.is-closed::before { content: none; }
+.invitation-envelope-reveal.is-opening { background: #272c24; }
+.invitation-envelope-reveal.is-opening .stationery-envelope { width: var(--envelope-width); }
+
+.stationery-envelope__back { background: #eae3d9; }
+.stationery-envelope__front {
+  background: #e7dfd3;
+  clip-path: polygon(0 0, 50% 61%, 100% 0, 100% 100%, 0 100%);
+}
+.stationery-envelope__front::after {
+  background: #eee6db;
+  clip-path: polygon(0 100%, 50% 49%, 100% 100%);
+  content: '';
+  inset: 0;
+  position: absolute;
+}
+.stationery-envelope__flap {
+  background: #f6eee4;
+  backface-visibility: visible;
+}
+.stationery-envelope__flap::after { content: none; }
+.stationery-envelope__seal::after {
+  border: 1px solid rgb(246 238 228 / 28%);
+  border-radius: 50%;
+  content: '';
+  inset: .3rem;
+  position: absolute;
+}
+.stationery-envelope__card { padding: .8rem 1rem; }
+.stationery-envelope__card b { font-size: clamp(2rem, 8vw, 3.25rem); font-weight: 400; }
+.stationery-envelope__card > span.stationery-card__names {
+  font: 400 clamp(.9rem, 3vw, 1.12rem)/1.2 var(--serif);
+  letter-spacing: 0;
+  margin-top: .55rem;
+  text-transform: none;
+}
+.stationery-envelope__card > span.stationery-card__date {
+  font: 500 .55rem/1.5 var(--sans);
+  letter-spacing: .08em;
+  margin-top: .5rem;
+}
+.stationery-card__rule { margin: .6rem 0; opacity: .35; width: 36%; }
+.stationery-card__rule::after { content: none; }
+
+.envelope-reveal-title {
+  color: #f6eee4;
+  font-weight: 400;
+  top: clamp(3rem, 10svh, 6rem);
+}
+.envelope-reveal-note {
+  bottom: clamp(3rem, 9svh, 5rem);
+  color: rgb(246 238 228 / 76%);
+  font: 400 .8rem/1.5 var(--sans);
+  letter-spacing: .035em;
+  text-transform: none;
+}
+
+/* 4 seconds: settle, release, unfold, reveal, then hold the card for reading. */
+.invitation-envelope-reveal.is-opening .stationery-envelope {
+  animation: bm-envelope-focus 900ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.invitation-envelope-reveal.is-opening .stationery-envelope__seal {
+  animation: bm-envelope-seal-release 550ms 350ms ease-in-out both;
+}
+.invitation-envelope-reveal.is-opening .stationery-envelope__flap {
+  animation: bm-envelope-flap-open 1100ms 850ms cubic-bezier(.45, 0, .2, 1) both;
+}
+.invitation-envelope-reveal.is-opening .stationery-envelope__card {
+  animation: bm-envelope-card-open 2300ms 1700ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes bm-envelope-focus {
+  from { transform: translate(var(--envelope-origin-x, 0px), var(--envelope-origin-y, 0px)); }
+  to { transform: translate(0, 2rem); }
+}
+@keyframes bm-envelope-seal-release {
+  0%, 15% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(.7rem) scale(.9); }
+}
+@keyframes bm-envelope-flap-open {
+  0% { transform: rotateX(0deg); z-index: 5; }
+  49% { z-index: 5; }
+  50% { transform: rotateX(-90deg); z-index: 1; }
+  100% { transform: rotateX(-178deg); z-index: 1; }
+}
+@keyframes bm-envelope-card-open {
+  0% { opacity: 1; transform: translateY(10%) scale(.97); }
+  70%, 100% { opacity: 1; transform: translateY(-96%) scale(1); }
+}
+
+@media (max-height: 700px) {
+  .private-gate.mystery-gate > .mystery-gate-composition { padding-top: 1.5rem; }
+  .private-gate.mystery-gate h1 { font-size: 2.85rem; }
+  .invitation-envelope-reveal { --envelope-width: min(64vw, 15rem); margin-block: 1.25rem; }
+  .private-gate.mystery-gate .private-gate-copy { margin-bottom: 1rem; }
+}
+
+@media (max-height: 700px) {
+  .private-gate.mystery-gate .private-note { display: none; }
+}
+
+@media (max-height: 480px) {
+  .invitation-envelope-reveal { --envelope-width: min(64vw, 15rem, 44svh); }
+  .stationery-envelope__card { padding: .3rem; }
+  .stationery-envelope__card b { font-size: 1.35rem; }
+  .stationery-envelope__card > span.stationery-card__names { font-size: .8rem; margin-top: .2rem; }
+  .stationery-envelope__card > span.stationery-card__date { font-size: .5rem; margin-top: .2rem; }
+  .stationery-card__rule { margin-block: .15rem; }
+  .envelope-reveal-title { top: 1.5rem; }
+  .envelope-reveal-note { bottom: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mystery-code-form,
+  .invitation-envelope-reveal.is-opening .stationery-envelope,
+  .invitation-envelope-reveal.is-opening .stationery-envelope__seal,
+  .invitation-envelope-reveal.is-opening .stationery-envelope__flap,
+  .invitation-envelope-reveal.is-opening .stationery-envelope__card { animation: none; }
+  .private-gate.mystery-gate .mystery-code-form input,
+  .private-gate.mystery-gate .mystery-code-form button,
+  .private-gate.mystery-gate .mystery-reveal,
+  .gate-action-arrow { transition: none; }
+}

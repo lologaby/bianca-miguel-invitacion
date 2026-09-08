@@ -7,5 +7,6 @@ import './wedding-iteration-v25.css';
 import './wedding-final-v26.css';
 import './wedding-client-idea-v27.css';
 import './art/page-marks.css';
+import './components/entry-stationery.css';
 
 export default App;

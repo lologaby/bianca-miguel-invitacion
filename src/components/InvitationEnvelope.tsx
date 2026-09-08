@@ -30,10 +30,10 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
    * interactions.css drives the card with `bm-envelope-card-open`, while
    * envelope-reveal.css declares `bm-card-rise` for the same element. Match
    * either family so a cascade change cannot silently drop the reveal back to
-   * the gate's 2.3s fallback timer.
+   * the gate's 4.6s fallback timer, which allows the full four-second sequence.
    */
   function finishOnCard(event: AnimationEvent<HTMLElement>) {
-    if (!opening) return;
+    if (!opening || event.target !== event.currentTarget) return;
     if (CARD_ANIMATIONS.has(event.animationName)) onComplete();
   }
 
@@ -53,7 +53,8 @@ export function InvitationEnvelope({ invitation, opening = true, onComplete }: P
               <Ampersand className="card-ampersand" tone="#5e2023" />
               {secondInitial}
             </b>
-            <span>{invitation.event.couple.first} &amp; {invitation.event.couple.second} · {invitation.event.dateLabel}</span>
+            <span className="stationery-card__names">{invitation.event.couple.first} &amp; {invitation.event.couple.second}</span>
+            <span className="stationery-card__date">{invitation.event.dateLabel}</span>
           </> : <span className="stationery-card__promise">Reservado para ti</span>}
           <span className="stationery-card__rule" />
         </article>
