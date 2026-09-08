@@ -1,10 +1,10 @@
-/* The original artwork, reflowed across the cover. The two glass copies share
-   coordinates; the actual curved green field clips the light copy. */
+/* Original artwork, reflowed across the cover. The whole glass sits in cream
+   on the green field; neither its stem nor its foot crosses a color boundary. */
 .cover-composition {
   --band-start: 78;
-  --glass-start: 66;
-  --glass-width: 26;
-  --glass-bottom: 2.5%;
+  --glass-start: 86;
+  --glass-width: 11;
+  --glass-bottom: clamp(1.5rem, 5%, 3rem);
   background: var(--client-cream, #f6eee4);
   inset: 0;
   overflow: hidden;
@@ -55,8 +55,7 @@
   inset-block-end: 2.5%;
   inset-inline-start: 12%;
 }
-.cover-glass,
-.cover-glass-light {
+.cover-glass {
   block-size: auto;
   inset-block-end: var(--glass-bottom);
   position: absolute;
@@ -65,12 +64,7 @@
 .cover-glass {
   inline-size: calc(var(--glass-width) * 1%);
   inset-inline-start: calc(var(--glass-start) * 1%);
-  z-index: 1;
-}
-.cover-glass-light {
-  inline-size: calc(var(--glass-width) / (100 - var(--band-start)) * 100%);
-  inset-inline-start: calc((var(--glass-start) - var(--band-start)) / (100 - var(--band-start)) * 100%);
-  max-inline-size: none;
+  z-index: 2;
 }
 .cover-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -83,7 +77,7 @@
   z-index: 3;
 }
 @media (min-width: 901px) {
-  .cover-composition { --band-start: 84; --glass-start: 88; --glass-width: 8; --glass-bottom: 3%; }
+  .cover-composition { --band-start: 84; --glass-start: 90; --glass-width: 7; }
   .cover-corner { block-size: 22%; inline-size: 11%; }
   .cover-texture-wedge { clip-path: polygon(0 18%, 17% 78%, 0 78%); }
   .cover-arch { block-size: 22%; inline-size: 17%; inset-block-end: -6%; inset-inline-start: -2%; }
@@ -91,7 +85,7 @@
   .cover-pod { block-size: 34%; inset-block-end: 3%; inset-inline-start: 5%; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* One arrival keeps the two halves registered and retains each mark's alpha. */
+  /* One arrival retains each mark's own opacity. */
   .cover-composition { animation: cover-paper-arrival 700ms ease-out both; }
 }
 @keyframes cover-paper-arrival { from { opacity: .65; } to { opacity: 1; } }

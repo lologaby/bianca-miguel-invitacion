@@ -23,8 +23,7 @@ export function CoverComposition() {
       className="cover-composition"
       aria-hidden="true"
     >
-      {/* Both copies use the same coordinates; the curved band clips the light one. */}
-      <span className="cover-band"><WineGlassMark className="cover-glass-light" tone={CREAM}/></span>
+      <span className="cover-band" />
       <span className="cover-corner" />
       <span className="cover-texture-wedge" />
 
@@ -34,7 +33,7 @@ export function CoverComposition() {
       <CacaoPodMark className="cover-pod" tone={INK} />
       <WineGlassMark
         className="cover-glass"
-        tone={INK}
+        tone={CREAM}
       />
 
       <span className="cover-grain" />
