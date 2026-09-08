@@ -1,9 +1,9 @@
 /* Original artwork, reflowed across the cover. The whole glass sits in cream
    on the green field; neither its stem nor its foot crosses a color boundary. */
 .cover-composition {
-  --band-start: 78;
-  --glass-start: 86;
-  --glass-width: 11;
+  --band-start: 84;
+  --glass-start: 90;
+  --glass-width: 8;
   --glass-bottom: clamp(1.5rem, 5%, 3rem);
   background: var(--client-cream, #f6eee4);
   inset: 0;
@@ -44,16 +44,16 @@
 }
 .cover-wedge {
   block-size: 13%;
-  inline-size: 20%;
+  inline-size: 14%;
   inset-block-end: 0;
-  inset-inline-start: 34%;
+  inset-inline-start: 27%;
   opacity: .9;
 }
 .cover-pod {
-  block-size: 22%;
-  inline-size: auto;
+  block-size: auto;
+  inline-size: min(20%, 6rem);
   inset-block-end: 2.5%;
-  inset-inline-start: 12%;
+  inset-inline-start: 6%;
 }
 .cover-glass {
   block-size: auto;
@@ -82,7 +82,7 @@
   .cover-texture-wedge { clip-path: polygon(0 18%, 17% 78%, 0 78%); }
   .cover-arch { block-size: 22%; inline-size: 17%; inset-block-end: -6%; inset-inline-start: -2%; }
   .cover-wedge { block-size: 20%; inline-size: 8%; inset-inline-start: 15%; }
-  .cover-pod { block-size: 34%; inset-block-end: 3%; inset-inline-start: 5%; }
+  .cover-pod { block-size: 34%; inline-size: auto; inset-block-end: 3%; inset-inline-start: 5%; }
 }
 @media (prefers-reduced-motion: no-preference) {
   /* One arrival retains each mark's own opacity. */

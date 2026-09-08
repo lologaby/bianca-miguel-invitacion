@@ -710,19 +710,6 @@
 /* --- what the client's review caught ---------------------------------- */
 
 /*
- * 1. The hero text was centred on the VIEWPORT while the artwork behind it is
- *    two fields: cream to 78%, then the green band. So the logo crossed the
- *    edge by 37px, the date line by 17px, and a guest name any longer than the
- *    demo one ran onto the green and lost its last letters. Centre the copy in
- *    the cream field instead, which is where it always belonged.
- */
-@media (max-width: 620px) {
-  .client-hero-copy {
-    inset-inline-start: -11%;
-  }
-}
-
-/*
  * 2. The FAQ's open indicator filled with dark green and rotated into an ×.
  *    A filled disc is the heaviest mark on a page built from hairlines, and an
  *    × reads as "delete", not "close". Keep the hairline ring and let the plus
@@ -898,16 +885,15 @@ input, textarea { caret-color: #5e2023; }
 
 @media (max-width: 900px) {
   .client-hero-copy {
-    inset-inline-start: auto;
-    justify-self: start;
-    width: 78%;
-    padding-inline: clamp(1rem, 4vw, 1.5rem);
+    inset-inline-start: 0;
+    justify-self: center;
+    width: 100%;
+    padding-inline: 18%;
     padding-block: 2.75rem clamp(11rem, 32svh, 17rem);
   }
   .client-hero-copy h1 { width: 100%; margin-top: 0; }
   .client-hero-personalization { margin-block-start: 1.75rem; }
-  /* The central wedge ends at 54%; keep the cue in the empty cream beside it. */
-  .hero-scroll-cue { inset-inline-start: 65%; inset-block-end: 1.5rem; }
+  /* Text and scroll share the viewport centre; the artwork leaves that axis clear. */
 }
 @media (max-width: 620px) and (max-height: 650px) {
   .client-hero-copy, .client-hero-art { min-height: 36rem; }
