@@ -20,6 +20,7 @@ export function InvitationGate({ onReveal }: Props) {
   const [showCode, setShowCode] = useState(reviewMode === 'entrada' || !initialLinkToken);
   const [status, setStatus] = useState('');
   const [hasError, setHasError] = useState(false);
+  const [invalidCode, setInvalidCode] = useState(false);
   const [busy, setBusy] = useState(false);
   const [opening, setOpening] = useState(false);
   const [pendingInvitation, setPendingInvitation] = useState<InvitationPayload | null>(null);
@@ -28,6 +29,8 @@ export function InvitationGate({ onReveal }: Props) {
   const pending = useRef<InvitationPayload | null>(null);
   const finished = useRef(false);
   const fallbackTimer = useRef<number | null>(null);
+  const authorizationRequest = useRef<AbortController | null>(null);
+  const sessionRequest = useRef<AbortController | null>(null);
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
   /*
    * Design-preview builds (GitHub Pages) have no API behind them, so the gate
@@ -98,26 +101,54 @@ export function InvitationGate({ onReveal }: Props) {
   }
 
   async function authorize(body: { code?: string; linkToken?: string }) {
+    if (authorizationRequest.current || opening) return;
+    sessionRequest.current?.abort();
+    sessionRequest.current = null;
+    setCheckingSession(false);
+    const controller = new AbortController();
+    authorizationRequest.current = controller;
+    let timedOut = false;
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, 12000);
     setBusy(true);
     setHasError(false);
+    setInvalidCode(false);
     setStatus(body.linkToken ? 'Preparando tu sobre…' : 'Comprobando tu código…');
     try {
       const response = await fetch('/api/guest', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal,
       });
-      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('invalid');
-      beginEnvelopeReveal(await response.json() as InvitationPayload);
-    } catch {
+      if (response.status === 401 || response.status === 403) throw new Error('invalid');
+      if (response.status === 429) throw new Error('rate-limit');
+      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('unavailable');
+      const invitation = await response.json() as InvitationPayload;
+      if (authorizationRequest.current !== controller) return;
+      beginEnvelopeReveal(invitation);
+    } catch (error) {
+      if (authorizationRequest.current !== controller) return;
+      const invalid = error instanceof Error && error.message === 'invalid';
+      const rateLimited = error instanceof Error && error.message === 'rate-limit';
       setHasError(true);
-      setStatus(body.linkToken
-        ? 'Este enlace ya no está activo. Puedes usar el código que recibiste.'
-        : 'Ese código no coincide. Revísalo e inténtalo de nuevo.');
-      if (body.linkToken) setShowCode(true);
-      window.setTimeout(() => input.current?.focus(), 0);
+      setInvalidCode(invalid && !body.linkToken);
+      setStatus(invalid
+        ? (body.linkToken
+          ? 'Este enlace ya no está activo. Puedes usar el código que recibiste.'
+          : 'Ese código no coincide. Revísalo e inténtalo de nuevo.')
+        : rateLimited
+          ? 'Hemos recibido varios intentos. Espera un momento e inténtalo de nuevo.'
+          : timedOut
+            ? 'La conexión está tardando más de lo esperado. Puedes intentarlo de nuevo.'
+            : 'No pudimos conectar para abrir tu invitación. Inténtalo de nuevo en un momento.');
+      if (invalid && body.linkToken) setShowCode(true);
+      if (!body.linkToken || invalid) window.setTimeout(() => input.current?.focus(), 0);
     } finally {
-      setBusy(false);
+      window.clearTimeout(timeout);
+      if (authorizationRequest.current === controller) {
+        authorizationRequest.current = null;
+        setBusy(false);
+      }
     }
   }
 
@@ -134,24 +165,43 @@ export function InvitationGate({ onReveal }: Props) {
       return;
     }
     if (isLocal || isDemoBuild || reviewMode === 'entrada') return;
-    // never leave the holding screen up if the network stalls
+    const controller = new AbortController();
+    sessionRequest.current = controller;
+    let timedOut = false;
+    // Show the access controls promptly; cancel this lookup if the guest uses them.
     const guard = window.setTimeout(() => setCheckingSession(false), 2500);
-    void fetch('/api/session', { headers: { accept: 'application/json' } }).then(async (response) => {
-      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
-        setCheckingSession(false);
-        return;
-      }
+    const timeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, 12000);
+    void fetch('/api/session', { headers: { accept: 'application/json' }, signal: controller.signal }).then(async (response) => {
+      if (sessionRequest.current !== controller) return;
+      if (response.status === 401) { setCheckingSession(false); return; }
+      if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('unavailable');
       const invitation = await response.json() as InvitationPayload;
-      // ?vista=sobre keeps this component mounted, so the holding screen has to
-      // come down here or it covers the envelope it was waiting for
+      if (sessionRequest.current !== controller) return;
       setCheckingSession(false);
       if (reviewMode === 'sobre') beginEnvelopeReveal(invitation);
       else onReveal(invitation);
-    }).catch(() => setCheckingSession(false)).finally(() => window.clearTimeout(guard));
+    }).catch(() => {
+      if (sessionRequest.current !== controller || (controller.signal.aborted && !timedOut)) return;
+      setCheckingSession(false);
+      setHasError(true);
+      setStatus('No pudimos recuperar tu invitación. Puedes entrar con el código que recibiste.');
+    }).finally(() => {
+      window.clearTimeout(guard);
+      window.clearTimeout(timeout);
+      if (sessionRequest.current === controller) sessionRequest.current = null;
+    });
+    return () => {
+      if (sessionRequest.current === controller) sessionRequest.current = null;
+      controller.abort();
+      window.clearTimeout(guard);
+      window.clearTimeout(timeout);
+    };
   }, []);
 
   useEffect(() => () => {
     if (fallbackTimer.current !== null) window.clearTimeout(fallbackTimer.current);
+    authorizationRequest.current?.abort();
+    authorizationRequest.current = null;
   }, []);
 
   useEffect(() => {
@@ -164,9 +214,11 @@ export function InvitationGate({ onReveal }: Props) {
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy || opening) return;
     const value = code.trim();
     if (!value) {
       setHasError(true);
+      setInvalidCode(true);
       setStatus('Escribe el código que recibiste.');
       input.current?.focus();
       return;
@@ -180,6 +232,8 @@ export function InvitationGate({ onReveal }: Props) {
 
   function revealCode() {
     setHasError(false);
+    setInvalidCode(false);
+    setStatus('');
     setShowCode(true);
     window.setTimeout(() => input.current?.focus(), 0);
   }
@@ -205,7 +259,7 @@ export function InvitationGate({ onReveal }: Props) {
               <button className="mystery-reveal" type="button" disabled={busy || opening} onClick={() => void authorize({ linkToken })}>
                 <span>{busy ? 'Preparando…' : 'Abrir el sobre'}</span><EntryArrow />
               </button>
-              <button className="code-toggle" type="button" disabled={opening} onClick={revealCode}>Usar un código</button>
+              <button className="code-toggle" type="button" disabled={busy || opening} onClick={revealCode}>Usar un código</button>
             </div>
           ) : !showCode ? (
             <button className="mystery-reveal" type="button" disabled={opening} onClick={revealCode}>
@@ -220,13 +274,13 @@ export function InvitationGate({ onReveal }: Props) {
                   id="guest-code"
                   autoComplete="one-time-code"
                   inputMode="text"
-                  aria-invalid={hasError || undefined}
+                  aria-invalid={invalidCode || undefined}
                   aria-describedby="guest-code-status"
                   spellCheck={false}
                   value={code}
                   onChange={(event) => {
                     setCode(event.target.value);
-                    if (hasError) { setHasError(false); setStatus(''); }
+                    if (hasError) { setHasError(false); setInvalidCode(false); setStatus(''); }
                   }}
                   maxLength={32}
                   disabled={busy || opening}

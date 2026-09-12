@@ -2,6 +2,7 @@ import { redis } from './_redis.js';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { publicGuest, readPrivateEvent } from './_data.js';
 import { allGuests } from './_guests-store.js';
+import { readSavedRsvp } from './_rsvp-store.js';
 import { clientIp, jsonError, signSession, type ApiRequest, type ApiResponse } from './_security.js';
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
@@ -27,10 +28,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       return stored.length === candidate.length && timingSafeEqual(stored, candidate);
     });
     if (!match) return res.status(401).json(jsonError('invalid_invitation', 'Invitación no válida.'));
+    const rsvp = await readSavedRsvp(match.id);
+    const event = readPrivateEvent();
     const session = signSession({ id: match.id, name: match.name, partyLimit: match.partyLimit, plusOneAllowed: match.plusOneAllowed });
     const secure = process.env.VERCEL_ENV === 'production' ? '; Secure' : '';
     res.setHeader('Set-Cookie', `bianca_session=${session}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000${secure}`);
-    return res.status(200).json({ guest: publicGuest(match), event: readPrivateEvent() });
+    return res.status(200).json({ guest: publicGuest(match), event, rsvp });
   } catch {
     return res.status(503).json(jsonError('not_configured', 'La invitación aún no está configurada.'));
   }

@@ -51,10 +51,10 @@ Dos destinos, desde `main`:
 
 | Destino | Qué es | Cómo despliega |
 | --- | --- | --- |
-| **Vercel** — [bianca-miguel-invitacion.vercel.app](https://bianca-miguel-invitacion.vercel.app) | La invitación real. Ejecuta `api/*.ts`, así que la puerta autentica y el RSVP se guarda en Redis. | Integración de Git de Vercel, en cada push a `main`. Sin workflow ni token. |
+| **Vercel** — [nuestracosecha.net](https://nuestracosecha.net/) | La invitación real. Ejecuta `api/*.ts`, así que la puerta autentica y el RSVP se guarda en Redis. | Integración de Git de Vercel, en cada push a `main`. Sin workflow ni token. |
 | **GitHub Pages** | Vista previa de diseño en `https://lologaby.github.io/bianca-miguel-invitacion/`. Estático: sin API, nadie entra con código y no se guarda nada. Se compila con `VITE_DEMO_PREVIEW=1`, que abre directamente la invitación de demostración. | `.github/workflows/pages.yml` |
 
-La vista previa lleva datos de marcador a propósito. El evento real —lugares, fecha y número de ATH Móvil— nunca forma parte de ningún bundle: vive en `PRIVATE_EVENT_JSON` en el hosting, tanto para el worker como para las funciones de Vercel. Ambos workflows fallan si detectan esos datos en el repositorio.
+La vista previa lleva datos de marcador a propósito. El evento real —lugares, fecha y número de ATH Móvil— nunca forma parte de ningún bundle: vive en `PRIVATE_EVENT_JSON` en el hosting, tanto para el worker como para las funciones de Vercel. Las compilaciones comprueban los marcadores del cliente y bloquean teléfonos privados o secretos configurados que lleguen al bundle. La revisión de contenido complementa estas comprobaciones.
 
 Compilar la vista previa en local:
 
@@ -69,8 +69,7 @@ Configura en el proveedor de hosting las variables descritas en `.env.example`:
 
 - `SESSION_SECRET`
 - `ADMIN_PASSWORD`
-- `UPSTASH_REDIS_REST_URL`
-- `UPSTASH_REDIS_REST_TOKEN`
+- `REDIS_URL`
 - `GUESTS_JSON`
 - `PRIVATE_EVENT_JSON`
 
@@ -82,3 +81,21 @@ No uses prefijos públicos como `VITE_` para ninguno de estos valores.
 npm run check
 python "C:\Users\agbm9\.codex\skills\build-immersive-wedding-sites\scripts\audit_wedding_site.py" .
 ```
+
+### Respuestas de invitados
+
+La primera respuesta guardada se conserva en Redis. La API devuelve esa misma respuesta al recuperar la sesión, entrar de nuevo con código o abrir el enlace personal. El formulario se sustituye por un comprobante tanto al aceptar como al declinar; volver a cargar o enviar desde dos pestañas no sobrescribe la respuesta. Las confirmaciones anteriores siguen siendo válidas.
+
+La demostración guarda su respuesta únicamente en el navegador y la identifica como tal. No se conecta a los invitados reales.
+
+### Operación en Vercel
+
+El proyecto utiliza Redis mediante `REDIS_URL`, proporcionado por la integración de Vercel. Las variables de Upstash REST pertenecen al despliegue antiguo y no sustituyen esa conexión.
+
+La lista combina `GUESTS_JSON` con las invitaciones creadas desde el panel. Las sesiones consultan esa lista actual; eliminar una invitación revoca sus siguientes accesos. Eliminar y volver a crear una invitación genera una identidad nueva. Las altas y bajas se guardan de forma atómica para conservar ediciones simultáneas.
+
+No cambies ni borres las claves de Redis para publicar un ajuste visual. Conserva una copia del almacén antes de cualquier migración o eliminación de datos.
+
+La comprobación de tipos incluye cliente y funciones de Vercel. Las regresiones de la API utilizan datos ficticios y Redis simulado; no se conectan al almacén real. Las compilaciones mantienen el acceso privado y la vista de diseño separados.
+
+El dominio de producción es [Nuestra Cosecha](https://nuestracosecha.net/). HTTP y www redirigen a esa dirección. La publicación se hace con un push a main y termina cuando Vercel marca el despliegue como correcto.

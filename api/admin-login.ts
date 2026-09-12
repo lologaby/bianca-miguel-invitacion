@@ -9,8 +9,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (!req.headers['content-type']?.includes('application/json')) return res.status(415).json(jsonError('invalid_content_type', 'Contenido no válido.'));
   const ipHash = createHash('sha256').update(clientIp(req)).digest('hex').slice(0, 20);
   if (await redis.overLimit(`admin-attempt:${ipHash}`, 12, 900)) return res.status(429).json(jsonError('rate_limited', 'Intenta nuevamente más tarde.'));
-  if (!validAdminPassword(req.body?.password)) return res.status(401).json(jsonError('invalid_credentials', 'Acceso no válido.'));
-  const secure = process.env.VERCEL_ENV === 'production' ? '; Secure' : '';
-  res.setHeader('Set-Cookie', `bianca_admin=${signAdminSession()}; Path=/; HttpOnly; SameSite=Strict; Max-Age=28800${secure}`);
-  return res.status(200).json({ ok: true });
+  try {
+    if (!validAdminPassword(req.body?.password)) return res.status(401).json(jsonError('invalid_credentials', 'Acceso no válido.'));
+    const secure = process.env.VERCEL_ENV === 'production' ? '; Secure' : '';
+    res.setHeader('Set-Cookie', `bianca_admin=${signAdminSession()}; Path=/; HttpOnly; SameSite=Strict; Max-Age=28800${secure}`);
+    return res.status(200).json({ ok: true });
+  } catch {
+    return res.status(503).json(jsonError('not_configured', 'El acceso no está disponible. Inténtalo de nuevo.'));
+  }
 }

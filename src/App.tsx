@@ -15,7 +15,7 @@ import './craft.css';
 import './refined.css';
 import './itinerary.css';
 
-const nav = [['celebracion', 'Celebración'], ['lugar', 'Lugar'], ['preguntas', 'Preguntas'], ['rsvp', 'Confirmar']] as const;
+const nav = [['celebracion', 'Celebración'], ['lugar', 'Lugar'], ['preguntas', 'Preguntas'], ['rsvp', 'Respuesta']] as const;
 
 function useScrollProgress() {
   useEffect(() => {
@@ -294,7 +294,7 @@ function BeforeWedding({ invitation }: { invitation: InvitationPayload }) {
 
       {faq.length ? <section className="faq-v2" id="preguntas"><ScrollMark place="sink" opacity={0.07}><SpeckleDisc tone="currentColor"/></ScrollMark><header><h2>Antes de venir</h2></header><div>{faq.map((item) => <details key={item.q}><summary><span>{item.q}</span><i aria-hidden="true"></i></summary><p>{item.a}</p></details>)}</div></section> : null}
 
-      <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><ScrollMark place="edge-right" opacity={0.08}><WineGlassMark tone="currentColor"/></ScrollMark><VineRule/><RsvpForm guest={guest}/></section>
+      <section className="rsvp rsvp-v2 distilled-rsvp" id="rsvp"><ScrollMark place="edge-right" opacity={0.08}><WineGlassMark tone="currentColor"/></ScrollMark><VineRule/><RsvpForm guest={guest} response={invitation.rsvp}/></section>
       {/*
         The last thing on the page, and the only playful one: a small glass off
         to one side whose wine leans with the scroll. It is a toy, so it is
@@ -326,10 +326,45 @@ function phaseFor(event: PrivateEvent) {
   return now < new Date(event.start).getTime() ? 'before' : now <= new Date(event.end).getTime() ? 'during' : 'after';
 }
 
+function useEventPhaseUpdates(event: PrivateEvent | undefined) {
+  const [, refreshPhase] = useState(0);
+  const start = event?.start;
+  const end = event?.end;
+
+  useEffect(() => {
+    if (!start || !end) return;
+    let timer = 0;
+    const boundaries = [new Date(start).getTime(), new Date(end).getTime() + 1];
+    const schedule = () => {
+      window.clearTimeout(timer);
+      const now = Date.now();
+      const next = boundaries.find((boundary) => boundary > now);
+      if (next !== undefined) {
+        // Browsers overflow longer delays; distant weddings must stay asleep.
+        timer = window.setTimeout(update, Math.min(next - now, 2_147_483_647));
+      }
+    };
+    const update = () => {
+      refreshPhase((revision) => revision + 1);
+      schedule();
+    };
+    const onVisibility = () => {
+      if (!document.hidden) update();
+    };
+    schedule();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [start, end]);
+}
+
 export default function App() {
   const params = new URLSearchParams(window.location.search);
   const isAdmin = params.has('coordinacion');
   const [invitation, setInvitation] = useState<InvitationPayload | null>(null);
+  useEventPhaseUpdates(invitation?.event);
   useEffect(() => { document.title = invitation ? `${invitation.event.couple.first} & ${invitation.event.couple.second}` : isAdmin ? 'Panel de coordinación' : 'Invitación privada'; }, [invitation, isAdmin]);
   if (isAdmin) return <AdminDashboard/>;
   if (!invitation) return <InvitationGate onReveal={setInvitation}/>;

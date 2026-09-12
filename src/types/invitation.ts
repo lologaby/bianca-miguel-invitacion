@@ -40,7 +40,15 @@ export interface PrivateEvent {
   weatherNote?: string;
 }
 
+export interface SavedRsvp {
+  attendance: 'yes' | 'no';
+  partySize: number;
+  plusOneName: string;
+  updatedAt: string;
+}
+
 export interface InvitationPayload {
+  rsvp?: SavedRsvp | null;
   guest: Guest;
   event: PrivateEvent;
 }

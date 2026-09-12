@@ -22,16 +22,16 @@ export function signAdminSession() {
 }
 
 export function isAdmin(req: ApiRequest) {
-  const raw = req.cookies.bianca_admin;
-  if (!raw) return false;
-  const [payload, provided] = raw.split('.');
-  if (!payload || !provided) return false;
-  const expected = createHmac('sha256', sessionSecret()).update(payload).digest();
-  const actual = Buffer.from(provided, 'base64url');
-  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return false;
   try {
+    const raw = req.cookies.bianca_admin;
+    if (!raw) return false;
+    const [payload, provided, extra] = raw.split('.');
+    if (!payload || !provided || extra !== undefined) return false;
+    const expected = createHmac('sha256', sessionSecret()).update(payload).digest();
+    const actual = Buffer.from(provided, 'base64url');
+    if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return false;
     const value = JSON.parse(Buffer.from(payload, 'base64url').toString()) as { scope?: string; exp?: number };
-    return value.scope === 'rsvp-admin' && typeof value.exp === 'number' && value.exp > Date.now();
+    return value?.scope === 'rsvp-admin' && typeof value.exp === 'number' && Number.isFinite(value.exp) && value.exp > Date.now();
   } catch {
     return false;
   }

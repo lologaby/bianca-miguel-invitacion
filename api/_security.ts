@@ -4,6 +4,23 @@ export interface ApiResponse { setHeader(name: string, value: string): void; sta
 export interface SessionGuest { id: string; name: string; partyLimit: number; plusOneAllowed: boolean; exp: number }
 function secret() { const value = process.env.SESSION_SECRET; if (!value || value.length < 32) throw new Error('SESSION_SECRET is missing or too short'); return value; }
 export function signSession(guest: Omit<SessionGuest, 'exp'>) { const payload = Buffer.from(JSON.stringify({ ...guest, exp: Date.now() + 2592000000 })).toString('base64url'); const signature = createHmac('sha256', secret()).update(payload).digest('base64url'); return `${payload}.${signature}`; }
-export function readSession(req: ApiRequest): SessionGuest | null { const raw = req.cookies.bianca_session; if (!raw) return null; const [payload, provided] = raw.split('.'); if (!payload || !provided) return null; const expected = createHmac('sha256', secret()).update(payload).digest(); const actual = Buffer.from(provided, 'base64url'); if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null; const guest = JSON.parse(Buffer.from(payload, 'base64url').toString()) as SessionGuest; return guest.exp > Date.now() ? guest : null; }
+export function readSession(req: ApiRequest): SessionGuest | null {
+  try {
+    const raw = req.cookies.bianca_session;
+    if (!raw) return null;
+    const [payload, provided, extra] = raw.split('.');
+    if (!payload || !provided || extra !== undefined) return null;
+    const expected = createHmac('sha256', secret()).update(payload).digest();
+    const actual = Buffer.from(provided, 'base64url');
+    if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
+    const guest = JSON.parse(Buffer.from(payload, 'base64url').toString()) as SessionGuest;
+    if (!guest || typeof guest.id !== 'string' || !guest.id || typeof guest.name !== 'string'
+      || !Number.isInteger(guest.partyLimit) || guest.partyLimit < 1
+      || typeof guest.plusOneAllowed !== 'boolean' || !Number.isFinite(guest.exp)) return null;
+    return guest.exp > Date.now() ? guest : null;
+  } catch {
+    return null;
+  }
+}
 export function clientIp(req: ApiRequest) { const forwarded = req.headers['x-forwarded-for']; return (Array.isArray(forwarded) ? forwarded[0] : forwarded?.split(',')[0])?.trim() || 'unknown'; }
 export function jsonError(code: string, message: string) { return { error: { code, message } }; }

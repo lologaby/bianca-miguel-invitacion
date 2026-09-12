@@ -1166,3 +1166,14 @@ input, textarea { caret-color: #5e2023; }
 @media (max-width: 720px) {
   .faq-v2 { gap: 1.25rem; }
 }
+
+/* A saved reply becomes a receipt, including after a new sign-in. */
+.rsvp-receipt { border-block: 1px solid rgba(71,85,72,.25); padding-block: 2rem; }
+.rsvp-receipt-mark { width: 40px; height: 40px; fill: none; stroke: #5e2023; stroke-width: 1; margin-bottom: 1.5rem; }
+.rsvp-receipt .form-heading h2 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.08; }
+.rsvp-receipt h2:focus { outline: none; }
+.rsvp-receipt dl { margin: 1.5rem 0; display: grid; gap: 1rem; }
+.rsvp-receipt dl > div { display: grid; gap: .35rem; }
+.rsvp-receipt dt { color: #596052; font: 500 .68rem/1.5 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.rsvp-receipt dd { margin: 0; color: #272c24; font: 400 1.2rem/1.4 var(--serif); overflow-wrap: anywhere; }
+.rsvp-receipt-note { color: #596052; font: 400 .85rem/1.6 var(--sans); }

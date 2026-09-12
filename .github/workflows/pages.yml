@@ -8,7 +8,7 @@
 #
 # Published at https://lologaby.github.io/bianca-miguel-invitacion/
 #
-# The real invitation lives at https://bianca-miguel-invitacion.vercel.app and is
+# The real invitation lives at https://nuestracosecha.net/ and is
 # deployed by Vercel's own Git integration on every push — no workflow, no token.
 name: Vista previa de diseño
 
@@ -39,6 +39,8 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - run: npm run test:api
 
       - run: npm run build:pages
 
