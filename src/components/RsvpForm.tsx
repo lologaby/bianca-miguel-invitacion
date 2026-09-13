@@ -14,7 +14,8 @@ function isSavedRsvp(value: unknown): value is SavedRsvp {
   const record = value as SavedRsvp;
   return (record.attendance === 'yes' || record.attendance === 'no')
     && Number.isInteger(record.partySize) && record.partySize >= 0
-    && typeof record.plusOneName === 'string' && typeof record.updatedAt === 'string';
+    && typeof record.plusOneName === 'string' && typeof record.updatedAt === 'string'
+    && (record.attendeeNames === undefined || (Array.isArray(record.attendeeNames) && record.attendeeNames.every(name => typeof name === 'string')));
 }
 
 export function RsvpForm({ guest, response }: { guest: Guest; response?: SavedRsvp | null }) {
@@ -30,36 +31,51 @@ export function RsvpForm({ guest, response }: { guest: Guest; response?: SavedRs
   const submitted = useRef(false);
   useEffect(() => { if (saved && submitted.current) receipt.current?.focus({ preventScroll: true }); }, [saved]);
   const [attendance, setAttendance] = useState<'yes' | 'no' | ''>('');
+  const [partySize, setPartySize] = useState(1);
+  const [names, setNames] = useState<string[]>([]);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
-
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy || saved) return;
     if (!attendance) return setStatus('Indique si podrá acompañarnos.');
+    const form = new FormData(event.currentTarget);
+    const attendeeNames = attendance === 'yes' ? form.getAll('attendeeName').map(name => String(name).trim()) : [];
+    if (attendance === 'yes' && (attendeeNames.length !== partySize || attendeeNames.some(name => !name || name.length > 80))) {
+      setStatus('Escriba el nombre de cada persona que asistirá.');
+      const fields = event.currentTarget.querySelectorAll<HTMLInputElement>('input[name="attendeeName"]');
+      [...fields].find(input => !input.value.trim())?.focus();
+      return;
+    }
+    const body = {
+      attendance, partySize: attendance === 'yes' ? partySize : 0, attendeeNames,
+      dietary: attendance === 'yes' ? String(form.get('dietary') || '') : '',
+      accessibility: attendance === 'yes' ? String(form.get('accessibility') || '') : '',
+    };
     setBusy(true);
     setStatus('Guardando su respuesta…');
-    const body = Object.fromEntries(new FormData(event.currentTarget).entries());
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 12000);
     try {
       let result: SavedRsvp;
       if (isLocalPreview) {
-        result = { attendance, partySize: attendance === 'yes' ? Number(body.partySize) : 0, plusOneName: attendance === 'yes' ? String(body.plusOneName || '') : '', updatedAt: new Date().toISOString() };
+        result = { ...body, plusOneName: '', updatedAt: new Date().toISOString() };
         localStorage.setItem(previewKey, JSON.stringify(result));
       } else {
         const request = await fetch('/api/rsvp', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: controller.signal });
-        if (!request.ok || !request.headers.get('content-type')?.includes('application/json')) throw new Error('submit');
-        const data = await request.json() as { rsvp?: unknown };
-        if (!isSavedRsvp(data.rsvp)) throw new Error('invalid_response');
+        if (!request.headers.get('content-type')?.includes('application/json')) throw new Error('No pudimos guardar su respuesta. Inténtelo nuevamente.');
+        const data = await request.json() as { rsvp?: unknown; error?: { message?: string } };
+        if (!request.ok) throw new Error(data.error?.message || 'No pudimos guardar su respuesta. Inténtelo nuevamente.');
+        if (!isSavedRsvp(data.rsvp)) throw new Error('No pudimos verificar su respuesta. Inténtelo nuevamente.');
         result = data.rsvp;
       }
       submitted.current = true;
       setSaved(result);
       setStatus('');
-    } catch {
-      setStatus('No pudimos guardar su respuesta. Inténtelo nuevamente.');
+    } catch (error) {
+      setStatus(error instanceof Error && error.name !== 'AbortError' && error.message !== 'Failed to fetch'
+        ? error.message : 'No pudimos guardar su respuesta. Inténtelo nuevamente.');
     } finally {
       window.clearTimeout(timeout);
       setBusy(false);
@@ -76,7 +92,9 @@ export function RsvpForm({ guest, response }: { guest: Guest; response?: SavedRs
       <dl>
         <div><dt>Invitación</dt><dd>{guest.name}</dd></div>
         {saved.attendance === 'yes' && saved.partySize > 0 && <div><dt>Asistentes</dt><dd>{saved.partySize} {saved.partySize === 1 ? 'persona' : 'personas'}</dd></div>}
-        {saved.attendance === 'yes' && saved.plusOneName && <div><dt>Acompañante</dt><dd>{saved.plusOneName}</dd></div>}
+        {saved.attendance === 'yes' && (saved.attendeeNames?.length
+          ? <div><dt>Nombres de asistentes</dt><dd><ol className="rsvp-saved-names">{saved.attendeeNames.map((name, index) => <li key={index}>{name}</li>)}</ol></dd></div>
+          : saved.plusOneName ? <div><dt>Nombre registrado</dt><dd>{saved.plusOneName}</dd></div> : null)}
       </dl>
       <p className="rsvp-receipt-note">{isLocalPreview ? 'Respuesta guardada solo en esta demostración.' : 'Su respuesta quedó guardada. No necesita confirmarla de nuevo.'}</p>
     </section>
@@ -92,8 +110,15 @@ export function RsvpForm({ guest, response }: { guest: Guest; response?: SavedRs
       </div>
     </fieldset>
     {attendance === 'yes' && <div className="conditional-fields">
-      <label>Número de asistentes<select disabled={busy} name="partySize" defaultValue="1">{Array.from({ length: guest.partyLimit }, (_, index) => <option key={index + 1}>{index + 1}</option>)}</select></label>
-      {guest.plusOneAllowed && <label>Nombre de acompañante<input disabled={busy} name="plusOneName" maxLength={80} defaultValue={guest.companionNames?.[0] ?? ''}/></label>}
+      <label>Número de asistentes<select disabled={busy} name="partySize" value={partySize} onChange={event => setPartySize(Number(event.target.value))}>{Array.from({ length: guest.partyLimit }, (_, index) => <option key={index + 1}>{index + 1}</option>)}</select></label>
+      <fieldset className="rsvp-attendees" disabled={busy} aria-describedby="rsvp-attendees-note">
+        <legend>{partySize === 1 ? 'Nombre del asistente' : 'Nombres de los asistentes'}</legend>
+        <p id="rsvp-attendees-note">Incluya a cada persona que asistirá, también a usted si nos acompaña.</p>
+        <div className="rsvp-attendee-fields">{Array.from({ length: partySize }, (_, index) => <label key={index}>
+          {partySize === 1 ? 'Nombre y apellido' : `Asistente ${index + 1}`}
+          <input name="attendeeName" required maxLength={80} autoComplete={index === 0 ? 'name' : 'off'} placeholder="Nombre y apellido" value={names[index] || ''} onChange={event => setNames(current => { const next = [...current]; next[index] = event.target.value; return next; })}/>
+        </label>)}</div>
+      </fieldset>
       <details className="rsvp-more"><summary>Alergias o accesibilidad</summary><div><label>Alergias o necesidades alimentarias<textarea disabled={busy} name="dietary" rows={3} maxLength={300}/></label><label>Necesidades de accesibilidad<textarea disabled={busy} name="accessibility" rows={3} maxLength={300}/></label></div></details>
     </div>}
     <button className={`button wine rsvp-submit${attendance ? ' is-ready' : ''}`} disabled={busy || !attendance}>

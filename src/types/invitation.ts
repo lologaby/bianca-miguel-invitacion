@@ -41,6 +41,7 @@ export interface PrivateEvent {
 }
 
 export interface SavedRsvp {
+  attendeeNames?: string[];
   attendance: 'yes' | 'no';
   partySize: number;
   plusOneName: string;

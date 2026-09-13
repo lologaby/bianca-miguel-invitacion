@@ -507,3 +507,44 @@
   letter-spacing: normal;
   text-transform: none;
 }
+
+/* Total reserved spaces and individual attendee names. */
+.guest-portal-capacity-note {
+  grid-column: 1 / -1;
+  color: #62675b;
+  font: 400 .76rem/1.55 var(--sans);
+  margin: 0;
+}
+.guest-portal-retry {
+  align-items: center;
+  border-inline-start: 2px solid var(--admin-wine);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.25rem;
+  margin-block-end: 1.5rem;
+  padding: .5rem 0 .5rem 1rem;
+}
+.guest-portal-retry p { flex: 1 1 15rem; font: 400 .8rem/1.5 var(--sans); margin: 0; }
+.guest-portal-retry button {
+  background: transparent;
+  border: 1px solid var(--admin-line);
+  color: var(--admin-ink);
+  cursor: pointer;
+  font: 600 .7rem/1.3 var(--sans);
+  min-block-size: 48px;
+  padding: .6rem 1rem;
+}
+.guest-portal :is(input, button):disabled { cursor: default; opacity: .55; }
+.admin-attendee-names { display: grid; gap: .25rem; list-style: none; margin: 0; padding: 0; }
+.admin-shell td[data-label="Nombres de asistentes"] { overflow-wrap: anywhere; }
+@media (min-width: 720px) {
+  .guest-portal-add { grid-template-columns: minmax(0, 1fr) 10rem; }
+  .guest-portal-add > button { grid-column: 1 / -1; justify-self: start; }
+}
+@media (min-width: 1000px) {
+  .guest-portal-add { grid-template-columns: minmax(14rem, 1fr) 10rem auto; }
+  .guest-portal-add > button { grid-column: auto; }
+}
+@media (max-width: 700px) {
+  .admin-shell td[data-label="Nombres de asistentes"] { grid-column: 1 / -1; }
+}

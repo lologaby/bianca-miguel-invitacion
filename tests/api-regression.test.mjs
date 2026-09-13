@@ -274,16 +274,17 @@ test('delete and recreate cannot inherit an old RSVP or reactivate an old cookie
   assert.equal((await f.call('admin-rsvps', { admin: true })).body.records[0].attendance, 'pending');
 });
 
-test('RSVP validates current capacity, positive attendance and companion permission', async () => {
+test('RSVP validates current capacity and positive attendance independently of legacy companion permission', async () => {
   const f = fixture();
   const old = f.guest('fixture-limits', { partyLimit: 5, plusOneAllowed: true });
   f.seed([{ ...old, partyLimit: 2, plusOneAllowed: false }]);
   for (const partySize of [0, -1, 1.5, 3]) {
     assert.equal((await f.call('rsvp', { guest: old, method: 'POST', body: { attendance: 'yes', partySize } })).code, 400);
   }
-  const res = await f.call('rsvp', { guest: old, method: 'POST', body: { attendance: 'yes', partySize: 2, plusOneName: 'Not allowed' } });
+  const res = await f.call('rsvp', { guest: old, method: 'POST', body: { attendance: 'yes', partySize: 2, attendeeNames: ['Fixture Guest', 'Invited person'], plusOneName: 'Legacy field ignored' } });
   assert.equal(res.code, 200);
   assert.equal(res.body.rsvp.plusOneName, '');
+  assert.deepEqual(res.body.rsvp.attendeeNames, ['Fixture Guest', 'Invited person']);
 });
 
 test('first RSVP persists across login, session reload and conflicting concurrent retries', async () => {
@@ -291,10 +292,10 @@ test('first RSVP persists across login, session reload and conflicting concurren
   const person = f.guest('fixture-answer', { plusOneAllowed: true });
   f.seed([person]);
   const first = await f.call('rsvp', { guest: person, method: 'POST', body: {
-    attendance: 'yes', partySize: 2, plusOneName: 'Fixture companion', dietary: 'Fixture dietary note',
+    attendance: 'yes', partySize: 2, attendeeNames: ['Fixture Guest', 'Fixture companion'], dietary: 'Fixture dietary note',
   } });
   assert.equal(first.code, 200);
-  assert.deepEqual(Object.keys(first.body.rsvp).sort(), ['attendance', 'partySize', 'plusOneName', 'updatedAt']);
+  assert.deepEqual(Object.keys(first.body.rsvp).sort(), ['attendance', 'attendeeNames', 'partySize', 'plusOneName', 'updatedAt']);
   const before = f.db.get(rsvpKey(person.id));
   const repeated = await Promise.all(Array.from({ length: 8 }, () =>
     f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'no', partySize: 0 } })));
@@ -330,7 +331,7 @@ test('two first responses in flight resolve to one identical saved response via 
   const person = f.guest('fixture-race');
   f.seed([person]);
   const results = await Promise.all([
-    f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'yes', partySize: 2 } }),
+    f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'yes', partySize: 2, attendeeNames: ['Fixture Guest', 'Fixture companion'] } }),
     f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'no', partySize: 0 } }),
   ]);
   assert.ok(results.every((res) => res.code === 200));
@@ -344,9 +345,11 @@ test('declined RSVP is persistent and always stores zero attendees', async () =>
   const f = fixture();
   const person = f.guest();
   f.seed([person]);
-  const res = await f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'no', partySize: 9 } });
+  const res = await f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'no', partySize: 9, attendeeNames: ['Must not persist'], plusOneName: 'Must not persist' } });
   assert.equal(res.code, 200);
   assert.equal(res.body.rsvp.partySize, 0);
+  assert.deepEqual(res.body.rsvp.attendeeNames, []);
+  assert.equal(res.body.rsvp.plusOneName, '');
   assert.equal((await f.call('session', { guest: person })).body.rsvp.attendance, 'no');
 });
 
@@ -365,4 +368,86 @@ test('failed or corrupt RSVP storage never reports success or prompts a fresh re
   f.db.set(rsvpKey(person.id), '{"attendance":"broken"}');
   assert.equal((await f.call('session', { guest: person })).code, 503);
   assert.equal((await f.call('rsvp', { guest: person, method: 'POST', body: { attendance: 'yes', partySize: 1 } })).code, 503);
+});
+
+
+test('a family of six provides every attendee name without legacy companion permission', async () => {
+  const f = fixture();
+  const person = f.guest('fixture-family', { partyLimit: 6, plusOneAllowed: false });
+  f.seed([person]);
+  const attendeeNames = ['Ana Uno', 'Luis Dos', 'María Tres', 'Pedro Cuatro', 'Eva Cinco', 'José Seis'];
+  const res = await f.call('rsvp', { guest: person, method: 'POST', body: {
+    attendance: 'yes', partySize: 6, attendeeNames: attendeeNames.map((name) => '  ' + name + '  '),
+  } });
+  assert.equal(res.code, 200);
+  assert.deepEqual(res.body.rsvp.attendeeNames, attendeeNames);
+  assert.deepEqual(JSON.parse(f.db.get(rsvpKey(person.id))).attendeeNames, attendeeNames);
+  assert.deepEqual((await f.call('session', { guest: person })).body.rsvp.attendeeNames, attendeeNames);
+  const adminRecord = (await f.call('admin-rsvps', { admin: true })).body.records[0];
+  assert.equal(adminRecord.partySize, 6);
+  assert.deepEqual(adminRecord.attendeeNames, attendeeNames);
+  assert.equal(adminRecord.plusOneName, '');
+});
+
+test('new confirmations reject absent, mismatched, blank and invalid attendee names without writes', async () => {
+  const f = fixture();
+  const person = f.guest();
+  f.seed([person]);
+  for (const attendeeNames of [undefined, 'One, Two', [], ['Only One'], ['One', 'Two', 'Three'],
+    ['One', '   '], ['One', 42], ['One', null], ['One', 'a'.repeat(81)]]) {
+    const res = await f.call('rsvp', { guest: person, method: 'POST', body: {
+      attendance: 'yes', partySize: 2, attendeeNames,
+    } });
+    assert.equal(res.code, 400);
+    assert.equal(res.body.error.code, 'invalid_attendee_names');
+    assert.equal(f.db.has(rsvpKey(person.id)), false);
+  }
+});
+
+test('twelve attendees fit the invitation limit and names accept the 80-character boundary', async () => {
+  const f = fixture();
+  const person = f.guest('fixture-twelve', { partyLimit: 12, plusOneAllowed: false });
+  f.seed([person]);
+  const attendeeNames = Array.from({ length: 12 }, (_, i) => i === 0 ? 'a'.repeat(80) : 'Invited Person ' + i);
+  const overflow = await f.call('rsvp', { guest: person, method: 'POST', body: {
+    attendance: 'yes', partySize: 13, attendeeNames: [...attendeeNames, 'Extra Person'],
+  } });
+  assert.equal(overflow.code, 400);
+  assert.equal(overflow.body.error.code, 'invalid_party_size');
+  const accepted = await f.call('rsvp', { guest: person, method: 'POST', body: {
+    attendance: 'yes', partySize: 12, attendeeNames,
+  } });
+  assert.equal(accepted.code, 200);
+  assert.deepEqual(accepted.body.rsvp.attendeeNames, attendeeNames);
+});
+
+test('legacy companion names remain readable and missing attendee lists do not require reconfirmation', async () => {
+  const f = fixture();
+  const person = f.guest('fixture-old-companion');
+  f.seed([person]);
+  const legacy = { attendance: 'yes', partySize: 2, plusOneName: 'Original Companion', updatedAt: '2030-01-01T00:00:00Z' };
+  f.put(rsvpKey(person.id), legacy);
+  assert.deepEqual((await f.call('session', { guest: person })).body.rsvp, legacy);
+  const retry = await f.call('rsvp', { guest: person, method: 'POST', body: {
+    attendance: 'yes', partySize: 2, attendeeNames: ['Replacement', 'Replacement Two'],
+  } });
+  assert.equal(retry.code, 200);
+  assert.deepEqual(retry.body.rsvp, legacy);
+  assert.deepEqual(JSON.parse(f.db.get(rsvpKey(person.id))), legacy);
+  const record = (await f.call('admin-rsvps', { admin: true })).body.records[0];
+  assert.deepEqual(record.attendeeNames, []);
+  assert.equal(record.plusOneName, 'Original Companion');
+});
+
+test('corrupt saved attendee lists fail closed instead of opening a fresh confirmation', async () => {
+  const f = fixture();
+  const person = f.guest();
+  f.seed([person]);
+  for (const attendeeNames of ['Invalid list', ['Only one'], ['First', null], ['First', ' ']]) {
+    f.put(rsvpKey(person.id), { attendance: 'yes', partySize: 2, attendeeNames, plusOneName: '', updatedAt: '2030-01-01T00:00:00Z' });
+    const res = await f.call('session', { guest: person });
+    assert.equal(res.code, 503);
+    assert.ok(res.body.error.code);
+    assert.equal(res.body.rsvp, undefined);
+  }
 });

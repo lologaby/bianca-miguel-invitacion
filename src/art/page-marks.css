@@ -1177,3 +1177,11 @@ input, textarea { caret-color: #5e2023; }
 .rsvp-receipt dt { color: #596052; font: 500 .68rem/1.5 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
 .rsvp-receipt dd { margin: 0; color: #272c24; font: 400 1.2rem/1.4 var(--serif); overflow-wrap: anywhere; }
 .rsvp-receipt-note { color: #596052; font: 400 .85rem/1.6 var(--sans); }
+
+/* One named attendee for every reserved place used by this reply. */
+.rsvp-v2.distilled-rsvp .rsvp-form .rsvp-attendees { min-width: 0; padding: 0; margin: 1.75rem 0; border: 0; }
+.rsvp-v2.distilled-rsvp .rsvp-form .rsvp-attendees legend { font: 400 1.75rem/1.2 var(--serif); letter-spacing: 0; text-transform: none; padding: 0; }
+.rsvp-attendees > p { font: 400 .85rem/1.6 var(--sans); color: #596052; margin: .75rem 0 1.25rem; }
+.rsvp-attendee-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem 1.25rem; }
+.rsvp-saved-names { padding-inline-start: 1.25em; margin: 0; display: grid; gap: .3rem; }
+@media (max-width: 620px) { .rsvp-attendee-fields { grid-template-columns: minmax(0, 1fr); } }

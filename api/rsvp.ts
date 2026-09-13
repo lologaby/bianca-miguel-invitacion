@@ -18,7 +18,16 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     if (!Number.isInteger(partySize) || partySize < (attendance === 'yes' ? 1 : 0) || partySize > guest.partyLimit) {
       return res.status(400).json(jsonError('invalid_party_size', 'Cantidad de asistentes no válida.'));
     }
-    const record: RsvpRecord = { event: 'bianca-placeholder-2026', guestId: guest.id, attendance, partySize, plusOneName: guest.plusOneAllowed ? text(req.body?.plusOneName, 80) : '', dietary: text(req.body?.dietary, 300), accessibility: text(req.body?.accessibility, 300), song: text(req.body?.song, 120), updatedAt: new Date().toISOString() };
+    const names = req.body?.attendeeNames;
+    let attendeeNames: string[] = [];
+    if (attendance === 'yes') {
+      if (!Array.isArray(names) || names.length !== partySize
+        || names.some((name: unknown) => typeof name !== 'string' || !name.trim() || name.trim().length > 80)) {
+        return res.status(400).json(jsonError('invalid_attendee_names', 'Escribe el nombre de cada persona que asistirá.'));
+      }
+      attendeeNames = names.map((name: string) => name.trim());
+    }
+    const record: RsvpRecord = { event: 'bianca-placeholder-2026', guestId: guest.id, attendance, partySize, attendeeNames, plusOneName: '', dietary: text(req.body?.dietary, 300), accessibility: text(req.body?.accessibility, 300), song: text(req.body?.song, 120), updatedAt: new Date().toISOString() };
     const rsvp = await saveRsvpOnce(record);
     return res.status(200).json({ ok: true, rsvp });
   } catch {

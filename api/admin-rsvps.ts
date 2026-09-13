@@ -3,7 +3,7 @@ import { isAdmin } from './_admin.js';
 import { allGuests } from './_guests-store.js';
 import { jsonError, type ApiRequest, type ApiResponse } from './_security.js';
 
-interface StoredRsvp { attendance: 'yes' | 'no'; partySize: number; plusOneName?: string; song?: string; updatedAt: string }
+interface StoredRsvp { attendance: 'yes' | 'no'; partySize: number; attendeeNames?: string[]; plusOneName?: string; song?: string; updatedAt: string }
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET') return res.status(405).json(jsonError('method_not_allowed', 'Método no permitido.'));
@@ -21,6 +21,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         attendance: response?.attendance ?? 'pending',
         partySize: response?.partySize ?? 0,
         plusOneName: response?.plusOneName ?? '',
+        attendeeNames: response?.attendeeNames ?? [],
         song: response?.song ?? '',
         updatedAt: response?.updatedAt ?? '',
       };

@@ -4,6 +4,7 @@ export interface SavedRsvp {
   attendance: 'yes' | 'no';
   partySize: number;
   plusOneName: string;
+  attendeeNames?: string[];
   updatedAt: string;
 }
 
@@ -22,13 +23,17 @@ function publicRsvp(value: unknown): SavedRsvp {
   if (!record || (record.attendance !== 'yes' && record.attendance !== 'no')
     || !Number.isInteger(record.partySize) || (record.partySize as number) < 0
     || typeof record.updatedAt !== 'string' || !Number.isFinite(Date.parse(record.updatedAt))
-    || (record.plusOneName !== undefined && typeof record.plusOneName !== 'string')) {
+    || (record.plusOneName !== undefined && typeof record.plusOneName !== 'string')
+    || (record.attendeeNames !== undefined && (!Array.isArray(record.attendeeNames)
+      || record.attendeeNames.length !== (record.attendance === 'yes' ? record.partySize : 0)
+      || record.attendeeNames.some((name) => typeof name !== 'string' || !name.trim() || name.length > 80)))) {
     throw new Error('Invalid saved RSVP');
   }
   return {
     attendance: record.attendance,
     partySize: record.partySize as number,
     plusOneName: record.plusOneName ?? '',
+    ...(record.attendeeNames !== undefined ? { attendeeNames: record.attendeeNames } : {}),
     updatedAt: record.updatedAt,
   };
 }
